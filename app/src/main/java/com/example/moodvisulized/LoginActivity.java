@@ -11,7 +11,7 @@ public class LoginActivity extends MainActivity {
     // Can be set to any integer.
     private static final int REQUEST_CODE = 1003;
     private static final String REDIRECT_URI = "moodvisualized://callback";
-    private static final String CLIENT_ID = "";
+    private static final String CLIENT_ID = "0184658057ca400693856a596026419b";
 
 
     @Override

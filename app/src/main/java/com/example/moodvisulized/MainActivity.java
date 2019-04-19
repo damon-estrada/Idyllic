@@ -3,29 +3,26 @@ package com.example.moodvisulized;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 // Imported from the QUICKSTART GUIDE
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 
-import com.spotify.protocol.client.Subscription;
-
 // Below are the protocols needed for api calls.
 // Use more as needed to accomplish any task
 
-import com.spotify.protocol.types.PlayerState;
 import com.spotify.protocol.types.Track;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
-import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 public class MainActivity extends AppCompatActivity {
+    private Button loginButton;
 
     private static final String CLIENT_ID = "0184658057ca400693856a596026419b";
     private static final String REDIRECT_URI = "moodvisualized://callback";
@@ -40,6 +37,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        loginButton = (Button) findViewById(R.id.login_button);
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openSignInPage();
+            }
+        });
+    }
+
+    public void openSignInPage() {
+        // We want to log into the next activity
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -59,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         SpotifyAppRemote.connect(this, connectionParams,
                 new Connector.ConnectionListener() {
 
+                    @Override
                     public void onConnected(SpotifyAppRemote spotifyAppRemote) {
                         mSpotifyAppRemote = spotifyAppRemote;
                         Log.d("MainActivity", "Connected! Yay!");
@@ -70,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
                     public void onFailure(Throwable throwable) {
                         // If we get here, something bad happened, figure out what happened.
-                        Log.e("MyActivity", throwable.getMessage(), throwable);
+                        Log.e("MainActivity", throwable.getMessage(), throwable);
                         System.out.println("\n\n\n\nFAILURE TO CONNECT APP REMOTE");
                     }
                 });
@@ -98,19 +109,6 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         // We shall disconnect from the App Remote when we do not need it anymore.
         SpotifyAppRemote.disconnect(mSpotifyAppRemote);
-    }
-
-    /**
-     * We are trying to login if we need to for the user.
-     */
-    private void checkAuthentication() {
-        AuthenticationRequest.Builder builder =
-                new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
-
-        builder.setScopes(new String[]{"streaming"});
-        AuthenticationRequest request = builder.build();
-
-        AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
