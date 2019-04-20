@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "/home/damon/AndroidStudioProjects/MoodVisulized/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-land/values-land.xml",
+            "outputFile": "/home/damon/Desktop/mood-visualization/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-land/values-land.xml",
             "map": [
                 {
                     "source": "/home/damon/.gradle/caches/transforms-2/files-2.1/28a09e283f2c98d6fb2e19691e56cfbc/res/values-land/values-land.xml",

@@ -1,23 +1,42 @@
 {
     "logs": [
         {
-            "outputFile": "/home/damon/AndroidStudioProjects/MoodVisulized/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values/values.xml",
+            "outputFile": "/home/damon/Desktop/mood-visualization/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values/values.xml",
             "map": [
                 {
-                    "source": "/home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/res/values/strings.xml",
+                    "source": "/home/damon/Desktop/mood-visualization/app/src/main/res/values/styles.xml",
                     "from": {
-                        "startLines": "1",
+                        "startLines": "3",
                         "startColumns": "4",
-                        "startOffsets": "16",
-                        "endColumns": "50",
-                        "endOffsets": "62"
+                        "startOffsets": "54",
+                        "endLines": "8",
+                        "endColumns": "12",
+                        "endOffsets": "368"
                     },
                     "to": {
-                        "startLines": "377",
+                        "startLines": "388",
                         "startColumns": "4",
-                        "startOffsets": "22533",
-                        "endColumns": "50",
-                        "endOffsets": "22579"
+                        "startOffsets": "23322",
+                        "endLines": "393",
+                        "endColumns": "12",
+                        "endOffsets": "23636"
+                    }
+                },
+                {
+                    "source": "/home/damon/Desktop/mood-visualization/app/src/main/res/values/colors.xml",
+                    "from": {
+                        "startLines": "4,2,3",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "153,55,102",
+                        "endColumns": "45,46,50",
+                        "endOffsets": "194,97,148"
+                    },
+                    "to": {
+                        "startLines": "153,154,155",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "7704,7750,7797",
+                        "endColumns": "45,46,50",
+                        "endOffsets": "7745,7792,7843"
                     }
                 },
                 {
@@ -40,56 +59,20 @@
                     }
                 },
                 {
-                    "source": "/home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/res/values/styles.xml",
+                    "source": "/home/damon/Desktop/mood-visualization/app/src/main/res/values/strings.xml",
                     "from": {
-                        "startLines": "3",
+                        "startLines": "1",
                         "startColumns": "4",
-                        "startOffsets": "54",
-                        "endLines": "8",
-                        "endColumns": "12",
-                        "endOffsets": "368"
+                        "startOffsets": "16",
+                        "endColumns": "50",
+                        "endOffsets": "62"
                     },
                     "to": {
-                        "startLines": "388",
+                        "startLines": "377",
                         "startColumns": "4",
-                        "startOffsets": "23322",
-                        "endLines": "393",
-                        "endColumns": "12",
-                        "endOffsets": "23636"
-                    }
-                },
-                {
-                    "source": "/home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/res/values/colors.xml",
-                    "from": {
-                        "startLines": "4,2,3",
-                        "startColumns": "4,4,4",
-                        "startOffsets": "153,55,102",
-                        "endColumns": "45,46,50",
-                        "endOffsets": "194,97,148"
-                    },
-                    "to": {
-                        "startLines": "153,154,155",
-                        "startColumns": "4,4,4",
-                        "startOffsets": "7704,7750,7797",
-                        "endColumns": "45,46,50",
-                        "endOffsets": "7745,7792,7843"
-                    }
-                },
-                {
-                    "source": "/home/damon/.gradle/caches/transforms-2/files-2.1/461f1442dd5d622045e5fb862678af78/res/values/values.xml",
-                    "from": {
-                        "startLines": "2,3,4",
-                        "startColumns": "4,4,4",
-                        "startOffsets": "55,123,174",
-                        "endColumns": "67,50,52",
-                        "endOffsets": "118,169,222"
-                    },
-                    "to": {
-                        "startLines": "378,379,380",
-                        "startColumns": "4,4,4",
-                        "startOffsets": "22584,22652,22703",
-                        "endColumns": "67,50,52",
-                        "endOffsets": "22647,22698,22751"
+                        "startOffsets": "22533",
+                        "endColumns": "50",
+                        "endOffsets": "22579"
                     }
                 },
                 {
@@ -147,6 +130,23 @@
                         "endLines": "15,1854,2561,2650",
                         "endColumns": "60,12,24,24",
                         "endOffsets": "720,122628,166565,171776"
+                    }
+                },
+                {
+                    "source": "/home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/res/values/values.xml",
+                    "from": {
+                        "startLines": "2,3,4",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,123,174",
+                        "endColumns": "67,50,52",
+                        "endOffsets": "118,169,222"
+                    },
+                    "to": {
+                        "startLines": "378,379,380",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "22584,22652,22703",
+                        "endColumns": "67,50,52",
+                        "endOffsets": "22647,22698,22751"
                     }
                 }
             ]

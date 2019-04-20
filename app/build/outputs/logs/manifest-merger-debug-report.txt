@@ -1,13 +1,13 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml:2:1-23:12
-INJECTED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml:2:1-23:12
-INJECTED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml:2:1-23:12
-INJECTED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml:2:1-23:12
+ADDED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml:2:1-24:12
+INJECTED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml:2:1-24:12
+INJECTED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml:2:1-24:12
+INJECTED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml:2:1-24:12
 MERGED from [com.android.support:appcompat-v7:28.0.0] /home/damon/.gradle/caches/transforms-2/files-2.1/28a09e283f2c98d6fb2e19691e56cfbc/AndroidManifest.xml:17:1-22:12
 MERGED from [com.android.support.constraint:constraint-layout:1.1.3] /home/damon/.gradle/caches/transforms-2/files-2.1/0b0cf9e70a93b3f70ae4b189751fbccb/AndroidManifest.xml:2:1-11:12
-MERGED from [:spotify-app-remote] /home/damon/.gradle/caches/transforms-2/files-2.1/b64c34b79270ac04ac837ac73aa9d849/AndroidManifest.xml:22:1-33:12
-MERGED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/461f1442dd5d622045e5fb862678af78/AndroidManifest.xml:22:1-55:12
+MERGED from [:spotify-app-remote] /home/damon/.gradle/caches/transforms-2/files-2.1/84af9e9b5b3008760778095a3cce2f4f/AndroidManifest.xml:22:1-33:12
+MERGED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:22:1-55:12
 MERGED from [com.spotify.android:auth:1.1.0] /home/damon/.gradle/caches/transforms-2/files-2.1/27708dc4ba273963fa6d8c1d9aa94889/AndroidManifest.xml:22:1-55:12
 MERGED from [com.android.support:support-fragment:28.0.0] /home/damon/.gradle/caches/transforms-2/files-2.1/ac7ccf62e6e517c00137fdb6b2b59125/AndroidManifest.xml:17:1-22:12
 MERGED from [com.android.support:animated-vector-drawable:28.0.0] /home/damon/.gradle/caches/transforms-2/files-2.1/2262e0f7390176dcc72bb06b9800686f/AndroidManifest.xml:17:1-22:12
@@ -35,31 +35,39 @@ MERGED from [android.arch.lifecycle:livedata:1.1.1] /home/damon/.gradle/caches/t
 MERGED from [android.arch.lifecycle:livedata-core:1.1.1] /home/damon/.gradle/caches/transforms-2/files-2.1/217d82f5a428977c654750c5bed92524/AndroidManifest.xml:17:1-22:12
 MERGED from [android.arch.core:runtime:1.1.1] /home/damon/.gradle/caches/transforms-2/files-2.1/0e6b1a560d6ad154d388f9387ad58928/AndroidManifest.xml:17:1-22:12
 MERGED from [com.android.support:interpolator:28.0.0] /home/damon/.gradle/caches/transforms-2/files-2.1/6ad3b2040f28b3b213d67c6712f668ca/AndroidManifest.xml:17:1-22:12
-INJECTED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml:2:1-23:12
-INJECTED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml:2:1-23:12
-INJECTED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml:2:1-23:12
+INJECTED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml:2:1-24:12
+INJECTED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml:2:1-24:12
+INJECTED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml:2:1-24:12
 	package
-		ADDED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml:3:5-40
-		INJECTED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml
-		INJECTED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml
+		ADDED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml:3:5-40
+		INJECTED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml
+		INJECTED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml
 	android:versionName
-		INJECTED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml
-		ADDED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml:2:1-23:12
-		INJECTED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml
+		INJECTED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml
+		ADDED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml:2:1-24:12
+		INJECTED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml
 	android:versionCode
-		INJECTED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml
-		ADDED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml:2:1-23:12
-		INJECTED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml
+		INJECTED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml
+		ADDED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml:2:1-24:12
+		INJECTED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml
 	xmlns:android
-		ADDED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml:2:11-69
+		ADDED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml:2:11-69
+uses-permission#android.permission.INTERNET
+ADDED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml:5:5-66
+MERGED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:31:5-67
+MERGED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:31:5-67
+MERGED from [com.spotify.android:auth:1.1.0] /home/damon/.gradle/caches/transforms-2/files-2.1/27708dc4ba273963fa6d8c1d9aa94889/AndroidManifest.xml:31:5-67
+MERGED from [com.spotify.android:auth:1.1.0] /home/damon/.gradle/caches/transforms-2/files-2.1/27708dc4ba273963fa6d8c1d9aa94889/AndroidManifest.xml:31:5-67
+	android:name
+		ADDED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml:5:22-64
 application
-ADDED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml:5:5-20:19
+ADDED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml:7:5-21:19
 MERGED from [com.android.support.constraint:constraint-layout:1.1.3] /home/damon/.gradle/caches/transforms-2/files-2.1/0b0cf9e70a93b3f70ae4b189751fbccb/AndroidManifest.xml:9:5-20
 MERGED from [com.android.support.constraint:constraint-layout:1.1.3] /home/damon/.gradle/caches/transforms-2/files-2.1/0b0cf9e70a93b3f70ae4b189751fbccb/AndroidManifest.xml:9:5-20
-MERGED from [:spotify-app-remote] /home/damon/.gradle/caches/transforms-2/files-2.1/b64c34b79270ac04ac837ac73aa9d849/AndroidManifest.xml:31:5-20
-MERGED from [:spotify-app-remote] /home/damon/.gradle/caches/transforms-2/files-2.1/b64c34b79270ac04ac837ac73aa9d849/AndroidManifest.xml:31:5-20
-MERGED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/461f1442dd5d622045e5fb862678af78/AndroidManifest.xml:33:5-53:19
-MERGED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/461f1442dd5d622045e5fb862678af78/AndroidManifest.xml:33:5-53:19
+MERGED from [:spotify-app-remote] /home/damon/.gradle/caches/transforms-2/files-2.1/84af9e9b5b3008760778095a3cce2f4f/AndroidManifest.xml:31:5-20
+MERGED from [:spotify-app-remote] /home/damon/.gradle/caches/transforms-2/files-2.1/84af9e9b5b3008760778095a3cce2f4f/AndroidManifest.xml:31:5-20
+MERGED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:33:5-53:19
+MERGED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:33:5-53:19
 MERGED from [com.spotify.android:auth:1.1.0] /home/damon/.gradle/caches/transforms-2/files-2.1/27708dc4ba273963fa6d8c1d9aa94889/AndroidManifest.xml:33:5-53:19
 MERGED from [com.spotify.android:auth:1.1.0] /home/damon/.gradle/caches/transforms-2/files-2.1/27708dc4ba273963fa6d8c1d9aa94889/AndroidManifest.xml:33:5-53:19
 MERGED from [com.android.support:support-compat:28.0.0] /home/damon/.gradle/caches/transforms-2/files-2.1/4ebd56a31de6192372e4e00d3cb6bc3f/AndroidManifest.xml:22:5-94
@@ -69,44 +77,44 @@ MERGED from [com.android.support:versionedparcelable:28.0.0] /home/damon/.gradle
 	android:appComponentFactory
 		ADDED from [com.android.support:support-compat:28.0.0] /home/damon/.gradle/caches/transforms-2/files-2.1/4ebd56a31de6192372e4e00d3cb6bc3f/AndroidManifest.xml:22:18-91
 	android:supportsRtl
-		ADDED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml:10:9-35
+		ADDED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml:12:9-35
 	android:label
-		ADDED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml:8:9-41
+		ADDED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml:10:9-41
 	android:roundIcon
-		ADDED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml:9:9-54
+		ADDED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml:11:9-54
 	android:icon
-		ADDED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml:7:9-43
+		ADDED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml:9:9-43
 	android:allowBackup
-		ADDED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml:6:9-35
+		ADDED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml:8:9-35
 	android:theme
-		ADDED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml:11:9-40
+		ADDED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml:13:9-40
 activity#com.example.moodvisulized.MainActivity
-ADDED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml:13:9-19:20
+ADDED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml:14:9-20:20
 	android:name
-		ADDED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml:13:19-47
+		ADDED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml:14:19-47
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml:14:13-18:29
+ADDED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml:15:13-19:29
 action#android.intent.action.MAIN
-ADDED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml:15:17-69
+ADDED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml:16:17-69
 	android:name
-		ADDED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml:15:25-66
+		ADDED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml:16:25-66
 category#android.intent.category.LAUNCHER
-ADDED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml:17:17-77
+ADDED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml:18:17-77
 	android:name
-		ADDED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml:17:27-74
+		ADDED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml:18:27-74
 uses-sdk
-INJECTED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
-INJECTED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml
-INJECTED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml
-INJECTED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml
+INJECTED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml
+INJECTED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml
+INJECTED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml
 MERGED from [com.android.support:appcompat-v7:28.0.0] /home/damon/.gradle/caches/transforms-2/files-2.1/28a09e283f2c98d6fb2e19691e56cfbc/AndroidManifest.xml:20:5-44
 MERGED from [com.android.support:appcompat-v7:28.0.0] /home/damon/.gradle/caches/transforms-2/files-2.1/28a09e283f2c98d6fb2e19691e56cfbc/AndroidManifest.xml:20:5-44
 MERGED from [com.android.support.constraint:constraint-layout:1.1.3] /home/damon/.gradle/caches/transforms-2/files-2.1/0b0cf9e70a93b3f70ae4b189751fbccb/AndroidManifest.xml:5:5-7:41
 MERGED from [com.android.support.constraint:constraint-layout:1.1.3] /home/damon/.gradle/caches/transforms-2/files-2.1/0b0cf9e70a93b3f70ae4b189751fbccb/AndroidManifest.xml:5:5-7:41
-MERGED from [:spotify-app-remote] /home/damon/.gradle/caches/transforms-2/files-2.1/b64c34b79270ac04ac837ac73aa9d849/AndroidManifest.xml:27:5-29:41
-MERGED from [:spotify-app-remote] /home/damon/.gradle/caches/transforms-2/files-2.1/b64c34b79270ac04ac837ac73aa9d849/AndroidManifest.xml:27:5-29:41
-MERGED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/461f1442dd5d622045e5fb862678af78/AndroidManifest.xml:27:5-29:41
-MERGED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/461f1442dd5d622045e5fb862678af78/AndroidManifest.xml:27:5-29:41
+MERGED from [:spotify-app-remote] /home/damon/.gradle/caches/transforms-2/files-2.1/84af9e9b5b3008760778095a3cce2f4f/AndroidManifest.xml:27:5-29:41
+MERGED from [:spotify-app-remote] /home/damon/.gradle/caches/transforms-2/files-2.1/84af9e9b5b3008760778095a3cce2f4f/AndroidManifest.xml:27:5-29:41
+MERGED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:27:5-29:41
+MERGED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:27:5-29:41
 MERGED from [com.spotify.android:auth:1.1.0] /home/damon/.gradle/caches/transforms-2/files-2.1/27708dc4ba273963fa6d8c1d9aa94889/AndroidManifest.xml:27:5-29:41
 MERGED from [com.spotify.android:auth:1.1.0] /home/damon/.gradle/caches/transforms-2/files-2.1/27708dc4ba273963fa6d8c1d9aa94889/AndroidManifest.xml:27:5-29:41
 MERGED from [com.android.support:support-fragment:28.0.0] /home/damon/.gradle/caches/transforms-2/files-2.1/ac7ccf62e6e517c00137fdb6b2b59125/AndroidManifest.xml:20:5-44
@@ -161,62 +169,56 @@ MERGED from [android.arch.core:runtime:1.1.1] /home/damon/.gradle/caches/transfo
 MERGED from [android.arch.core:runtime:1.1.1] /home/damon/.gradle/caches/transforms-2/files-2.1/0e6b1a560d6ad154d388f9387ad58928/AndroidManifest.xml:20:5-44
 MERGED from [com.android.support:interpolator:28.0.0] /home/damon/.gradle/caches/transforms-2/files-2.1/6ad3b2040f28b3b213d67c6712f668ca/AndroidManifest.xml:20:5-44
 MERGED from [com.android.support:interpolator:28.0.0] /home/damon/.gradle/caches/transforms-2/files-2.1/6ad3b2040f28b3b213d67c6712f668ca/AndroidManifest.xml:20:5-44
-INJECTED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml
-INJECTED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml
-INJECTED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml
+INJECTED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml
+INJECTED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml
+INJECTED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml
 	android:maxSdkVersion
-		INJECTED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml
-		ADDED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml
-		INJECTED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml
+		INJECTED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml
+		ADDED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml
+		INJECTED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml
 	android:targetSdkVersion
-		INJECTED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml
-		ADDED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml
-		INJECTED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml
+		INJECTED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml
+		ADDED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml
+		INJECTED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml
 	android:minSdkVersion
-		INJECTED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml
-		ADDED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml
-		INJECTED from /home/damon/AndroidStudioProjects/MoodVisulized/app/src/main/AndroidManifest.xml
-uses-permission#android.permission.INTERNET
-ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/461f1442dd5d622045e5fb862678af78/AndroidManifest.xml:31:5-67
-MERGED from [com.spotify.android:auth:1.1.0] /home/damon/.gradle/caches/transforms-2/files-2.1/27708dc4ba273963fa6d8c1d9aa94889/AndroidManifest.xml:31:5-67
-MERGED from [com.spotify.android:auth:1.1.0] /home/damon/.gradle/caches/transforms-2/files-2.1/27708dc4ba273963fa6d8c1d9aa94889/AndroidManifest.xml:31:5-67
-	android:name
-		ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/461f1442dd5d622045e5fb862678af78/AndroidManifest.xml:31:22-64
+		INJECTED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml
+		ADDED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml
+		INJECTED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifest.xml
 activity#com.spotify.sdk.android.authentication.AuthCallbackActivity
-ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/461f1442dd5d622045e5fb862678af78/AndroidManifest.xml:34:9-48:20
+ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:34:9-48:20
 MERGED from [com.spotify.android:auth:1.1.0] /home/damon/.gradle/caches/transforms-2/files-2.1/27708dc4ba273963fa6d8c1d9aa94889/AndroidManifest.xml:34:9-48:20
 MERGED from [com.spotify.android:auth:1.1.0] /home/damon/.gradle/caches/transforms-2/files-2.1/27708dc4ba273963fa6d8c1d9aa94889/AndroidManifest.xml:34:9-48:20
 	android:exported
-		ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/461f1442dd5d622045e5fb862678af78/AndroidManifest.xml:36:13-36
+		ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:36:13-36
 	android:theme
-		ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/461f1442dd5d622045e5fb862678af78/AndroidManifest.xml:37:13-72
+		ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:37:13-72
 	android:name
-		ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/461f1442dd5d622045e5fb862678af78/AndroidManifest.xml:35:13-87
+		ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:35:13-87
 intent-filter#action:name:android.intent.action.VIEW+category:name:android.intent.category.BROWSABLE+category:name:android.intent.category.DEFAULT+data:host:@string/com_spotify_sdk_redirect_host+data:scheme:@string/com_spotify_sdk_redirect_scheme
-ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/461f1442dd5d622045e5fb862678af78/AndroidManifest.xml:38:13-47:29
+ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:38:13-47:29
 action#android.intent.action.VIEW
-ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/461f1442dd5d622045e5fb862678af78/AndroidManifest.xml:39:17-69
+ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:39:17-69
 	android:name
-		ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/461f1442dd5d622045e5fb862678af78/AndroidManifest.xml:39:25-66
+		ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:39:25-66
 category#android.intent.category.DEFAULT
-ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/461f1442dd5d622045e5fb862678af78/AndroidManifest.xml:41:17-76
+ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:41:17-76
 	android:name
-		ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/461f1442dd5d622045e5fb862678af78/AndroidManifest.xml:41:27-73
+		ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:41:27-73
 category#android.intent.category.BROWSABLE
-ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/461f1442dd5d622045e5fb862678af78/AndroidManifest.xml:42:17-78
+ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:42:17-78
 	android:name
-		ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/461f1442dd5d622045e5fb862678af78/AndroidManifest.xml:42:27-75
+		ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:42:27-75
 data
-ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/461f1442dd5d622045e5fb862678af78/AndroidManifest.xml:44:17-46:80
+ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:44:17-46:80
 	android:host
-		ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/461f1442dd5d622045e5fb862678af78/AndroidManifest.xml:45:21-73
+		ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:45:21-73
 	android:scheme
-		ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/461f1442dd5d622045e5fb862678af78/AndroidManifest.xml:46:21-77
+		ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:46:21-77
 activity#com.spotify.sdk.android.authentication.LoginActivity
-ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/461f1442dd5d622045e5fb862678af78/AndroidManifest.xml:49:9-52:20
+ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:49:9-52:20
 MERGED from [com.spotify.android:auth:1.1.0] /home/damon/.gradle/caches/transforms-2/files-2.1/27708dc4ba273963fa6d8c1d9aa94889/AndroidManifest.xml:49:9-52:20
 MERGED from [com.spotify.android:auth:1.1.0] /home/damon/.gradle/caches/transforms-2/files-2.1/27708dc4ba273963fa6d8c1d9aa94889/AndroidManifest.xml:49:9-52:20
 	android:theme
-		ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/461f1442dd5d622045e5fb862678af78/AndroidManifest.xml:51:13-72
+		ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:51:13-72
 	android:name
-		ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/461f1442dd5d622045e5fb862678af78/AndroidManifest.xml:50:13-80
+		ADDED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:50:13-80

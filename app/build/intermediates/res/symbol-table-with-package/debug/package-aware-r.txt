@@ -669,7 +669,6 @@ id action_mode_close_button
 id action_text
 id actions
 id activity_chooser_view_content
-id activity_login_page
 id add
 id alertTitle
 id all
@@ -704,6 +703,7 @@ id edit_query
 id end
 id expand_activities_button
 id expanded_menu
+id fetchSpotifyData
 id fill
 id fill_horizontal
 id fill_vertical
@@ -725,7 +725,6 @@ id line1
 id line3
 id listMode
 id list_item
-id login_button
 id message
 id middle
 id multiply
@@ -828,7 +827,6 @@ layout abc_search_dropdown_item_icons_2line
 layout abc_search_view
 layout abc_select_dialog_material
 layout abc_tooltip
-layout activity_login
 layout activity_main
 layout com_spotify_sdk_login_activity
 layout com_spotify_sdk_login_dialog
