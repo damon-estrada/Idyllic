@@ -1,1 +1,1 @@
-include ':app', ':spotify-app-remote', ':auth_lib'
+include ':app', ':spotify-app-remote', ':auth_lib', ':retrofit-2.5.0'

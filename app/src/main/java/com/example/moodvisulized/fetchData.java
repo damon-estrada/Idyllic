@@ -1,6 +1,7 @@
 package com.example.moodvisulized;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,11 +15,21 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import kaaes.spotify.webapi.android.SpotifyApi;
+import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.Album;
+import retrofit.RequestInterceptor;
+import retrofit.RestAdapter;
+import retrofit2.Callback;
+
 public class fetchData extends AsyncTask<Void, Void, Void> {
 // https://api.myjson.com/bins/7zqgs  -> Stored information
+
+    /*
     private String data = "";
     private String dataParsed = "";
     private String singleParsed = ""; // single json obj parsed (1 obj. only)
+
 
     // access our JSON data
     @Override
@@ -62,18 +73,40 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
 
         return null;
     }
+    */
 
-
+/*
     // This is whenever the above finished
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
         MainActivity.data.setText(this.dataParsed);
     }
+*/
+    @Override
+    protected Void doInBackground(Void... voids) {
 
+        /*
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint(SpotifyApi.SPOTIFY_WEB_API_ENDPOINT)
+                .setRequestInterceptor(new RequestInterceptor() {
+                    @Override
+                    public void intercept(RequestFacade request) {
+                        request.addHeader("Authorization", "Bearer " + accessToken);
+                    }
+                })
+                .build();
 
+        SpotifyService spotify = restAdapter.create(SpotifyService.class);
+    */
 
+        return null;
+    }
 
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
 
-
+        //System.out.println("ALBUM RELEASE: " + spotify.getAlbum("2dIGnmEIy1WZIcZCFSj6i8").release_date);
+    }
 }

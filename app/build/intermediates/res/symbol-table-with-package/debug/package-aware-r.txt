@@ -670,6 +670,7 @@ id action_text
 id actions
 id activity_chooser_view_content
 id add
+id albumName
 id alertTitle
 id all
 id always
@@ -828,6 +829,7 @@ layout abc_search_view
 layout abc_select_dialog_material
 layout abc_tooltip
 layout activity_main
+layout activity_user_statistics
 layout com_spotify_sdk_login_activity
 layout com_spotify_sdk_login_dialog
 layout notification_action
@@ -881,12 +883,15 @@ string abc_searchview_description_voice
 string abc_shareactionprovider_share_with
 string abc_shareactionprovider_share_with_application
 string abc_toolbar_collapse_description
+string album_name
 string app_name
 string com_spotify_sdk_login_progress
 string com_spotify_sdk_redirect_host
 string com_spotify_sdk_redirect_scheme
+string fetchSpotifyData
 string search_menu_title
 string status_bar_notification_info_overflow
+string title_activity_user_statistics
 style AlertDialog_AppCompat
 style AlertDialog_AppCompat_Light
 style Animation_AppCompat_Dialog

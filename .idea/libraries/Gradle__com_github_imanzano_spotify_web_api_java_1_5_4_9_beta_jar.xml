@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.imanzano:spotify-web-api-java:1.5.4.9-beta@jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.imanzano/spotify-web-api-java/1.5.4.9-beta/72c2376eddc602cdd396088c8a4889f5de57eef4/spotify-web-api-java-1.5.4.9-beta.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.imanzano/spotify-web-api-java/1.5.4.9-beta/816922078858579d1b031efd3f9d47016a44871d/spotify-web-api-java-1.5.4.9-beta-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/auth_lib/auth_lib.iml" filepath="$PROJECT_DIR$/auth_lib/auth_lib.iml" />
       <module fileurl="file://$PROJECT_DIR$/mood-visualization.iml" filepath="$PROJECT_DIR$/mood-visualization.iml" />
+      <module fileurl="file://$PROJECT_DIR$/retrofit-2.5.0/retrofit-2.5.0.iml" filepath="$PROJECT_DIR$/retrofit-2.5.0/retrofit-2.5.0.iml" />
       <module fileurl="file://$PROJECT_DIR$/spotify-app-remote/spotify-app-remote.iml" filepath="$PROJECT_DIR$/spotify-app-remote/spotify-app-remote.iml" />
     </modules>
   </component>
