@@ -41,15 +41,13 @@ import retrofit2.Callback;
 public class MainActivity extends AppCompatActivity implements Item {
 
     private Button fetchSpotifyData;
-    private String accessToken;
+    private static final String CLIENT_ID = "0184658057ca400693856a596026419b";
+    private static final String REDIRECT_URI = "moodvisualized://callback";
 
     // Request code will be used to verify if result comes from the login activity.
     // Can be set to any integer.
 
     private SpotifyAppRemote mSpotifyAppRemote;
-    private String returnedAlbum;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements Item {
     @Override
     protected void onStart() {
         super.onStart();
-/* DO I EVEN NEED APPREMOTE??
+/*
         SpotifyAppRemote.disconnect(mSpotifyAppRemote);
         // We want to log into the next activity
         // We need to authorize my application to use the App Remote SDK
@@ -114,8 +112,6 @@ public class MainActivity extends AppCompatActivity implements Item {
                     }
                 });
                 */
-
-
     }
 
     private void connected() {
@@ -140,89 +136,4 @@ public class MainActivity extends AppCompatActivity implements Item {
         // We shall disconnect from the App Remote when we do not need it anymore.
         SpotifyAppRemote.disconnect(mSpotifyAppRemote);
     }
-
-
-
-
-
-    /*
-    The PlayerState
-    It could answer the following questions
-
-    what track is being played now?
-    is the player playing/paused?
-    what is current playback position?
-    is the track saved to the user’s library?
-
-
-
-    The PlayerContext
-
-    Get metadata like the title of the current context that is playing
-    such as an album or a playlist.
-
-
-    ***SpotifyAppRemote***
-
-    PlayerApi
-
-    Send playback related commands such as:
-
-        play content by URI
-        resume/pause playback
-        shuffle playback
-
-    You can also subscribe to the following events:
-
-        PlayerState updates
-        PlayerContext updates
-
-    Note: A Spotify Premium account is required to play a single track uri. You should make a call to the UserApi to get the on-demand capabilities of a user before attempting to play a single track uri.
-    ----------------------------------------------------------------------
-    UserApi
-
-    Get user-related data and perform actions such as:
-
-        user capabilities - can this user play music on demand?
-        add/remove content in a user’s library
-    ---------------------------------------------------------------------
-    ImagesApi
-
-    Use it to download cover arts by URI
-    ContentApi
-
-    Get a list of content
-    --------------------------------------------------------------------
-    ConnectApi
-
-    Control on what device the Spotify app should be playing music
-  */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
