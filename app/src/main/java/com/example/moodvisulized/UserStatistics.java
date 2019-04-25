@@ -34,6 +34,7 @@ import kaaes.spotify.webapi.android.SpotifyError;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Album;
 import kaaes.spotify.webapi.android.models.AudioFeaturesTrack;
+import kaaes.spotify.webapi.android.models.AudioFeaturesTracks;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.Playlist;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
@@ -142,38 +143,54 @@ public class UserStatistics extends AppCompatActivity {
     }
 
     public void getTrackAudioFeatures() {
-        float acousticness = 0;
-        String analysisUrl;
-        android.os.Parcelable.Creator<AudioFeaturesTrack> creator;
-        float danceability;
-        int durationMs;
-        float energy;
-        String id;
-        float instrumentalness;
-        int key;
-        float liveness;
-        float loudness;
-        int mode;
-        float speechiness;
-        float tempo;
-        int timeSignature;
-        String trackHref;
-        String type;
-        String uri;
-        float valence;
+        float acousticness = 0; // 0.0 - 1.0 (acoustic)
+        //String analysisUrl;
+        //android.os.Parcelable.Creator<AudioFeaturesTrack> creator;
+        float danceability = 0; // (not danceable) 0.0 - 1.0 (danceable)
+        int durationMs = 0; // How long the song is in ms
+        float energy = 0;   // 0.0 - 1.0 (loud, fast, noisy)
+        //String id = "";
+        float instrumentalness = 0; // (vocals present) 0.0 - 1.0 (no vocal content)
+        //int key = 0;
+        //float liveness = 0;
+        float loudness = 0; // -60 - 0 (how loud a song is)
+        //int mode = 0;
+        //float speechiness = 0;
+        float tempo = 0;  // BPM measured in each song
+        //int timeSignature = 0;
+        //String trackHref = "";
+        //String type = "";
+        //String uri = "";
+        float valence = 0; // (angry, depresses, sad ) 0.0 - 1.0 (most positive, happy, cheerful track)
 
         try {
             //AudioFeaturesTrack trackAudioFeatures = spotify.getTrackAudioFeatures("7bvfRXXrxi9f546dzNjSx8");
             int totalTracks = userTopTracks.size();
+            int j = 0;
 
             // Compute for all parameters above
             // [Acousticness]
             for (Track track : userTopTracks) {
-                System.out.println("Acousticness: " + acousticness);
-                acousticness += spotify.getTrackAudioFeatures(track.id).acousticness;
-            }
-            System.out.println("Average Acousticness: " + (acousticness / totalTracks));
+                AudioFeaturesTracks audioFeaturesTracks = spotify.getTracksAudioFeatures(track.id);
 
+                acousticness += audioFeaturesTracks.audio_features.get(0).acousticness;
+                danceability += audioFeaturesTracks.audio_features.get(0).danceability;
+                durationMs += audioFeaturesTracks.audio_features.get(0).duration_ms;
+                energy += audioFeaturesTracks.audio_features.get(0).energy;
+                instrumentalness += audioFeaturesTracks.audio_features.get(0).instrumentalness;
+                loudness += audioFeaturesTracks.audio_features.get(0).loudness;
+                tempo += audioFeaturesTracks.audio_features.get(0).tempo;
+                valence += audioFeaturesTracks.audio_features.get(0).valence;
+                j++;
+            }
+            acousticness /= totalTracks;
+            danceability /= totalTracks;
+            durationMs /= totalTracks;
+            energy /= totalTracks;
+            instrumentalness /= totalTracks;
+            loudness /= totalTracks;
+            tempo /= totalTracks;
+            valence /= totalTracks;
 
 
         } catch (RetrofitError e) {
