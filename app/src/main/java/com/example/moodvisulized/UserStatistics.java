@@ -176,6 +176,7 @@ public class UserStatistics extends AppCompatActivity {
                         + userSavedTracks.get(i).artists.get(0).name);
             }
 
+
             //Message msg = handler.obtainMessage();
             //Bundle bundle = new Bundle();
             //String numberOfPlaylists = Integer.toString(userPlaylists.describeContents());
