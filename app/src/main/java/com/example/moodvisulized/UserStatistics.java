@@ -58,6 +58,8 @@ public class UserStatistics extends AppCompatActivity {
     Button mySavedTracks;
     private String accessToken;
     List<Track> userSavedTracks = new ArrayList<>(); // getting all saved tracks
+    List<Track> userTopTracks = new ArrayList<>(); // getting all top songs
+    SpotifyService spotify;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +75,20 @@ public class UserStatistics extends AppCompatActivity {
         AuthenticationRequest request = builder.build();
 
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
+
+        // Get access to spotify services
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint(SpotifyApi.SPOTIFY_WEB_API_ENDPOINT)
+                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .setRequestInterceptor(new RequestInterceptor() {
+                    @Override
+                    public void intercept(RequestFacade request) {
+                        request.addHeader("Authorization", "Bearer " + accessToken);
+                    }
+                })
+                .build();
+
+        spotify = restAdapter.create(SpotifyService.class);
 
         mySavedTracks = (Button) findViewById(R.id.mySavedTracks);
 
@@ -121,20 +137,68 @@ public class UserStatistics extends AppCompatActivity {
     }
 
     public void getUserTopTracks() {
+        try {
+            int totalTopSongs = 0;
+            int i = 0;
+            // Limit is how many songs we can grab at a time (Max is 50 for this call)
+            int limit = 50;
+            int updateIndexBy = 50; // where to start the new index in the library.
+            // Offset is the starting point of which we index our songs
+            // REMEMBER: update offset to get more than 50 songs. It starts at 0
+            // and when updated to (offset = 50) will start at the 50th song while
+            // (limit) will fetch the next 50 songs in this case.
+            int offset = 0;
+            String timeRange = "long_term"; // How far back to calculate topSongs
+                                            // long_term - years back
+                                            // medium_term - 6 months back
+                                            // short_term - 1 month back
+            Pager<Track> topTrackPager = new Pager<>();
 
-        RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint(SpotifyApi.SPOTIFY_WEB_API_ENDPOINT)
-                .setLogLevel(RestAdapter.LogLevel.FULL)
-                .setRequestInterceptor(new RequestInterceptor() {
-                    @Override
-                    public void intercept(RequestFacade request) {
-                        request.addHeader("Authorization", "Bearer " + accessToken);
-                    }
-                })
-                .build();
+            totalTopSongs = spotify.getTopTracks().total;
+            options.put(SpotifyService.LIMIT, limit); // get 50 songs at a time.
+            options.put(SpotifyService.OFFSET, offset); // initially 0 to start at top of library.
+            options.put(SpotifyService.TIME_RANGE, timeRange); // get recent songs
 
-        SpotifyService spotify = restAdapter.create(SpotifyService.class);
+            while (i <= totalTopSongs) {
+                topTrackPager = spotify.getTopTracks(options);
+                for (Track track : topTrackPager.items) {
+                    userTopTracks.add(track); // save the track from the fetch
+                }
 
+                if ( (totalTopSongs - i) >= 50 ) {
+                    i += updateIndexBy; // This means there are more than 50 songs left, increase by so.
+                    options.put(SpotifyService.OFFSET, offset += updateIndexBy); // New start point is at 50th song.
+                    options.put(SpotifyService.TIME_RANGE, timeRange); // get recent songs
+                } else if(i == totalTopSongs) {
+                    break; // To get out of the infinite loop
+                } else {
+                    i += (totalTopSongs - i); // update by remained to not go over.
+                    options.put(SpotifyService.OFFSET, offset += (totalTopSongs - i)); // New start point is at 50th song.
+                    options.put(SpotifyService.TIME_RANGE, timeRange); // get recent songs
+                }
+            }
+
+            for (Track track : userTopTracks) {
+                System.out.println("Top Songs: " + track.name + " by -> " + track.artists.get(0).name);
+            }
+
+            //Message msg = handler.obtainMessage();
+            //Bundle bundle = new Bundle();
+            //String numberOfPlaylists = Integer.toString(userPlaylists.describeContents());
+            //System.out.println("Test: " + userProfilePublic.id);
+            //bundle.putString("Key", numberOfPlaylists);
+            //msg.setData(bundle);
+            //handler.sendMessage(msg);
+        } catch (RetrofitError e) {
+            System.out.println(e.getResponse().getStatus());
+            System.out.println(e.getResponse().getReason());
+        }
+    }
+
+    /**
+     * getUserTopTracks() gets the user's whole saved song library.
+     */
+    public void getUserSavedLibrary() {
         try {
             int totalSongsInLibrary = 0;
             int i = 0;
@@ -153,7 +217,6 @@ public class UserStatistics extends AppCompatActivity {
             options.put(SpotifyService.OFFSET, offset); // initially 0 to start at top of library.
 
             while (i <= totalSongsInLibrary) {
-                System.out.println("I counter: " + i);
                 savedTrackPager = spotify.getMySavedTracks(options);
                 for (SavedTrack savedTrack : savedTrackPager.items) {
                     userSavedTracks.add(savedTrack.track); // save the track from the fetch
@@ -169,13 +232,6 @@ public class UserStatistics extends AppCompatActivity {
                     options.put(SpotifyService.OFFSET, offset += (totalSongsInLibrary - i)); // New start point is at 50th song.
                 }
             }
-
-            System.out.println("Hello friend, it has been awhile since you were successful");
-            for (i = 0; i < userSavedTracks.size(); i++) {
-                System.out.println("Track: " + userSavedTracks.get(i).name + "by -> "
-                        + userSavedTracks.get(i).artists.get(0).name);
-            }
-
 
             //Message msg = handler.obtainMessage();
             //Bundle bundle = new Bundle();
@@ -222,7 +278,6 @@ public class UserStatistics extends AppCompatActivity {
                     // Whenever we want to update our interface, it is bad practice to do so inside a thread
                     // (PROGRAM CRASH, thread locks, etc)
                     accessToken = response.getAccessToken();
-                    System.out.println("MY ACCESS TOKEN: " + accessToken);
                     break;
 
                 // Auth flow returned an error
