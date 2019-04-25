@@ -33,6 +33,7 @@ import kaaes.spotify.webapi.android.SpotifyCallback;
 import kaaes.spotify.webapi.android.SpotifyError;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Album;
+import kaaes.spotify.webapi.android.models.AudioFeaturesTrack;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.Playlist;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
@@ -54,12 +55,15 @@ public class UserStatistics extends AppCompatActivity {
     private static final String CLIENT_ID = "0184658057ca400693856a596026419b";
     private static final String REDIRECT_URI = "moodvisualized://callback";
     Album album;                            // info on the current album
-    Map<String, Object> options = new HashMap<String, Object>(); // for each call
+
     Button mySavedTracks;
-    private String accessToken;
     List<Track> userSavedTracks = new ArrayList<>(); // getting all saved tracks
     List<Track> userTopTracks = new ArrayList<>(); // getting all top songs
-    SpotifyService spotify;
+    Map<String, Object> options = new HashMap<String, Object>(); // for each call
+
+
+    SpotifyService spotify;                         // Service variable
+    private String accessToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +103,7 @@ public class UserStatistics extends AppCompatActivity {
                     @Override
                     public void run() {
                         getUserTopTracks();
+                        getTrackAudioFeatures();
                     }
                 };
 
@@ -134,6 +139,49 @@ public class UserStatistics extends AppCompatActivity {
             System.out.println(e.getResponse().getStatus());
             System.out.println(e.getResponse().getReason());
         }
+    }
+
+    public void getTrackAudioFeatures() {
+        float acousticness = 0;
+        String analysisUrl;
+        android.os.Parcelable.Creator<AudioFeaturesTrack> creator;
+        float danceability;
+        int durationMs;
+        float energy;
+        String id;
+        float instrumentalness;
+        int key;
+        float liveness;
+        float loudness;
+        int mode;
+        float speechiness;
+        float tempo;
+        int timeSignature;
+        String trackHref;
+        String type;
+        String uri;
+        float valence;
+
+        try {
+            //AudioFeaturesTrack trackAudioFeatures = spotify.getTrackAudioFeatures("7bvfRXXrxi9f546dzNjSx8");
+            int totalTracks = userTopTracks.size();
+
+            // Compute for all parameters above
+            // [Acousticness]
+            for (Track track : userTopTracks) {
+                System.out.println("Acousticness: " + acousticness);
+                acousticness += spotify.getTrackAudioFeatures(track.id).acousticness;
+            }
+            System.out.println("Average Acousticness: " + (acousticness / totalTracks));
+
+
+
+        } catch (RetrofitError e) {
+            System.out.println(e.getResponse().getStatus());
+            System.out.println(e.getResponse().getReason());
+        }
+
+
     }
 
     public void getUserTopTracks() {
