@@ -21,6 +21,7 @@ import org.w3c.dom.Text;
 
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -56,8 +57,7 @@ public class UserStatistics extends AppCompatActivity {
     Map<String, Object> options = new HashMap<String, Object>(); // for each call
     Button mySavedTracks;
     private String accessToken;
-
-
+    List<Track> userSavedTracks = new ArrayList<>(); // getting all saved tracks
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,28 +136,45 @@ public class UserStatistics extends AppCompatActivity {
         SpotifyService spotify = restAdapter.create(SpotifyService.class);
 
         try {
-            options.put(SpotifyService.LIMIT, 25);
-            options.put(SpotifyService.OFFSET, 0);
-            options.put(SpotifyService.TIME_RANGE, "short_term");
+            int totalSongsInLibrary = 0;
+            int i = 0;
+            // Limit is how many songs we can grab at a time (Max is 50 for this call)
+            int limit = 50;
+            int updateIndexBy = 50; // where to start the new index in the library.
+            // Offset is the starting point of which we index our songs
+            // REMEMBER: update offset to get more than 50 songs. It starts at 0
+            // and when updated to (offset = 50) will start at the 50th song while
+            // (limit) will fetch the next 50 songs in this case.
+            int offset = 0;
+            Pager<SavedTrack> savedTrackPager = new Pager<>();
 
-            //spotify.getMe();
+            totalSongsInLibrary = spotify.getMySavedTracks().total;
+            options.put(SpotifyService.LIMIT, limit); // get 50 songs at a time.
+            options.put(SpotifyService.OFFSET, offset); // initially 0 to start at top of library.
 
-            spotify.getMySavedTracks(new SpotifyCallback<Pager<SavedTrack>>() {
-                @Override
-                public void failure(SpotifyError spotifyError) {
-                    System.out.println(spotifyError);
+            while (i <= totalSongsInLibrary) {
+                System.out.println("I counter: " + i);
+                savedTrackPager = spotify.getMySavedTracks(options);
+                for (SavedTrack savedTrack : savedTrackPager.items) {
+                    userSavedTracks.add(savedTrack.track); // save the track from the fetch
                 }
 
-                @Override
-                public void success(Pager<SavedTrack> savedTrackPager, Response response) {
-                    for (SavedTrack savedTrack : savedTrackPager.items) {
-                        Log.d("Saved track", savedTrack.track.name);
-                        Log.d("Artist", savedTrack.track.artists.get(0).name);
-
-                    }
+                if ( (totalSongsInLibrary - i) >= 50 ) {
+                    i += updateIndexBy; // This means there are more than 50 songs left, increase by so.
+                    options.put(SpotifyService.OFFSET, offset += updateIndexBy); // New start point is at 50th song.
+                } else if(i == totalSongsInLibrary) {
+                    break; // To get out of the infinite loop
+                } else {
+                    i += (totalSongsInLibrary - i); // update by remained to not go over.
+                    options.put(SpotifyService.OFFSET, offset += (totalSongsInLibrary - i)); // New start point is at 50th song.
                 }
-            });
+            }
 
+            System.out.println("Hello friend, it has been awhile since you were successful");
+            for (i = 0; i < userSavedTracks.size(); i++) {
+                System.out.println("Track: " + userSavedTracks.get(i).name + "by -> "
+                        + userSavedTracks.get(i).artists.get(0).name);
+            }
 
             //Message msg = handler.obtainMessage();
             //Bundle bundle = new Bundle();
@@ -219,17 +236,4 @@ public class UserStatistics extends AppCompatActivity {
             }
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
