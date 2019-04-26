@@ -1,6 +1,20 @@
 package com.example.moodvisulized;
 
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.os.StrictMode;
@@ -10,6 +24,7 @@ import android.util.Log;
 import android.util.Xml;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.spotify.android.appremote.api.error.UserNotAuthorizedException;
@@ -19,7 +34,11 @@ import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 import org.w3c.dom.Text;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -62,7 +81,6 @@ public class UserStatistics extends AppCompatActivity {
     List<Track> userTopTracks = new ArrayList<>(); // getting all top songs
     Map<String, Object> options = new HashMap<String, Object>(); // for each call
 
-
     SpotifyService spotify;                         // Service variable
     private String accessToken;
 
@@ -103,8 +121,9 @@ public class UserStatistics extends AppCompatActivity {
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
-                        getUserTopTracks();
-                        getTrackAudioFeatures();
+                        //getUserTopTracks();
+                        //getTrackAudioFeatures();
+                        overlay();
                     }
                 };
 
@@ -114,6 +133,7 @@ public class UserStatistics extends AppCompatActivity {
         });
     }
 
+    /* Sample way of how to get api call info*/
     public void getAlbumInfo() {
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(SpotifyApi.SPOTIFY_WEB_API_ENDPOINT)
@@ -144,32 +164,20 @@ public class UserStatistics extends AppCompatActivity {
 
     public void getTrackAudioFeatures() {
         float acousticness = 0; // 0.0 - 1.0 (acoustic)
-        //String analysisUrl;
         //android.os.Parcelable.Creator<AudioFeaturesTrack> creator;
         float danceability = 0; // (not danceable) 0.0 - 1.0 (danceable)
         int durationMs = 0; // How long the song is in ms
         float energy = 0;   // 0.0 - 1.0 (loud, fast, noisy)
-        //String id = "";
         float instrumentalness = 0; // (vocals present) 0.0 - 1.0 (no vocal content)
-        //int key = 0;
-        //float liveness = 0;
         float loudness = 0; // -60 - 0 (how loud a song is)
-        //int mode = 0;
-        //float speechiness = 0;
         float tempo = 0;  // BPM measured in each song
-        //int timeSignature = 0;
-        //String trackHref = "";
-        //String type = "";
-        //String uri = "";
         float valence = 0; // (angry, depresses, sad ) 0.0 - 1.0 (most positive, happy, cheerful track)
 
         try {
             //AudioFeaturesTrack trackAudioFeatures = spotify.getTrackAudioFeatures("7bvfRXXrxi9f546dzNjSx8");
             int totalTracks = userTopTracks.size();
-            int j = 0;
 
             // Compute for all parameters above
-            // [Acousticness]
             for (Track track : userTopTracks) {
                 AudioFeaturesTracks audioFeaturesTracks = spotify.getTracksAudioFeatures(track.id);
 
@@ -181,7 +189,6 @@ public class UserStatistics extends AppCompatActivity {
                 loudness += audioFeaturesTracks.audio_features.get(0).loudness;
                 tempo += audioFeaturesTracks.audio_features.get(0).tempo;
                 valence += audioFeaturesTracks.audio_features.get(0).valence;
-                j++;
             }
             acousticness /= totalTracks;
             danceability /= totalTracks;
@@ -192,13 +199,10 @@ public class UserStatistics extends AppCompatActivity {
             tempo /= totalTracks;
             valence /= totalTracks;
 
-
         } catch (RetrofitError e) {
             System.out.println(e.getResponse().getStatus());
             System.out.println(e.getResponse().getReason());
         }
-
-
     }
 
     public void getUserTopTracks() {
@@ -260,6 +264,52 @@ public class UserStatistics extends AppCompatActivity {
         }
     }
 
+    public void overlay() {
+
+        // Get your images from their files
+        try {
+            // Access the drawable resources
+            Resources res = getResources();
+            Drawable dI = res.getDrawable(R.drawable.danceability_identifier);
+            Drawable eI = res.getDrawable(R.drawable.energy_identifier);
+            Drawable tI = res.getDrawable(R.drawable.tempo_identifier);
+            Drawable vI = res.getDrawable(R.drawable.valance_identifier);
+
+            // Format: 0x   00      00      00      00
+            //              alpha   red     green   blue
+            // (0x00) 0 - 255 (OxFF)
+
+            // mutate() If i dont intend to change the Drawable everywhere in
+            // the app.
+
+            // Yellow
+            dI.setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_IN);
+            // Green
+            eI.setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_IN);
+            // Blue
+            tI.setColorFilter(Color.MAGENTA, PorterDuff.Mode.SRC_IN);
+            // Cyan
+            vI.setColorFilter(Color.CYAN, PorterDuff.Mode.SRC_IN);
+
+            // Create an array of drawable resources.
+            Drawable[] stackImgs = new Drawable[5];
+            stackImgs[0] = res.getDrawable(R.drawable.mood_image);
+            stackImgs[1] = dI;
+            stackImgs[2] = eI;
+            stackImgs[3] = tI;
+            stackImgs[4] = vI;
+
+            // Stack the images ontop of each other
+            LayerDrawable layerDrawable = new LayerDrawable(stackImgs);
+            // display the image
+            ImageView imageView = (ImageView) findViewById(R.id.moodPicture);
+            imageView.setImageDrawable(layerDrawable);
+
+        } catch (Exception e) {
+            System.out.println("IMAGES NOT FOUND: " + e);
+        }
+    }
+
     /**
      * getUserTopTracks() gets the user's whole saved song library.
      */
@@ -318,8 +368,8 @@ public class UserStatistics extends AppCompatActivity {
             Bundle bundle = msg.getData();
             String string = bundle.getString("Key");
             // Update the text view with the release date of the album
-            TextView tv = (TextView) findViewById(R.id.albumName);
-            tv.setText(string);
+            //TextView tv = (TextView) findViewById(R.id.albumName);
+            //tv.setText(string);
         }
     };
 

@@ -628,8 +628,11 @@ drawable abc_textfield_search_activated_mtrl_alpha
 drawable abc_textfield_search_default_mtrl_alpha
 drawable abc_textfield_search_material
 drawable abc_vector_test
+drawable danceability_identifier
+drawable energy_identifier
 drawable ic_launcher_background
 drawable ic_launcher_foreground
+drawable mood_image
 drawable notification_action_background
 drawable notification_bg
 drawable notification_bg_low
@@ -642,8 +645,10 @@ drawable notification_template_icon_bg
 drawable notification_template_icon_low_bg
 drawable notification_tile_bg
 drawable notify_panel_notification_icon_bg
+drawable tempo_identifier
 drawable tooltip_frame_dark
 drawable tooltip_frame_light
+drawable valance_identifier
 id ALT
 id CTRL
 id FUNCTION
@@ -670,7 +675,6 @@ id action_text
 id actions
 id activity_chooser_view_content
 id add
-id albumName
 id alertTitle
 id all
 id always
@@ -728,6 +732,7 @@ id listMode
 id list_item
 id message
 id middle
+id moodPicture
 id multiply
 id mySavedTracks
 id never

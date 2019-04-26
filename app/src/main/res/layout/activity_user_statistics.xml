@@ -6,37 +6,38 @@
     android:layout_height="match_parent"
     tools:context="com.example.moodvisulized.UserStatistics">
 
-    <TextView
-        android:id="@+id/albumName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="500dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginBottom="500dp"
-
-
-        android:text="@string/album_name"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.416"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/mySavedTracks"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="276dp"
-        android:layout_marginEnd="241dp"
-        android:layout_marginBottom="407dp"
+
+        android:layout_marginStart="10dp"
+        android:layout_marginTop= "500dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="2dp"
         android:text="Get Saved Tracks"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/moodPicture"
+        android:layout_width="404dp"
+        android:layout_height="840dp"
+        android:src="@drawable/danceability_identifier"
+
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="250dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="650dp"
+
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/danceability_identifier" />
 </android.support.constraint.ConstraintLayout>
