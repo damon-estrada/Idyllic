@@ -628,8 +628,9 @@ drawable abc_textfield_search_activated_mtrl_alpha
 drawable abc_textfield_search_default_mtrl_alpha
 drawable abc_textfield_search_material
 drawable abc_vector_test
-drawable danceability_identifier
-drawable energy_identifier
+drawable danceability1_img
+drawable danceability2_img
+drawable energy_img
 drawable ic_launcher_background
 drawable ic_launcher_foreground
 drawable mood_image
@@ -645,10 +646,10 @@ drawable notification_template_icon_bg
 drawable notification_template_icon_low_bg
 drawable notification_tile_bg
 drawable notify_panel_notification_icon_bg
-drawable tempo_identifier
+drawable tempo_img
 drawable tooltip_frame_dark
 drawable tooltip_frame_light
-drawable valance_identifier
+drawable valence_img
 id ALT
 id CTRL
 id FUNCTION

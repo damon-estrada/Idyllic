@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements Item {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         fetchSpotifyData = (Button) findViewById(R.id.fetchSpotifyData);
 
         fetchSpotifyData.setOnClickListener(new View.OnClickListener() {
@@ -59,6 +60,11 @@ public class MainActivity extends AppCompatActivity implements Item {
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
     public void toSpotifyData(View view) {
         // Do something in response to button
         // This constructor takes in :
@@ -66,11 +72,6 @@ public class MainActivity extends AppCompatActivity implements Item {
         // class - where the intent should delvier to
         Intent intent = new Intent(this, UserStatistics.class);
         startActivity(intent);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
     }
 
     @Override

@@ -74,7 +74,6 @@ public class UserStatistics extends AppCompatActivity {
     private static final int REQUEST_CODE = 1003;
     private static final String CLIENT_ID = "0184658057ca400693856a596026419b";
     private static final String REDIRECT_URI = "moodvisualized://callback";
-    Album album;                            // info on the current album
 
     Button mySavedTracks;
     List<Track> userSavedTracks = new ArrayList<>(); // getting all saved tracks
@@ -87,6 +86,7 @@ public class UserStatistics extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_user_statistics);
 
         AuthenticationRequest.Builder builder =
@@ -121,9 +121,8 @@ public class UserStatistics extends AppCompatActivity {
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
-                        //getUserTopTracks();
-                        //getTrackAudioFeatures();
-                        overlay();
+                        getUserTopTracks();
+                        overlay(getImageColors(getTrackAudioFeatures()));
                     }
                 };
 
@@ -133,36 +132,15 @@ public class UserStatistics extends AppCompatActivity {
         });
     }
 
-    /* Sample way of how to get api call info*/
-    public void getAlbumInfo() {
-        RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint(SpotifyApi.SPOTIFY_WEB_API_ENDPOINT)
-                .setLogLevel(RestAdapter.LogLevel.FULL)
-                .setRequestInterceptor(new RequestInterceptor() {
-                    @Override
-                    public void intercept(RequestFacade request) {
-                        request.addHeader("Authorization", "Bearer " + accessToken);
-                    }
-                })
-                .build();
-
-        SpotifyService spotify = restAdapter.create(SpotifyService.class);
-
-        try {
-            album = spotify.getAlbum("47KIS7mtjSEIhfUkMmo30e");
-            Message msg = handler.obtainMessage();
-            Bundle bundle = new Bundle();
-            String releaseDate = album.release_date;
-            bundle.putString("Key", releaseDate);
-            msg.setData(bundle);
-            handler.sendMessage(msg);
-        } catch (RetrofitError e) {
-            System.out.println(e.getResponse().getStatus());
-            System.out.println(e.getResponse().getReason());
-        }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // After onCreate is finish, start this method andretireve the necessary
+        // data from Spotify's API
     }
 
-    public void getTrackAudioFeatures() {
+    public ArrayList<Float> getTrackAudioFeatures() {
+        ArrayList<Float> results = new ArrayList<>();
         float acousticness = 0; // 0.0 - 1.0 (acoustic)
         //android.os.Parcelable.Creator<AudioFeaturesTrack> creator;
         float danceability = 0; // (not danceable) 0.0 - 1.0 (danceable)
@@ -190,19 +168,21 @@ public class UserStatistics extends AppCompatActivity {
                 tempo += audioFeaturesTracks.audio_features.get(0).tempo;
                 valence += audioFeaturesTracks.audio_features.get(0).valence;
             }
-            acousticness /= totalTracks;
-            danceability /= totalTracks;
-            durationMs /= totalTracks;
-            energy /= totalTracks;
-            instrumentalness /= totalTracks;
-            loudness /= totalTracks;
-            tempo /= totalTracks;
-            valence /= totalTracks;
+            results.add(acousticness / totalTracks);
+            results.add(danceability / totalTracks);
+            results.add( (float) (durationMs / totalTracks) );
+            results.add(energy / totalTracks);
+            results.add(instrumentalness / totalTracks);
+            results.add(loudness / totalTracks);
+            results.add(tempo / totalTracks);
+            results.add(valence / totalTracks);
 
         } catch (RetrofitError e) {
             System.out.println(e.getResponse().getStatus());
             System.out.println(e.getResponse().getReason());
         }
+
+        return results;
     }
 
     public void getUserTopTracks() {
@@ -251,53 +231,52 @@ public class UserStatistics extends AppCompatActivity {
                 System.out.println("Top Songs: " + track.name + " by -> " + track.artists.get(0).name);
             }
 
-            //Message msg = handler.obtainMessage();
-            //Bundle bundle = new Bundle();
-            //String numberOfPlaylists = Integer.toString(userPlaylists.describeContents());
-            //System.out.println("Test: " + userProfilePublic.id);
-            //bundle.putString("Key", numberOfPlaylists);
-            //msg.setData(bundle);
-            //handler.sendMessage(msg);
         } catch (RetrofitError e) {
             System.out.println(e.getResponse().getStatus());
             System.out.println(e.getResponse().getReason());
         }
     }
 
-    public void overlay() {
+    /**
+     * [ acousticness, danceability, duration, energy, instrumentalness,
+     *   loudness, tempo, valence] --> 1, 3, 6, 7 -----> 0, 1, 2, 3, 4
+     *
+     */
+    public void overlay(ArrayList<Integer> colors) {
 
         // Get your images from their files
         try {
             // Access the drawable resources
             Resources res = getResources();
-            Drawable dI = res.getDrawable(R.drawable.danceability_identifier);
-            Drawable eI = res.getDrawable(R.drawable.energy_identifier);
-            Drawable tI = res.getDrawable(R.drawable.tempo_identifier);
-            Drawable vI = res.getDrawable(R.drawable.valance_identifier);
+            Drawable dI1 = res.getDrawable(R.drawable.danceability1_img);
+            Drawable dI2 = res.getDrawable(R.drawable.danceability2_img);
+            Drawable eI = res.getDrawable(R.drawable.energy_img);
+            Drawable tI = res.getDrawable(R.drawable.tempo_img);
+            Drawable vI = res.getDrawable(R.drawable.valence_img);
 
             // Format: 0x   00      00      00      00
             //              alpha   red     green   blue
             // (0x00) 0 - 255 (OxFF)
 
-            // mutate() If i dont intend to change the Drawable everywhere in
-            // the app.
-
             // Yellow
-            dI.setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_IN);
+            dI1.setColorFilter(colors.get(0), PorterDuff.Mode.MULTIPLY);
+            // Should be yellow lighter
+            dI2.setColorFilter(colors.get(1), PorterDuff.Mode.MULTIPLY);
             // Green
-            eI.setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_IN);
+            eI.setColorFilter(colors.get(2), PorterDuff.Mode.MULTIPLY);
             // Blue
-            tI.setColorFilter(Color.MAGENTA, PorterDuff.Mode.SRC_IN);
+            tI.setColorFilter(colors.get(3), PorterDuff.Mode.MULTIPLY);
             // Cyan
-            vI.setColorFilter(Color.CYAN, PorterDuff.Mode.SRC_IN);
+            vI.setColorFilter(colors.get(4), PorterDuff.Mode.MULTIPLY);
 
             // Create an array of drawable resources.
-            Drawable[] stackImgs = new Drawable[5];
+            Drawable[] stackImgs = new Drawable[6];
             stackImgs[0] = res.getDrawable(R.drawable.mood_image);
-            stackImgs[1] = dI;
-            stackImgs[2] = eI;
-            stackImgs[3] = tI;
-            stackImgs[4] = vI;
+            stackImgs[1] = dI1;
+            stackImgs[2] = dI2;
+            stackImgs[3] = eI;
+            stackImgs[4] = tI;
+            stackImgs[5] = vI;
 
             // Stack the images ontop of each other
             LayerDrawable layerDrawable = new LayerDrawable(stackImgs);
@@ -308,6 +287,63 @@ public class UserStatistics extends AppCompatActivity {
         } catch (Exception e) {
             System.out.println("IMAGES NOT FOUND: " + e);
         }
+    }
+
+
+    /**
+     *
+     * @param results Ordered as: [ acousticness, danceability, duration, energy, instrumentalness,
+     *      *                             loudness, tempo, valence]
+     * @return and arraylist of colors computed by parameters to pain the iage.
+     */
+
+    public ArrayList<Integer> getImageColors(ArrayList<Float> results) {
+        ArrayList<Integer> imageColors = new ArrayList<>();
+        System.out.println("danceability 1: " + results.get(1));
+        System.out.println("energy: " + results.get(3));
+        System.out.println("tempo: " + results.get(6));
+        System.out.println("Valence: " + results.get(7));
+
+        for (int i = 0; i < results.size(); i++) {
+            switch (i) {
+                case 2: // danceability [not active = <.50] [Active = >.50]
+                    if (results.get(i) >= 0.5) {
+                        imageColors.add(Color.MAGENTA);
+                        // lighter shade of magenta
+                        imageColors.add(Color.rgb(118, 21, 178));
+                    } else {
+                        //whiteish grey
+                        imageColors.add(Color.rgb(227, 220, 232));
+                        //lighter grey
+                        imageColors.add(Color.rgb(222, 219, 224));
+                    }
+                break;
+                case 3: // energy
+                    if (results.get(i) >= 0.5) {
+                        imageColors.add(Color.RED);
+                    } else {
+                        imageColors.add(Color.rgb(28, 28, 33));
+                    }
+                    break;
+                case 6: // tempo
+                    if (results.get(i) >= 130) {
+                        // blueish
+                        imageColors.add(Color.rgb(0, 225, 255));
+                    } else {
+                        // gray
+                        imageColors.add(Color.rgb(104, 104, 127));
+                    }
+                    break;
+                case 7: // valence
+                    if (results.get(i) >= 0.5) {
+                        // orange
+                        imageColors.add(Color.rgb(255 ,144 ,0));
+                    } else {
+                        imageColors.add(Color.CYAN);
+                    }
+            }
+        }
+        return imageColors;
     }
 
     /**
