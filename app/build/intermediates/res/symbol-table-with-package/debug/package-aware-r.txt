@@ -698,6 +698,7 @@ id com_spotify_sdk_login_webview
 id com_spotify_sdk_login_webview_container
 id content
 id contentPanel
+id currentPlaying
 id custom
 id customPanel
 id decor_content_parent

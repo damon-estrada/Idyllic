@@ -2,72 +2,55 @@ package com.example.moodvisulized;
 
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.LightingColorFilter;
-import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
-import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
-import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.Xml;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.spotify.android.appremote.api.error.UserNotAuthorizedException;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.spotify.android.appremote.api.PlayerApi;
+import com.spotify.android.appremote.internal.PlayerApiImpl;
+import com.spotify.protocol.types.PlayerContext;
+import com.spotify.protocol.types.PlayerState;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
-import org.w3c.dom.Text;
-
-import java.io.FileOutputStream;
+import java.io.BufferedReader;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URI;
-import java.text.SimpleDateFormat;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
-import kaaes.spotify.webapi.android.SpotifyCallback;
-import kaaes.spotify.webapi.android.SpotifyError;
 import kaaes.spotify.webapi.android.SpotifyService;
-import kaaes.spotify.webapi.android.models.Album;
-import kaaes.spotify.webapi.android.models.AudioFeaturesTrack;
 import kaaes.spotify.webapi.android.models.AudioFeaturesTracks;
 import kaaes.spotify.webapi.android.models.Pager;
-import kaaes.spotify.webapi.android.models.Playlist;
-import kaaes.spotify.webapi.android.models.PlaylistSimple;
 import kaaes.spotify.webapi.android.models.SavedTrack;
 import kaaes.spotify.webapi.android.models.Track;
-import kaaes.spotify.webapi.android.models.UserPrivate;
-import kaaes.spotify.webapi.android.models.UserPublic;
-import retrofit.Callback;
-import retrofit.ErrorHandler;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
-import retrofit.client.Response;
-import retrofit2.Call;
+import retrofit.http.GET;
+import retrofit2.http.HTTP;
 
 public class UserStatistics extends AppCompatActivity {
 
@@ -76,6 +59,7 @@ public class UserStatistics extends AppCompatActivity {
     private static final String REDIRECT_URI = "moodvisualized://callback";
 
     Button mySavedTracks;
+    Button currentSong;                             // The current song playing button
     List<Track> userSavedTracks = new ArrayList<>(); // getting all saved tracks
     List<Track> userTopTracks = new ArrayList<>(); // getting all top songs
     Map<String, Object> options = new HashMap<String, Object>(); // for each call
@@ -94,7 +78,7 @@ public class UserStatistics extends AppCompatActivity {
 
         // IMPORTANT, YOU NEED TO ADD TO THE SCOPES IF YOU WANT TO ACCESS MORE INFO!!!!
         builder.setScopes(new String[]{"streaming", "user-read-private", "user-read-recently-played," +
-                "user-top-read", "user-library-read"});
+                "user-top-read", "user-library-read, user-read-currently-playing"});
         AuthenticationRequest request = builder.build();
 
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
@@ -110,10 +94,11 @@ public class UserStatistics extends AppCompatActivity {
                     }
                 })
                 .build();
-
+        // If we made it here we are good to go! Start getting service.
         spotify = restAdapter.create(SpotifyService.class);
 
         mySavedTracks = (Button) findViewById(R.id.mySavedTracks);
+        currentSong = (Button) findViewById(R.id.currentPlaying);
 
         mySavedTracks.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,13 +115,29 @@ public class UserStatistics extends AppCompatActivity {
                 myThread.start();
             }
         });
+
+        currentSong.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // To prevent locking up the UI, launch a new thread.
+                Runnable runnable2 = new Runnable() {
+                    @Override
+                    public void run() {
+                        getCurrentSong();
+                    }
+                };
+
+                Thread thread2 = new Thread(runnable2);
+                thread2.start();
+            }
+        });
+
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        // After onCreate is finish, start this method andretireve the necessary
-        // data from Spotify's API
     }
 
     public ArrayList<Float> getTrackAudioFeatures() {
@@ -152,7 +153,6 @@ public class UserStatistics extends AppCompatActivity {
         float valence = 0; // (angry, depresses, sad ) 0.0 - 1.0 (most positive, happy, cheerful track)
 
         try {
-            //AudioFeaturesTrack trackAudioFeatures = spotify.getTrackAudioFeatures("7bvfRXXrxi9f546dzNjSx8");
             int totalTracks = userTopTracks.size();
 
             // Compute for all parameters above
@@ -257,16 +257,10 @@ public class UserStatistics extends AppCompatActivity {
             // Format: 0x   00      00      00      00
             //              alpha   red     green   blue
             // (0x00) 0 - 255 (OxFF)
-
-            // Yellow
             dI1.setColorFilter(colors.get(0), PorterDuff.Mode.MULTIPLY);
-            // Should be yellow lighter
             dI2.setColorFilter(colors.get(1), PorterDuff.Mode.MULTIPLY);
-            // Green
             eI.setColorFilter(colors.get(2), PorterDuff.Mode.MULTIPLY);
-            // Blue
             tI.setColorFilter(colors.get(3), PorterDuff.Mode.MULTIPLY);
-            // Cyan
             vI.setColorFilter(colors.get(4), PorterDuff.Mode.MULTIPLY);
 
             // Create an array of drawable resources.
@@ -285,6 +279,7 @@ public class UserStatistics extends AppCompatActivity {
             imageView.setImageDrawable(layerDrawable);
 
         } catch (Exception e) {
+            // Path to images not found.
             System.out.println("IMAGES NOT FOUND: " + e);
         }
     }
@@ -344,6 +339,40 @@ public class UserStatistics extends AppCompatActivity {
             }
         }
         return imageColors;
+    }
+
+    private void getCurrentSong() {
+        // As of May 8, 2019 there is not a way from the kaae wrapper to get current song
+        // Let's roll our own handler.
+
+        //@GET("https://api.spotify.com/v1/me/player/currently-playing")
+        // Full call:
+        // GET "https://api.spotify.com/v1/me/player/currently-playing" -H "Authorization: Bearer {your access token}"
+
+
+        String urlStr = "https://api.spotify.com/v1/me/player/currently-playing";
+
+        try {
+            URL url = new URL(urlStr);
+            URLConnection request = url.openConnection();
+            // I need to tell spotify who I am with my access code
+            request.setRequestProperty("Authorization", "Bearer " + accessToken);
+            request.connect();
+
+            JsonParser parser = new JsonParser(); // From gson
+            JsonElement root = parser.parse(new InputStreamReader((InputStream) request.getContent()));
+            JsonObject rootObj = root.getAsJsonObject();
+            // For some reason and thanks to stack overflow the blow get().getAsString() does not
+            // work. the .toString() works however.
+            String currentSong = rootObj.get("name").toString();
+
+            System.out.println(currentSong);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     /**
@@ -426,8 +455,6 @@ public class UserStatistics extends AppCompatActivity {
                 // Response was successful and contains auth token
                 case TOKEN:
                     // Handle successful response
-                    // Whenever we want to update our interface, it is bad practice to do so inside a thread
-                    // (PROGRAM CRASH, thread locks, etc)
                     accessToken = response.getAccessToken();
                     break;
 

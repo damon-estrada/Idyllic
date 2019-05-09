@@ -12,10 +12,26 @@
         android:layout_height="wrap_content"
 
         android:layout_marginStart="10dp"
-        android:layout_marginTop= "500dp"
+        android:layout_marginTop="500dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="2dp"
         android:text="Get Saved Tracks"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/currentPlaying"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="550dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginBottom="250dp"
+        android:text="Get current playing song"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -26,14 +42,14 @@
         android:id="@+id/moodPicture"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:adjustViewBounds="true"
-        android:src="@drawable/danceability1_img"
-        android:scaleType="centerCrop"
-
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp"
         android:layout_marginEnd="0dp"
-        android:layout_marginBottom= "0dp"
+
+        android:layout_marginBottom="0dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/danceability1_img"
 
 
         app:layout_constraintBottom_toBottomOf="@id/mySavedTracks"
@@ -41,4 +57,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/danceability1_img" />
+
+
 </android.support.constraint.ConstraintLayout>
