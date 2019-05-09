@@ -15,7 +15,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.spotify.android.appremote.api.PlayerApi;
@@ -123,7 +126,7 @@ public class UserStatistics extends AppCompatActivity {
                 Runnable runnable2 = new Runnable() {
                     @Override
                     public void run() {
-                        getCurrentSong();
+                        getAudioAnalysisJSON(getCurrentSong(getCurrentSongJSON()));
                     }
                 };
 
@@ -341,7 +344,7 @@ public class UserStatistics extends AppCompatActivity {
         return imageColors;
     }
 
-    private void getCurrentSong() {
+    private String getCurrentSongJSON() {
         // As of May 8, 2019 there is not a way from the kaae wrapper to get current song
         // Let's roll our own handler.
 
@@ -349,7 +352,7 @@ public class UserStatistics extends AppCompatActivity {
         // Full call:
         // GET "https://api.spotify.com/v1/me/player/currently-playing" -H "Authorization: Bearer {your access token}"
 
-
+        String JSONFile = null;
         String urlStr = "https://api.spotify.com/v1/me/player/currently-playing";
 
         try {
@@ -362,18 +365,101 @@ public class UserStatistics extends AppCompatActivity {
             JsonParser parser = new JsonParser(); // From gson
             JsonElement root = parser.parse(new InputStreamReader((InputStream) request.getContent()));
             JsonObject rootObj = root.getAsJsonObject();
-            // For some reason and thanks to stack overflow the blow get().getAsString() does not
-            // work. the .toString() works however.
-            String currentSong = rootObj.get("name").toString();
 
-            System.out.println(currentSong);
+            // Return the "item" section
+            JSONFile = rootObj.get("item").toString();
+            System.out.println(JSONFile);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-
+        return JSONFile;
     }
+
+    public String getCurrentSong(String jsonData) {
+        // jsonData has the "item" contents already
+        // since it contains all of the current songs info
+        String trackId = null;
+        try {
+            JsonElement jelement = new JsonParser().parse(jsonData);
+            JsonObject  jobject = jelement.getAsJsonObject();
+            jobject = jobject.getAsJsonObject("album");
+            /*
+            JsonObject  tmp;
+
+            // This is the most outer subsection
+            jobject = jobject.getAsJsonObject("album");
+
+            // This is an example of reading the json file
+            // only if you see [ ] does that mean an array
+            // get the artists section
+            JsonArray jarray = jobject.getAsJsonArray("artists");
+
+            for (int i = 0; i < jarray.size(); i++) {
+                tmp = jarray.get(i).getAsJsonObject();
+                String artistName = tmp.get("name").getAsString();
+                System.out.println("Artist " + (i + 1) + " name: " + artistName);
+            }
+            // get the name of the track
+            System.out.println("Track Name: " + jobject.get("name"));
+            */
+            trackId = jobject.get("id").getAsString();
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return trackId;
+    }
+
+    /**
+     * This method will allow use to get the audio analysis for the current playing song
+     * @param trackId The current song playing
+     * @return a json object that we will parse and finally store data
+     */
+    private JsonObject getAudioAnalysisJSON(String trackId) {
+        // As of May 8, 2019 there is not a way from the kaaes wrapper to get audio analysis
+        // Let's roll our own handler
+
+        // This tells the next methoid that the song has no audio analysis
+        JsonObject jsonObj = null;
+        if (trackId == null)
+            return jsonObj;
+
+        //   GET https://api.spotify.com/v1/audio-analysis/{id}
+        // Full call:
+        // GET "https://api.spotify.com/v1/audio-analysis/" -H "Accept: application/json" -H "Content-Type: application/json"
+        //                                                          -H "Authorization: Bearer "
+        String urlStr = "https://api.spotify.com/v1/audio-analysis/" + trackId;
+
+
+
+        try {
+            URL url = new URL(urlStr);
+            URLConnection request = url.openConnection();
+            // I need to tell spotify who I am with my access code
+            request.setRequestProperty("Accept", "application/json");
+            request.setRequestProperty("Content-Type", "application/json");
+            request.setRequestProperty("Authorization", "Bearer " + accessToken);
+
+            request.connect();
+
+            JsonParser parser = new JsonParser(); // From gson
+            JsonElement root = parser.parse(new InputStreamReader((InputStream) request.getContent()));
+            jsonObj = root.getAsJsonObject();
+
+            // Return the whole JSON object. Will parse in another method
+            System.out.println(jsonObj);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return jsonObj;
+    }
+
 
     /**
      * getUserTopTracks() gets the user's whole saved song library.
