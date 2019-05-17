@@ -6,43 +6,27 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.spotify.android.appremote.api.PlayerApi;
-import com.spotify.android.appremote.internal.PlayerApiImpl;
-import com.spotify.protocol.types.PlayerContext;
-import com.spotify.protocol.types.PlayerState;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
-
-import java.io.BufferedReader;
-import java.io.DataOutput;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.AudioFeaturesTracks;
@@ -52,8 +36,7 @@ import kaaes.spotify.webapi.android.models.Track;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
-import retrofit.http.GET;
-import retrofit2.http.HTTP;
+
 
 public class UserStatistics extends AppCompatActivity {
 
@@ -62,13 +45,16 @@ public class UserStatistics extends AppCompatActivity {
     private static final String REDIRECT_URI = "moodvisualized://callback";
 
     Button mySavedTracks;
-    Button currentSong;                             // The current song playing button
-    List<Track> userSavedTracks = new ArrayList<>(); // getting all saved tracks
-    List<Track> userTopTracks = new ArrayList<>(); // getting all top songs
-    Map<String, Object> options = new HashMap<String, Object>(); // for each call
-
-    SpotifyService spotify;                         // Service variable
+    Button currentSong;                                     // The current song playing button
+    List<Track> userSavedTracks = new ArrayList<>();       // getting all saved tracks
+    List<Track> userSongTodayTracks = new ArrayList<>();  // Stores the date everything was added
+    List<Track> userTopTracks = new ArrayList<>();       // getting all top song
+    Map<String, Object> options = new HashMap<String, Object>();     // for each call
+    SpotifyService spotify;                            // Service variable
     private String accessToken;
+    private String dateToday = new SimpleDateFormat("MM-dd").
+                                                    format(Calendar.getInstance().getTime());
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +66,14 @@ public class UserStatistics extends AppCompatActivity {
                 new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
 
         // IMPORTANT, YOU NEED TO ADD TO THE SCOPES IF YOU WANT TO ACCESS MORE INFO!!!!
-        builder.setScopes(new String[]{"streaming", "user-read-private", "user-read-recently-played," +
-                "user-top-read", "user-library-read, user-read-currently-playing"});
+        builder.setScopes(new String[]{
+                "streaming",                       // Controls the playback of a Spotify track.
+                "user-read-private",              // Read access to user's subscription details.
+                "user-read-recently-played",     // Read access to a user's recently played tracks.
+                "user-top-read",                // Read access to a user's top artists/tracks.
+                "user-library-read",           // Permission to see user's library.
+                "user-read-currently-playing" // Permission to see what user is currently playing.
+        });
         AuthenticationRequest request = builder.build();
 
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
@@ -97,6 +89,7 @@ public class UserStatistics extends AppCompatActivity {
                     }
                 })
                 .build();
+
         // If we made it here we are good to go! Start getting service.
         spotify = restAdapter.create(SpotifyService.class);
 
@@ -123,6 +116,18 @@ public class UserStatistics extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // To prevent locking up the UI, launch a new thread.
+
+                Runnable runGetTracks = new Runnable() {
+                    @Override
+                    public void run() {
+                        getUserSavedLibrary();
+                    }
+                };
+
+                Thread threadGetTracks = new Thread(runGetTracks);
+                threadGetTracks.start();
+
+/* This needs work, is erroring
                 Runnable runnable2 = new Runnable() {
                     @Override
                     public void run() {
@@ -132,9 +137,9 @@ public class UserStatistics extends AppCompatActivity {
 
                 Thread thread2 = new Thread(runnable2);
                 thread2.start();
+                */
             }
         });
-
 
     }
 
@@ -188,9 +193,78 @@ public class UserStatistics extends AppCompatActivity {
         return results;
     }
 
+    /**
+     * getUserSavedLibrary gets the user's whole saved songs from their library.
+     * This iterates until the first song ever saved. It also does other things such
+     * as populate userSongTodayTracks which will check to see if a song today was saved
+     * earlier in the past year(s).
+     */
+    public void getUserSavedLibrary() {
+        try {
+            int totalSongsInLibrary;
+            int i = 0;
+            // Limit is how many songs we can grab at a time (Max is 50 for this call)
+            int limit = 50;
+            int updateIndexBy = 50; // where to start the new index in the library.
+            int offset = 0;
+            String tmp;
+            Pager<SavedTrack> savedTrackPager;
+
+            totalSongsInLibrary = spotify.getMySavedTracks().total;
+            options.put(SpotifyService.LIMIT, limit); // get 50 songs at a time.
+            options.put(SpotifyService.OFFSET, offset); // initially 0 to start at top of library.
+
+            while (i <= totalSongsInLibrary) {
+                savedTrackPager = spotify.getMySavedTracks(options);
+
+                // iterate though the first songs fetched
+                for (SavedTrack savedTrack : savedTrackPager.items) {
+                    userSavedTracks.add(savedTrack.track); // save the track from the fetch
+
+                    // capture the instance of the track being analyzed
+                    tmp = savedTrack.added_at;
+
+                    // reformat it to MM-dd
+                    tmp = reformatDate(tmp);
+
+                    if (tmp.equals(dateToday)) {
+                        userSongTodayTracks.add(savedTrack.track);
+                    }
+                }
+
+                if ( (totalSongsInLibrary - i) >= 50 ) {
+                    i += updateIndexBy; // This means there are more than 50 songs left, increase by so.
+                    options.put(SpotifyService.OFFSET, offset += updateIndexBy); // New start point is at 50th song.
+                } else if(i == totalSongsInLibrary) {
+                    break; // To get out of the infinite loop
+                } else {
+                    i += (totalSongsInLibrary - i); // update by remained to not go over.
+                    options.put(SpotifyService.OFFSET, offset += (totalSongsInLibrary - i)); // New start point is at 50th song.
+                }
+            }
+        } catch (RetrofitError e) {
+            System.out.println(e.getResponse().getStatus());
+            System.out.println(e.getResponse().getReason());
+        }
+    }
+
+    /**
+     * This method will restructure the spotify added_at format(yyyy-MM-ddT##..) to (MM-dd)
+     * @param trackDate The added_at track string date
+     * @return The new formatted (MM-dd) string
+     */
+    public String reformatDate(String trackDate) {
+        /* I want to ignore the timezone and year, just capture the MM-dd */
+        int indexStart = trackDate.indexOf("-"); // this is the month
+        int indexEnd = trackDate.indexOf("T"); // this is the day of the month
+        trackDate = trackDate.substring(indexStart + 1, indexEnd);
+
+        return trackDate;
+    }
+
     public void getUserTopTracks() {
         try {
-            int totalTopSongs = 0;
+            int totalTopSongs;
             int i = 0;
             // Limit is how many songs we can grab at a time (Max is 50 for this call)
             int limit = 50;
@@ -239,6 +313,7 @@ public class UserStatistics extends AppCompatActivity {
             System.out.println(e.getResponse().getReason());
         }
     }
+
 
     /**
      * [ acousticness, danceability, duration, energy, instrumentalness,
@@ -459,70 +534,6 @@ public class UserStatistics extends AppCompatActivity {
 
         return jsonObj;
     }
-
-
-    /**
-     * getUserTopTracks() gets the user's whole saved song library.
-     */
-    public void getUserSavedLibrary() {
-        try {
-            int totalSongsInLibrary = 0;
-            int i = 0;
-            // Limit is how many songs we can grab at a time (Max is 50 for this call)
-            int limit = 50;
-            int updateIndexBy = 50; // where to start the new index in the library.
-            // Offset is the starting point of which we index our songs
-            // REMEMBER: update offset to get more than 50 songs. It starts at 0
-            // and when updated to (offset = 50) will start at the 50th song while
-            // (limit) will fetch the next 50 songs in this case.
-            int offset = 0;
-            Pager<SavedTrack> savedTrackPager = new Pager<>();
-
-            totalSongsInLibrary = spotify.getMySavedTracks().total;
-            options.put(SpotifyService.LIMIT, limit); // get 50 songs at a time.
-            options.put(SpotifyService.OFFSET, offset); // initially 0 to start at top of library.
-
-            while (i <= totalSongsInLibrary) {
-                savedTrackPager = spotify.getMySavedTracks(options);
-                for (SavedTrack savedTrack : savedTrackPager.items) {
-                    userSavedTracks.add(savedTrack.track); // save the track from the fetch
-                }
-
-                if ( (totalSongsInLibrary - i) >= 50 ) {
-                    i += updateIndexBy; // This means there are more than 50 songs left, increase by so.
-                    options.put(SpotifyService.OFFSET, offset += updateIndexBy); // New start point is at 50th song.
-                } else if(i == totalSongsInLibrary) {
-                    break; // To get out of the infinite loop
-                } else {
-                    i += (totalSongsInLibrary - i); // update by remained to not go over.
-                    options.put(SpotifyService.OFFSET, offset += (totalSongsInLibrary - i)); // New start point is at 50th song.
-                }
-            }
-
-            //Message msg = handler.obtainMessage();
-            //Bundle bundle = new Bundle();
-            //String numberOfPlaylists = Integer.toString(userPlaylists.describeContents());
-            //System.out.println("Test: " + userProfilePublic.id);
-            //bundle.putString("Key", numberOfPlaylists);
-            //msg.setData(bundle);
-            //handler.sendMessage(msg);
-        } catch (RetrofitError e) {
-            System.out.println(e.getResponse().getStatus());
-            System.out.println(e.getResponse().getReason());
-        }
-    }
-
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            Bundle bundle = msg.getData();
-            String string = bundle.getString("Key");
-            // Update the text view with the release date of the album
-            //TextView tv = (TextView) findViewById(R.id.albumName);
-            //tv.setText(string);
-        }
-    };
 
     /**
      *
