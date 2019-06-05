@@ -109,10 +109,10 @@ public class UserStatistics extends AppCompatActivity {
         // If we made it here we are good to go! Start getting service.
         spotify = restAdapter.create(SpotifyService.class);
 
-        mySavedTracks = (Button) findViewById(R.id.mySavedTracks);
-        currentSong = (Button) findViewById(R.id.currentPlaying);
+        //mySavedTracks = (Button) findViewById(R.id.mySavedTracks);
+        //currentSong = (Button) findViewById(R.id.currentPlaying);
         getArtwork = (Button) findViewById(R.id.getArtwork);
-
+/*
         mySavedTracks.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -156,7 +156,7 @@ public class UserStatistics extends AppCompatActivity {
 
             }
         });
-
+*/
         getArtwork.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -170,7 +170,7 @@ public class UserStatistics extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                ImageView update = (ImageView) findViewById(R.id.moodPicture);
+                                ImageView update = (ImageView) findViewById(R.id.coverArt);
                                 update.setImageBitmap(coverArt);
                             }
                         });
@@ -394,7 +394,7 @@ public class UserStatistics extends AppCompatActivity {
             // Stack the images ontop of each other
             LayerDrawable layerDrawable = new LayerDrawable(stackImgs);
             // display the image
-            ImageView imageView = (ImageView) findViewById(R.id.moodPicture);
+            ImageView imageView = (ImageView) findViewById(R.id.coverArt);
             imageView.setImageDrawable(layerDrawable);
 
         } catch (Exception e) {

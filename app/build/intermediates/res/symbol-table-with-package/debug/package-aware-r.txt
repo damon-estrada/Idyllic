@@ -656,6 +656,7 @@ id FUNCTION
 id META
 id SHIFT
 id SYM
+id acousticnessVar
 id action_bar
 id action_bar_activity_content
 id action_bar_container
@@ -698,9 +699,10 @@ id com_spotify_sdk_login_webview
 id com_spotify_sdk_login_webview_container
 id content
 id contentPanel
-id currentPlaying
+id coverArt
 id custom
 id customPanel
+id danceabilityVar
 id decor_content_parent
 id default_activity_button
 id dimensions
@@ -708,6 +710,7 @@ id direct
 id disableHome
 id edit_query
 id end
+id energyVar
 id expand_activities_button
 id expanded_menu
 id fetchSpotifyData
@@ -726,18 +729,20 @@ id icon_group
 id ifRoom
 id image
 id info
+id instrumentalnessVar
 id invisible
 id italic
+id keyVar
 id left
 id line1
 id line3
 id listMode
 id list_item
+id livenessVar
+id loudnessVar
 id message
 id middle
-id moodPicture
 id multiply
-id mySavedTracks
 id never
 id none
 id normal
@@ -774,6 +779,7 @@ id showCustom
 id showHome
 id showTitle
 id spacer
+id speechinessVar
 id split_action_bar
 id spread
 id spread_inside
@@ -788,6 +794,7 @@ id tabMode
 id tag_transition_group
 id tag_unhandled_key_event_manager
 id tag_unhandled_key_listeners
+id tempoVar
 id text
 id text2
 id textSpacerNoButtons
@@ -801,6 +808,7 @@ id topPanel
 id uniform
 id up
 id useLogo
+id valenceVar
 id withText
 id wrap
 id wrap_content
@@ -892,15 +900,36 @@ string abc_searchview_description_voice
 string abc_shareactionprovider_share_with
 string abc_shareactionprovider_share_with_application
 string abc_toolbar_collapse_description
+string acousticness
+string acousticnessDesc
 string album_name
 string app_name
 string com_spotify_sdk_login_progress
 string com_spotify_sdk_redirect_host
 string com_spotify_sdk_redirect_scheme
+string coverArtDesc
+string daceabilityDesc
+string danceability
+string energy
+string energyDesc
 string fetchSpotifyData
+string instrumentalness
+string instrumentalnessDesc
+string key
+string keyDesc
+string liveness
+string livenessDesc
+string loudness
+string loudnessDesc
 string search_menu_title
+string speechiness
+string speechinessDesc
 string status_bar_notification_info_overflow
+string tempo
+string tempoDesc
 string title_activity_user_statistics
+string valence
+string valenceDesc
 style AlertDialog_AppCompat
 style AlertDialog_AppCompat_Light
 style Animation_AppCompat_Dialog
@@ -1248,6 +1277,7 @@ style Widget_AppCompat_Toolbar_Button_Navigation
 style Widget_Compat_NotificationActionContainer
 style Widget_Compat_NotificationActionText
 style Widget_Support_CoordinatorLayout
+style danceability
 styleable ActionBar background backgroundSplit backgroundStacked contentInsetEnd contentInsetEndWithActions contentInsetLeft contentInsetRight contentInsetStart contentInsetStartWithNavigation customNavigationLayout displayOptions divider elevation height hideOnContentScroll homeAsUpIndicator homeLayout icon indeterminateProgressStyle itemPadding logo navigationMode popupTheme progressBarPadding progressBarStyle subtitle subtitleTextStyle title titleTextStyle
 styleable ActionBarLayout android_layout_gravity
 styleable ActionMenuItemView android_minWidth

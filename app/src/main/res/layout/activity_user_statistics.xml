@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context="com.example.moodvisulized.UserStatistics">
 
+    <!--
     <Button
         android:id="@+id/mySavedTracks"
         android:layout_width="wrap_content"
@@ -38,15 +39,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+        -->
+
     <Button
         android:id="@+id/getArtwork"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="900dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="800dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="600dp"
         android:text="Get Artwork"
 
         app:layout_constraintBottom_toBottomOf="parent"
@@ -55,21 +58,235 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/moodPicture"
+        android:id="@+id/coverArt"
+        android:contentDescription="@string/coverArtDesc"
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:scaleType="center"
+
+        android:scaleType="centerCrop"
         android:adjustViewBounds="true"
 
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp"
         android:layout_marginEnd="0dp"
-        android:layout_marginBottom="200dp"
+        android:layout_marginBottom="0dp"
 
-        app:layout_constraintBottom_toBottomOf="@id/mySavedTracks"
+        app:layout_constraintBottom_toTopOf="@id/danceabilityVar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/danceabilityVar"
+        android:contentDescription="@string/daceabilityDesc"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+
+        android:text="@string/danceability"
+        android:textSize="18sp"
+        android:textAppearance="@style/danceability"
+        android:gravity="start"
+
+        app:layout_constraintTop_toBottomOf="@id/coverArt"
+        app:layout_constraintBottom_toTopOf="@id/livenessVar"
+        app:layout_constraintStart_toStartOf="@id/coverArt"
+        app:layout_constraintEnd_toEndOf="@id/coverArt"
+
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="231dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        />
+
+    <TextView
+        android:id="@+id/livenessVar"
+        android:contentDescription="@string/livenessDesc"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+
+        android:text="@string/liveness"
+        android:textSize="18sp"
+        android:textAppearance="@style/danceability"
+        android:gravity="start"
+
+        app:layout_constraintTop_toBottomOf ="@id/danceabilityVar"
+        app:layout_constraintBottom_toTopOf="@id/valenceVar"
+        app:layout_constraintStart_toStartOf="@id/danceabilityVar"
+
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp" />
+    <TextView
+        android:id="@+id/valenceVar"
+        android:contentDescription="@string/valenceDesc"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+
+        android:text="@string/valence"
+        android:textSize="18sp"
+        android:textAppearance="@style/danceability"
+        android:gravity="start"
+
+        app:layout_constraintTop_toBottomOf ="@id/livenessVar"
+        app:layout_constraintBottom_toTopOf="@id/speechinessVar"
+        app:layout_constraintStart_toStartOf="@id/danceabilityVar"
+
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        />
+
+    <TextView
+        android:id="@+id/speechinessVar"
+        android:contentDescription="@string/speechinessDesc"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+
+        android:text="@string/speechiness"
+        android:textSize="18sp"
+        android:textAppearance="@style/danceability"
+        android:gravity="start"
+
+        app:layout_constraintTop_toBottomOf ="@id/valenceVar"
+        app:layout_constraintBottom_toTopOf="@id/instrumentalnessVar"
+        app:layout_constraintStart_toStartOf="@id/danceabilityVar"
+
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        />
+
+    <TextView
+        android:id="@+id/instrumentalnessVar"
+        android:contentDescription="@string/instrumentalnessDesc"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+
+        android:text="@string/instrumentalness"
+        android:textSize="18sp"
+        android:textAppearance="@style/danceability"
+        android:gravity="start"
+
+        app:layout_constraintTop_toBottomOf ="@id/speechinessVar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/danceabilityVar" />
+
+
+    <!-- This will bet for the right column now -->
+    <TextView
+        android:id="@+id/loudnessVar"
+        android:contentDescription="@string/loudnessDesc"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+
+        android:text="@string/loudness"
+        android:textSize="18sp"
+        android:textAppearance="@style/danceability"
+        android:gravity="end"
+
+        app:layout_constraintTop_toBottomOf ="@id/coverArt"
+        app:layout_constraintBottom_toTopOf="@id/keyVar"
+        app:layout_constraintStart_toStartOf="@id/coverArt"
+        app:layout_constraintEnd_toEndOf="@id/acousticnessVar"
+
+
+        android:layout_marginStart="217dp"
+        android:layout_marginEnd="60dp" />
+
+    <TextView
+        android:id="@+id/keyVar"
+        android:contentDescription="@string/keyDesc"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+
+        android:text="@string/key"
+        android:textSize="18sp"
+        android:textAppearance="@style/danceability"
+        android:gravity="end"
+
+        app:layout_constraintTop_toBottomOf ="@id/loudnessVar"
+        app:layout_constraintBottom_toTopOf="@id/energyVar"
+        app:layout_constraintStart_toStartOf="@id/loudnessVar"
+
+        android:layout_marginEnd="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp" />
+
+    <TextView
+        android:id="@+id/energyVar"
+        android:contentDescription="@string/energyDesc"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+
+        android:text="@string/energy"
+        android:textSize="18sp"
+        android:textAppearance="@style/danceability"
+        android:gravity="end"
+
+        app:layout_constraintTop_toBottomOf ="@id/keyVar"
+        app:layout_constraintBottom_toTopOf="@id/tempoVar"
+        app:layout_constraintStart_toStartOf="@id/loudnessVar"
+
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp" />
+
+    <TextView
+        android:id="@+id/tempoVar"
+        android:contentDescription="@string/tempoDesc"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+
+        android:text="@string/tempo"
+        android:textSize="18sp"
+        android:textAppearance="@style/danceability"
+        android:gravity="end"
+
+        app:layout_constraintTop_toBottomOf ="@id/energyVar"
+        app:layout_constraintBottom_toTopOf="@id/acousticnessVar"
+        app:layout_constraintStart_toStartOf="@id/loudnessVar"
+
+
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp" />
+
+    <TextView
+        android:id="@+id/acousticnessVar"
+        android:layout_width="wrap_content"
+
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:contentDescription="@string/acousticnessDesc"
+
+        android:gravity="end"
+        android:text="@string/acousticness"
+        android:textAppearance="@style/danceability"
+        android:textSize="18sp"
+
+
+        app:layout_constraintStart_toStartOf="@id/loudnessVar"
+        app:layout_constraintEnd_toEndOf="@id/coverArt"
+        app:layout_constraintTop_toBottomOf="@id/tempoVar"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
