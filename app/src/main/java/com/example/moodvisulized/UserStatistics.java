@@ -2,6 +2,8 @@ package com.example.moodvisulized;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -11,14 +13,25 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
@@ -30,6 +43,7 @@ import java.util.Map;
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.AudioFeaturesTracks;
+import kaaes.spotify.webapi.android.models.Image;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.SavedTrack;
 import kaaes.spotify.webapi.android.models.Track;
@@ -44,6 +58,8 @@ public class UserStatistics extends AppCompatActivity {
     private static final String CLIENT_ID = "0184658057ca400693856a596026419b";
     private static final String REDIRECT_URI = "moodvisualized://callback";
 
+    Bitmap coverArt;
+    Button getArtwork;
     Button mySavedTracks;
     Button currentSong;                                     // The current song playing button
     List<Track> userSavedTracks = new ArrayList<>();       // getting all saved tracks
@@ -95,6 +111,7 @@ public class UserStatistics extends AppCompatActivity {
 
         mySavedTracks = (Button) findViewById(R.id.mySavedTracks);
         currentSong = (Button) findViewById(R.id.currentPlaying);
+        getArtwork = (Button) findViewById(R.id.getArtwork);
 
         mySavedTracks.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,20 +144,44 @@ public class UserStatistics extends AppCompatActivity {
                 Thread threadGetTracks = new Thread(runGetTracks);
                 threadGetTracks.start();
 
-/* This needs work, is erroring
                 Runnable runnable2 = new Runnable() {
                     @Override
                     public void run() {
-                        getAudioAnalysisJSON(getCurrentSong(getCurrentSongJSON()));
+                        //getCurrentSong(getCurrentSongJSON());
                     }
                 };
 
                 Thread thread2 = new Thread(runnable2);
                 thread2.start();
-                */
+
             }
         });
 
+        getArtwork.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Runnable getArtwork = new Runnable() {
+                    @Override
+                    public void run() {
+                        /* Get the artwork for the current song playing */
+                        getSongArtwork(getCurrentSongJSON());
+
+                        /* Update the UI with the current songs cover art */
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ImageView update = (ImageView) findViewById(R.id.moodPicture);
+                                update.setImageBitmap(coverArt);
+                            }
+                        });
+                    }
+                };
+                Thread threadGetArtwork = new Thread(getArtwork);
+                threadGetArtwork.start();
+            }
+        });
+
+    // End of onCreate
     }
 
     @Override
@@ -419,7 +460,7 @@ public class UserStatistics extends AppCompatActivity {
         return imageColors;
     }
 
-    private String getCurrentSongJSON() {
+    private JsonObject getCurrentSongJSON() {
         // As of May 8, 2019 there is not a way from the kaae wrapper to get current song
         // Let's roll our own handler.
 
@@ -427,8 +468,8 @@ public class UserStatistics extends AppCompatActivity {
         // Full call:
         // GET "https://api.spotify.com/v1/me/player/currently-playing" -H "Authorization: Bearer {your access token}"
 
-        String JSONFile = null;
         String urlStr = "https://api.spotify.com/v1/me/player/currently-playing";
+        JsonObject rootObj = null;
 
         try {
             URL url = new URL(urlStr);
@@ -439,18 +480,56 @@ public class UserStatistics extends AppCompatActivity {
 
             JsonParser parser = new JsonParser(); // From gson
             JsonElement root = parser.parse(new InputStreamReader((InputStream) request.getContent()));
-            JsonObject rootObj = root.getAsJsonObject();
+            rootObj = root.getAsJsonObject();
 
-            // Return the "item" section
-            JSONFile = rootObj.get("item").toString();
-            System.out.println(JSONFile);
+            System.out.println("JSON FILE: " + rootObj);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return JSONFile;
+        return rootObj;
     }
+
+    public void getSongArtwork(JsonObject jsonData) {
+
+        try {
+            /* This will get the "images" section from the json file. */
+            JsonElement images = jsonData.get("item").
+                    getAsJsonObject().get("album").
+                    getAsJsonObject().get("images");
+
+            //ArrayList<String> imageURIs = new ArrayList<>();
+            String imageURL;
+            JsonElement imageDetails;
+
+            /* Obtain the section as a json array from the three elements in the section. */
+            JsonArray imagesArray = images.getAsJsonArray();
+
+            /* This will get the URL from the 640x640 cover art */
+            imageDetails = imagesArray.get(0).getAsJsonObject().get("url");
+            imageURL = imageDetails.toString();
+
+            /* Lets clean up the URL by stripping the " occurances */
+            imageURL = imageURL.replace("\"", "");
+
+            System.out.println("URL: " + imageURL);
+
+            InputStream in = new URL(imageURL).openStream();
+
+            // decode bitmap
+            coverArt = BitmapFactory.decodeStream(in);
+
+            coverArt = coverArt.createScaledBitmap(coverArt, 900, 900, true);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //return ;
+    }
+
 
     public String getCurrentSong(String jsonData) {
         // jsonData has the "item" contents already

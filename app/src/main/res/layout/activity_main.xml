@@ -10,9 +10,14 @@
         android:id="@+id/fetchSpotifyData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
         android:text="@string/fetchSpotifyData"
         android:onClick="toSpotifyData"
+
+        android:layout_marginStart="125dp"
+        android:layout_marginTop="450dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="800dp"
+
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
