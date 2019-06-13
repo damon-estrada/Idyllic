@@ -23,4 +23,11 @@
 
     </style>
 
+    <!-- This is for a blank activity -->
+    <style name="DarkActivity" parent="android:Theme.NoTitleBar.Fullscreen">
+        <item name="android:windowBackground">
+            @color/black
+        </item>
+    </style>
+
 </resources>

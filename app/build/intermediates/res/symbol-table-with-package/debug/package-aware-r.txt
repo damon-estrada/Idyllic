@@ -373,6 +373,7 @@ color background_floating_material_dark
 color background_floating_material_light
 color background_material_dark
 color background_material_light
+color black
 color bright_foreground_disabled_material_dark
 color bright_foreground_disabled_material_light
 color bright_foreground_inverse_material_dark
@@ -656,6 +657,7 @@ id FUNCTION
 id META
 id SHIFT
 id SYM
+id acousticnessNum
 id acousticnessVar
 id action_bar
 id action_bar_activity_content
@@ -702,6 +704,7 @@ id contentPanel
 id coverArt
 id custom
 id customPanel
+id danceabilityNum
 id danceabilityVar
 id decor_content_parent
 id default_activity_button
@@ -710,6 +713,7 @@ id direct
 id disableHome
 id edit_query
 id end
+id energyNum
 id energyVar
 id expand_activities_button
 id expanded_menu
@@ -718,7 +722,6 @@ id fill
 id fill_horizontal
 id fill_vertical
 id forever
-id getArtwork
 id gone
 id group_divider
 id groups
@@ -729,16 +732,20 @@ id icon_group
 id ifRoom
 id image
 id info
+id instrumentalnessNum
 id instrumentalnessVar
 id invisible
 id italic
+id keyNum
 id keyVar
 id left
 id line1
 id line3
 id listMode
 id list_item
+id livenessNum
 id livenessVar
+id loudnessNum
 id loudnessVar
 id message
 id middle
@@ -779,6 +786,7 @@ id showCustom
 id showHome
 id showTitle
 id spacer
+id speechinessNum
 id speechinessVar
 id split_action_bar
 id spread
@@ -794,6 +802,7 @@ id tabMode
 id tag_transition_group
 id tag_unhandled_key_event_manager
 id tag_unhandled_key_listeners
+id tempoNum
 id tempoVar
 id text
 id text2
@@ -808,6 +817,7 @@ id topPanel
 id uniform
 id up
 id useLogo
+id valenceNum
 id valenceVar
 id withText
 id wrap
@@ -859,6 +869,7 @@ layout select_dialog_item_material
 layout select_dialog_multichoice_material
 layout select_dialog_singlechoice_material
 layout support_simple_spinner_dropdown_item
+layout temporary_layout
 mipmap ic_launcher
 mipmap ic_launcher_round
 string abc_action_bar_home_description
@@ -1091,6 +1102,7 @@ style Base_Widget_AppCompat_Spinner_Underlined
 style Base_Widget_AppCompat_TextView_SpinnerItem
 style Base_Widget_AppCompat_Toolbar
 style Base_Widget_AppCompat_Toolbar_Button_Navigation
+style DarkActivity
 style Platform_AppCompat
 style Platform_AppCompat_Light
 style Platform_ThemeOverlay_AppCompat
