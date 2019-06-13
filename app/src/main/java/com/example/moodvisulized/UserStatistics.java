@@ -8,13 +8,10 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
-import android.os.Handler;
-import android.os.Looper;
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.view.Window;
+
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -23,14 +20,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.spotify.android.appremote.api.ConnectionParams;
-import com.spotify.android.appremote.api.Connector;
-import com.spotify.android.appremote.api.SpotifyAppRemote;
-import com.spotify.protocol.client.CallResult;
-import com.spotify.protocol.client.Result;
-import com.spotify.protocol.client.Subscription;
-import com.spotify.protocol.types.Image;
-import com.spotify.protocol.types.PlayerState;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -45,7 +34,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
@@ -81,7 +69,6 @@ public class UserStatistics extends AppCompatActivity {
     private String accessToken;
     private String dateToday = new SimpleDateFormat("MM-dd").
                                                     format(Calendar.getInstance().getTime());
-    private static SpotifyAppRemote spotifyAppRemote; // use this for audio playback routines
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -195,31 +182,7 @@ public class UserStatistics extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        ImageView initImg = (ImageView) findViewById(R.id.coverArt);
-/*
-        // Get access to the spotify app remote
-        ConnectionParams connectionParams =
-                new ConnectionParams.Builder(CLIENT_ID)
-                    .setRedirectUri(REDIRECT_URI)
-                    .showAuthView(true)
-                    .build();
 
-        SpotifyAppRemote.connect(this, connectionParams,
-                new Connector.ConnectionListener() {
-                    @Override
-                    public void onConnected(SpotifyAppRemote spotifyAppRemote) {
-                        Log.d("UserStatistics", "Successful connection to app remote.");
-
-                        //updateUI();
-                        test();
-                    }
-
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        Log.e("UserStatistics", throwable.getMessage(), throwable);
-                    }
-                });
-                */
         updateUI();
 
         System.out.println("onStart END");

@@ -9,9 +9,8 @@ import android.widget.Button;
 // Below are the protocols needed for api calls.
 // Use more as needed to accomplish any task
 
-import com.spotify.protocol.types.Item;
 
-public class MainActivity extends AppCompatActivity implements Item {
+public class MainActivity extends AppCompatActivity {
 
     private Button fetchSpotifyData;
 
