@@ -66,13 +66,10 @@
         android:layout_height="wrap_content"
         android:src="@drawable/mood_image"
 
-        android:scaleType="centerCrop"
+        android:scaleType="fitCenter"
         android:adjustViewBounds="true"
-
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginBottom="0dp"
+        android:maxWidth="640dp"
+        android:maxHeight="640dp"
 
         app:layout_constraintBottom_toTopOf="@id/danceabilityVar"
         app:layout_constraintEnd_toEndOf="parent"
@@ -94,14 +91,7 @@
 
         app:layout_constraintTop_toBottomOf="@id/coverArt"
         app:layout_constraintBottom_toTopOf="@id/danceabilityNum"
-        app:layout_constraintStart_toStartOf="@id/coverArt"
-
-
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="0dp"
-        />
+        app:layout_constraintStart_toStartOf="@id/coverArt" />
 
     <TextView
         android:id="@+id/danceabilityNum"
