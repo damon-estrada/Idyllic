@@ -1,21 +1,12 @@
 package com.example.moodvisulized;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
-
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -23,7 +14,6 @@ import com.google.gson.JsonParser;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
-
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -34,7 +24,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.AudioFeaturesTracks;
@@ -55,10 +44,6 @@ public class UserStatistics extends AppCompatActivity {
     int retry = 0;
     final int retryLimit = 3;
     Bitmap coverArt = null;
-    ImageView coverArt2 = null;
-    Button getArtwork;
-    Button mySavedTracks;
-    Button currentSong;                                     // The current song playing button
     List<Track> userSavedTracks = new ArrayList<>();       // getting all saved tracks
     List<Track> userSongTodayTracks = new ArrayList<>();  // Stores the date everything was added
     List<Track> userTopTracks = new ArrayList<>();       // getting all top song
@@ -83,7 +68,7 @@ public class UserStatistics extends AppCompatActivity {
         AuthenticationRequest.Builder builder =
                 new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
 
-        // IMPORTANT, YOU NEED TO ADD TO THE SCOPES IF YOU WANT TO ACCESS MORE INFO!!!!
+        /* IMPORTANT, YOU NEED TO ADD TO THE SCOPES IF YOU WANT TO ACCESS MORE INFO!!!! */
         builder.setScopes(new String[]{
                 "streaming",                        // Controls the playback of a Spotify track.
                 "user-read-private",               // Read access to user's subscription details.
@@ -97,7 +82,7 @@ public class UserStatistics extends AppCompatActivity {
 
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
 
-        // Get access to spotify services
+        /* Get access to spotify services */
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(SpotifyApi.SPOTIFY_WEB_API_ENDPOINT)
                 .setLogLevel(RestAdapter.LogLevel.FULL)
@@ -110,73 +95,15 @@ public class UserStatistics extends AppCompatActivity {
                 .build();
 
 
-        // If we made it here we are good to go! Start getting service.
+        /* If we made it here we are good to go! Start getting service. */
         spotify = restAdapter.create(SpotifyService.class);
         System.out.println("Connected");
 
-        //mySavedTracks = (Button) findViewById(R.id.mySavedTracks);
-        //currentSong = (Button) findViewById(R.id.currentPlaying);
-        //getArtwork = (Button) findViewById(R.id.getArtwork);
         ImageView initImg = (ImageView) findViewById(R.id.coverArt);
         initImg.setImageResource(R.drawable.mood_image);
 
-/*
-        mySavedTracks.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Runnable runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        getUserTopTracks();
-                        overlay(getImageColors(getTrackAudioFeatures()));
-                    }
-                };
 
-                Thread myThread = new Thread(runnable);
-                myThread.start();
-            }
-        });
-
-        currentSong.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // To prevent locking up the UI, launch a new thread.
-
-                Runnable runGetTracks = new Runnable() {
-                    @Override
-                    public void run() {
-                        getUserSavedLibrary();
-                    }
-                };
-
-                Thread threadGetTracks = new Thread(runGetTracks);
-                threadGetTracks.start();
-
-                Runnable runnable2 = new Runnable() {
-                    @Override
-                    public void run() {
-                        //getCurrentSong(getCurrentSongJSON());
-                    }
-                };
-
-                Thread thread2 = new Thread(runnable2);
-                thread2.start();
-
-            }
-        });
-*/
-
-        /*MonitorVariable var = new MonitorVariable();
-        var.listenForChange(new MonitorVariable() {
-            @Override
-            public void onChange() {
-                onResume();
-            }
-        });
-        */
-
-
-    // End of onCreate
+        System.out.println("End of onCreate()");
     }
 
     @Override
@@ -201,11 +128,11 @@ public class UserStatistics extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
 
-        // disconnect from the app remote when finished
-        //SpotifyAppRemote.disconnect(spotifyAppRemote);
-        //System.out.println("onStop(), DISCONNECTING FROM APP REMOTE");
     }
 
+    /**
+     * This method will call the proper thread ui update so that no crashes happen
+     */
     private void updateUI() {
 
         Runnable getArtwork = new Runnable() {
@@ -408,114 +335,14 @@ public class UserStatistics extends AppCompatActivity {
         }
     }
 
-
     /**
-     * [ acousticness, danceability, duration, energy, instrumentalness,
-     *   loudness, tempo, valence] --> 1, 3, 6, 7 -----> 0, 1, 2, 3, 4
-     *
+     * The current song's JSON file that corresponds to it
+     * @return JSON file
      */
-    public void overlay(ArrayList<Integer> colors) {
-
-        // Get your images from their files
-        try {
-            // Access the drawable resources
-            Resources res = getResources();
-            Drawable dI1 = res.getDrawable(R.drawable.danceability1_img);
-            Drawable dI2 = res.getDrawable(R.drawable.danceability2_img);
-            Drawable eI = res.getDrawable(R.drawable.energy_img);
-            Drawable tI = res.getDrawable(R.drawable.tempo_img);
-            Drawable vI = res.getDrawable(R.drawable.valence_img);
-
-            // Format: 0x   00      00      00      00
-            //              alpha   red     green   blue
-            // (0x00) 0 - 255 (OxFF)
-            dI1.setColorFilter(colors.get(0), PorterDuff.Mode.MULTIPLY);
-            dI2.setColorFilter(colors.get(1), PorterDuff.Mode.MULTIPLY);
-            eI.setColorFilter(colors.get(2), PorterDuff.Mode.MULTIPLY);
-            tI.setColorFilter(colors.get(3), PorterDuff.Mode.MULTIPLY);
-            vI.setColorFilter(colors.get(4), PorterDuff.Mode.MULTIPLY);
-
-            // Create an array of drawable resources.
-            Drawable[] stackImgs = new Drawable[6];
-            stackImgs[0] = res.getDrawable(R.drawable.mood_image);
-            stackImgs[1] = dI1;
-            stackImgs[2] = dI2;
-            stackImgs[3] = eI;
-            stackImgs[4] = tI;
-            stackImgs[5] = vI;
-
-            // Stack the images ontop of each other
-            LayerDrawable layerDrawable = new LayerDrawable(stackImgs);
-            // display the image
-            ImageView imageView = (ImageView) findViewById(R.id.coverArt);
-            imageView.setImageDrawable(layerDrawable);
-
-        } catch (Exception e) {
-            // Path to images not found.
-            System.out.println("IMAGES NOT FOUND: " + e);
-        }
-    }
-
-
-    /**
-     *
-     * @param results Ordered as: [ acousticness, danceability, duration, energy, instrumentalness,
-     *      *                             loudness, tempo, valence]
-     * @return and arraylist of colors computed by parameters to pain the iage.
-     */
-
-    public ArrayList<Integer> getImageColors(ArrayList<Float> results) {
-        ArrayList<Integer> imageColors = new ArrayList<>();
-        System.out.println("danceability 1: " + results.get(1));
-        System.out.println("energy: " + results.get(3));
-        System.out.println("tempo: " + results.get(6));
-        System.out.println("Valence: " + results.get(7));
-
-        for (int i = 0; i < results.size(); i++) {
-            switch (i) {
-                case 2: // danceability [not active = <.50] [Active = >.50]
-                    if (results.get(i) >= 0.5) {
-                        imageColors.add(Color.MAGENTA);
-                        // lighter shade of magenta
-                        imageColors.add(Color.rgb(118, 21, 178));
-                    } else {
-                        //whiteish grey
-                        imageColors.add(Color.rgb(227, 220, 232));
-                        //lighter grey
-                        imageColors.add(Color.rgb(222, 219, 224));
-                    }
-                break;
-                case 3: // energy
-                    if (results.get(i) >= 0.5) {
-                        imageColors.add(Color.RED);
-                    } else {
-                        imageColors.add(Color.rgb(28, 28, 33));
-                    }
-                    break;
-                case 6: // tempo
-                    if (results.get(i) >= 130) {
-                        // blueish
-                        imageColors.add(Color.rgb(0, 225, 255));
-                    } else {
-                        // gray
-                        imageColors.add(Color.rgb(104, 104, 127));
-                    }
-                    break;
-                case 7: // valence
-                    if (results.get(i) >= 0.5) {
-                        // orange
-                        imageColors.add(Color.rgb(255 ,144 ,0));
-                    } else {
-                        imageColors.add(Color.CYAN);
-                    }
-            }
-        }
-        return imageColors;
-    }
-
     private JsonObject getCurrentSongJSON() {
-        // As of May 8, 2019 there is not a way from the kaae wrapper to get current song
-        // Let's roll our own handler.
+        /* As of May 8, 2019 there is not a way from the kaae wrapper to get current song
+           Let's roll our own handler.
+         */
 
         //@GET("https://api.spotify.com/v1/me/player/currently-playing")
         // Full call:
@@ -550,6 +377,10 @@ public class UserStatistics extends AppCompatActivity {
         return rootObj;
     }
 
+    /**
+     * This method will retrieve the url the artwork is located at and store it in coverArt variable
+     * @param jsonData the current playing song's JSON file
+     */
     public void getSongArtwork(JsonObject jsonData) {
         /* Always experience a cache miss, retry since next time a song is playing */
         if (jsonData == null)
@@ -565,7 +396,6 @@ public class UserStatistics extends AppCompatActivity {
                     getAsJsonObject().get("album").
                     getAsJsonObject().get("name");
 
-            //ArrayList<String> imageURIs = new ArrayList<>();
             String imageURL;
             JsonElement imageDetails;
 
@@ -585,101 +415,18 @@ public class UserStatistics extends AppCompatActivity {
 
             InputStream in = new URL(imageURL).openStream();
 
-            // decode bitmap
+            /* Decode bitmap */
             coverArt = BitmapFactory.decodeStream(in);
 
+            /* Re-structure bitmap */
             coverArt = coverArt.createScaledBitmap(coverArt, 900, 900, true);
 
             in.close();
         } catch (Exception e) {e.printStackTrace();}
     }
 
-
-    public String getCurrentSong(String jsonData) {
-        // jsonData has the "item" contents already
-        // since it contains all of the current songs info
-        String trackId = null;
-        try {
-            JsonElement jelement = new JsonParser().parse(jsonData);
-            JsonObject  jobject = jelement.getAsJsonObject();
-            jobject = jobject.getAsJsonObject("album");
-            /*
-            JsonObject  tmp;
-
-            // This is the most outer subsection
-            jobject = jobject.getAsJsonObject("album");
-
-            // This is an example of reading the json file
-            // only if you see [ ] does that mean an array
-            // get the artists section
-            JsonArray jarray = jobject.getAsJsonArray("artists");
-
-            for (int i = 0; i < jarray.size(); i++) {
-                tmp = jarray.get(i).getAsJsonObject();
-                String artistName = tmp.get("name").getAsString();
-                System.out.println("Artist " + (i + 1) + " name: " + artistName);
-            }
-            // get the name of the track
-            System.out.println("Track Name: " + jobject.get("name"));
-            */
-            trackId = jobject.get("id").getAsString();
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return trackId;
-    }
-
     /**
-     * This method will allow use to get the audio analysis for the current playing song
-     * @param trackId The current song playing
-     * @return a json object that we will parse and finally store data
-     */
-    private JsonObject getAudioAnalysisJSON(String trackId) {
-        // As of May 8, 2019 there is not a way from the kaaes wrapper to get audio analysis
-        // Let's roll our own handler
-
-        // This tells the next methoid that the song has no audio analysis
-        JsonObject jsonObj = null;
-        if (trackId == null)
-            return jsonObj;
-
-        //   GET https://api.spotify.com/v1/audio-analysis/{id}
-        // Full call:
-        // GET "https://api.spotify.com/v1/audio-analysis/" -H "Accept: application/json" -H "Content-Type: application/json"
-        //                                                          -H "Authorization: Bearer "
-        String urlStr = "https://api.spotify.com/v1/audio-analysis/" + trackId;
-
-
-
-        try {
-            URL url = new URL(urlStr);
-            URLConnection request = url.openConnection();
-            // I need to tell spotify who I am with my access code
-            request.setRequestProperty("Accept", "application/json");
-            request.setRequestProperty("Content-Type", "application/json");
-            request.setRequestProperty("Authorization", "Bearer " + accessToken);
-
-            request.connect();
-
-            JsonParser parser = new JsonParser(); // From gson
-            JsonElement root = parser.parse(new InputStreamReader((InputStream) request.getContent()));
-            jsonObj = root.getAsJsonObject();
-
-            // Return the whole JSON object. Will parse in another method
-            System.out.println(jsonObj);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return jsonObj;
-    }
-
-    /**
-     *
+     * This method will handle acccessToken or failure as necessary
      * @param requestCode
      * @param resultCode
      * @param intent
@@ -687,24 +434,24 @@ public class UserStatistics extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
 
-        // Check if result comes from the correct activity
+        /* Check if result comes from the correct activity */
         if (requestCode == REQUEST_CODE) {
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
 
             switch (response.getType()) {
-                // Response was successful and contains auth token
+                /* Response was successful and contains auth token */
                 case TOKEN:
-                    // Handle successful response
+                    /* Handle successful response */
                     accessToken = response.getAccessToken();
                     break;
 
-                // Auth flow returned an error
+                /* Auth flow returned an error */
                 case ERROR:
-                    // Handle error response
+                    /* Handle error response */
                     System.out.println("We reached a failure in onActivityResult method");
                     break;
 
-                // Most likely auth flow was cancelled
+                /* Most likely auth flow was cancelled */
                 default:
                     // Handle other cases
             }
