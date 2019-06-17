@@ -3,6 +3,9 @@ package com.example.moodvisulized;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Credentials;
+import android.os.AsyncTask;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,26 +35,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import kaaes.spotify.webapi.android.SpotifyApi;
+import kaaes.spotify.webapi.android.SpotifyCallback;
+import kaaes.spotify.webapi.android.SpotifyError;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.AudioFeaturesTrack;
 import kaaes.spotify.webapi.android.models.AudioFeaturesTracks;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.SavedTrack;
 import kaaes.spotify.webapi.android.models.Track;
+import kaaes.spotify.webapi.android.models.UserPrivate;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class UserStatistics extends AppCompatActivity {
 
-    private static final int REQUEST_CODE = 1003;
+    private static final int REQUEST_CODE = 1337;
     private static final String CLIENT_ID = "0184658057ca400693856a596026419b";
     private static final String REDIRECT_URI = "moodvisualized://callback";
 
-    int retry = 0;
-    final int retryLimit = 3;
     Bitmap coverArt = null;
     List<Track> userSavedTracks = new ArrayList<>();       // getting all saved tracks
     List<Track> userSongTodayTracks = new ArrayList<>();  // Stores the date everything was added
@@ -60,14 +67,12 @@ public class UserStatistics extends AppCompatActivity {
     SpotifyService spotify;                            // Service variable
     private SpotifyAppRemote mSpotifyAppRemote;       // the app remote
 
-    String lastTrack = "";
     String currentTrack = "";
-    private String accessToken;
+    private String accessToken = null;
     private String dateToday = new SimpleDateFormat("MM-dd").
                                                     format(Calendar.getInstance().getTime());
 
-    private String currentTrackId = ""; // The track Id for the current song playing
-    private String currentTrackImageURI = ""; // the tracks coverart
+    private String currentTrackUri = ""; // The track Id for the current song playing
     private ArrayList<Float> curTrackAudioFet = new ArrayList<>(); // current track audio features.
     ImageView coverArtImg;
 
@@ -92,7 +97,8 @@ public class UserStatistics extends AppCompatActivity {
                 "user-top-read",                 // Read access to a user's top artists/tracks.
                 "user-library-read",            // Permission to see user's library.
                 "user-read-currently-playing", // Permission to see what user is currently playing.
-                "user-read-playback-state"    // To read information on playerState
+                "user-read-playback-state",   // To read information on playerState
+                "app-remote-control"
         });
         AuthenticationRequest request = builder.build();
 
@@ -117,12 +123,7 @@ public class UserStatistics extends AppCompatActivity {
         coverArtImg = (ImageView) findViewById(R.id.coverArt);
         coverArtImg.setImageResource(R.drawable.mood_image);
 
-        /* default values for the ui */
-        TextView defaultVal = (TextView) findViewById(R.id.danceabilityNum);
-        defaultVal.setText("0");
 
-
-        System.out.println("End of onCreate()");
     }
 
     @Override
@@ -142,6 +143,15 @@ public class UserStatistics extends AppCompatActivity {
                 mSpotifyAppRemote = spotifyAppRemote;
                 Log.d("UserStatistics", "App remote Connected!");
                 connected();
+                Runnable fetchInfo = new Runnable() {
+                    @Override
+                    public void run() {
+                        getSongArtwork(getCurrentSongJSON());
+                    }
+                };
+
+                Thread fit = new Thread(fetchInfo);
+                fit.start();
             }
 
             @Override
@@ -150,7 +160,7 @@ public class UserStatistics extends AppCompatActivity {
             }
         });
 
-        //updateTrackValUI();
+        Log.d("UserStatistics", "size of array: " + curTrackAudioFet.size());
     }
 
     @Override
@@ -176,106 +186,26 @@ public class UserStatistics extends AppCompatActivity {
         mSpotifyAppRemote.getPlayerApi()
                 .subscribeToPlayerState()
                 .setEventCallback(playerState -> {
-                   final com.spotify.protocol.types.Track track = playerState.track;
-                   currentTrackId = playerState.track.uri;
-                   if (track != null) {
-                       Log.d("UserStatistics", track.name + " by " + track.artist.name);
-                   }
+                    final com.spotify.protocol.types.Track track = playerState.track;
+                    currentTrackUri = playerState.track.uri;
+                    Log.d("US", "TRACK URI: " + currentTrackUri);
 
-                   /* Get the cover art of the current playing song */
-                   mSpotifyAppRemote.getImagesApi()
-                           .getImage(playerState.track.imageUri, Image.Dimension.LARGE)
-                           .setResultCallback(bitmap -> {
-                               coverArtImg.setImageBitmap(bitmap);
-                           });
+                    /* Get the cover art of the current playing song */
+                    mSpotifyAppRemote.getImagesApi()
+                            .getImage(playerState.track.imageUri, Image.Dimension.LARGE)
+                            .setResultCallback(bitmap -> {
+                                coverArtImg.setImageBitmap(bitmap);
+                            });
+
                 });
-
-
-
     }
 
-    /**
-     * This method will call the proper thread ui update so that no crashes happen
-     */
-    private void updateArtworkUI() {
 
-        Runnable getArtwork = new Runnable() {
-            @Override
-            public void run() {
-                /* Get the artwork for the current song playing */
-                /* Keep looking until song starts playing */
-                while (true) {
-                    try {
-                        lastTrack = currentTrack;
-                        getSongArtwork(getCurrentSongJSON());
-                        break;
-                    } catch (Exception e) {
-                        if (retry == retryLimit)
-                            throw e;
-                        System.out.println("RETRYING: count: " + (retry + 1));
-                        retry++;
-                    }
-                }
-
-                /* Update the UI with the current songs cover art */
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ImageView update = (ImageView) findViewById(R.id.coverArt);
-                        update.setImageBitmap(coverArt);
-                    }
-                });
-            }
-        };
-        Thread threadGetArtwork = new Thread(getArtwork);
-        threadGetArtwork.start();
-    }
-
-    /**
-     * This method will call the proper thread ui update so that no crashes happen for updating
-     * track audio analysis values.
-     */
-    private void updateTrackValUI() {
-
-        System.out.println("Size of array: " + curTrackAudioFet.size());
-
-        Runnable getAudioAnalysis = new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        getTrackAudioFeatures(currentTrackId);
-                        break;
-                    } catch (Exception e) {
-                        if (retry == retryLimit)
-                            throw e;
-                        System.out.println("RETRYING: count: " + (retry + 1));
-                        retry++;
-                    }
-                }
-
-                /* Update the UI with the current songs cover art */
-
-
-                //runOnUiThread(new Runnable() {
-                  //  @Override
-                    //public void run() {
-                      //  /* Update the values on the ui  for the current song */
-                        //TextView updateNum = (TextView) findViewById(R.id.danceabilityNum);
-                        //updateNum.setText(String.format("%s", curTrackAudioFet.get(0).toString()));
-                    //}
-                //});
-            }
-        };
-        Thread threadGetAnalysis = new Thread(getAudioAnalysis);
-        threadGetAnalysis.start();
-    }
 
     /**
      * Get audio analysis for the song that is playing right now
      */
-    public void getTrackAudioFeatures(String currentTrack) {
+    public void getTrackAudioFeatures() {
         float danceability = 0;
         float liveness = 0;
         float valence = 0;
@@ -290,8 +220,8 @@ public class UserStatistics extends AppCompatActivity {
 
 
         try {
-
-            AudioFeaturesTrack trackAudioFeatures = spotify.getTrackAudioFeatures(currentTrack);
+            Track track = spotify.getTrack("4s2BWgnSQ9NZiOQM4PP4HB");
+            AudioFeaturesTrack trackAudioFeatures = spotify.getTrackAudioFeatures(track.uri);
 
             danceability = trackAudioFeatures.danceability;
             liveness = trackAudioFeatures.liveness;
@@ -319,9 +249,11 @@ public class UserStatistics extends AppCompatActivity {
 
             System.out.println("Array size inside METHOD: " + curTrackAudioFet.size());
 
+
         } catch (RetrofitError e) {
-            System.out.println(e.getResponse().getStatus());
-            System.out.println(e.getResponse().getReason());
+            e.getBody();
+            e.getResponse();
+
         }
     }
 
@@ -525,11 +457,11 @@ public class UserStatistics extends AppCompatActivity {
             /* Lets clean up the URL by stripping the " occurances */
             imageURL = imageURL.replace("\"", "");
             currentTrack = trackName.toString().replace("\"", "");
-            currentTrackId = trackId.toString().replace("\"", "");
+            currentTrackUri = trackId.toString().replace("\"", "");
 
             System.out.println("URL: " + imageURL);
             System.out.println("Current Track: " + currentTrack);
-            System.out.println("Current Track ID: " + currentTrackId);
+            System.out.println("Current Track Uri: " + currentTrackUri);
 
             InputStream in = new URL(imageURL).openStream();
 
@@ -560,6 +492,7 @@ public class UserStatistics extends AppCompatActivity {
                 /* Response was successful and contains auth token */
                 case TOKEN:
                     /* Handle successful response */
+                    Log.d("UserStatistics", "Auth token given!: " + response.getAccessToken());
                     accessToken = response.getAccessToken();
                     break;
 

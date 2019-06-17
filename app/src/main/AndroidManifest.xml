@@ -14,7 +14,6 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".UserStatistics"
-
         />
         <activity android:name=".MainActivity">
             <intent-filter>
