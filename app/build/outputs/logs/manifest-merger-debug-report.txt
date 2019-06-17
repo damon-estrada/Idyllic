@@ -7,6 +7,7 @@ INJECTED from /home/damon/Desktop/mood-visualization/app/src/main/AndroidManifes
 MERGED from [com.android.support:appcompat-v7:28.0.0] /home/damon/.gradle/caches/transforms-2/files-2.1/28a09e283f2c98d6fb2e19691e56cfbc/AndroidManifest.xml:17:1-22:12
 MERGED from [com.android.support.constraint:constraint-layout:1.1.3] /home/damon/.gradle/caches/transforms-2/files-2.1/0b0cf9e70a93b3f70ae4b189751fbccb/AndroidManifest.xml:2:1-11:12
 MERGED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:22:1-55:12
+MERGED from [:spotify-app-remote] /home/damon/.gradle/caches/transforms-2/files-2.1/84af9e9b5b3008760778095a3cce2f4f/AndroidManifest.xml:22:1-33:12
 MERGED from [com.github.kaaes:spotify-web-api-android:0.4.1] /home/damon/.gradle/caches/transforms-2/files-2.1/13ac0fc9fa3ae060120a13c5a1a1b6ba/AndroidManifest.xml:2:1-13:12
 MERGED from [com.spotify.android:auth:1.1.0] /home/damon/.gradle/caches/transforms-2/files-2.1/27708dc4ba273963fa6d8c1d9aa94889/AndroidManifest.xml:22:1-55:12
 MERGED from [com.android.support:support-fragment:28.0.0] /home/damon/.gradle/caches/transforms-2/files-2.1/ac7ccf62e6e517c00137fdb6b2b59125/AndroidManifest.xml:17:1-22:12
@@ -70,6 +71,8 @@ MERGED from [com.android.support.constraint:constraint-layout:1.1.3] /home/damon
 MERGED from [com.android.support.constraint:constraint-layout:1.1.3] /home/damon/.gradle/caches/transforms-2/files-2.1/0b0cf9e70a93b3f70ae4b189751fbccb/AndroidManifest.xml:9:5-20
 MERGED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:33:5-53:19
 MERGED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:33:5-53:19
+MERGED from [:spotify-app-remote] /home/damon/.gradle/caches/transforms-2/files-2.1/84af9e9b5b3008760778095a3cce2f4f/AndroidManifest.xml:31:5-20
+MERGED from [:spotify-app-remote] /home/damon/.gradle/caches/transforms-2/files-2.1/84af9e9b5b3008760778095a3cce2f4f/AndroidManifest.xml:31:5-20
 MERGED from [com.github.kaaes:spotify-web-api-android:0.4.1] /home/damon/.gradle/caches/transforms-2/files-2.1/13ac0fc9fa3ae060120a13c5a1a1b6ba/AndroidManifest.xml:11:5-20
 MERGED from [com.github.kaaes:spotify-web-api-android:0.4.1] /home/damon/.gradle/caches/transforms-2/files-2.1/13ac0fc9fa3ae060120a13c5a1a1b6ba/AndroidManifest.xml:11:5-20
 MERGED from [com.spotify.android:auth:1.1.0] /home/damon/.gradle/caches/transforms-2/files-2.1/27708dc4ba273963fa6d8c1d9aa94889/AndroidManifest.xml:33:5-53:19
@@ -131,6 +134,8 @@ MERGED from [com.android.support.constraint:constraint-layout:1.1.3] /home/damon
 MERGED from [com.android.support.constraint:constraint-layout:1.1.3] /home/damon/.gradle/caches/transforms-2/files-2.1/0b0cf9e70a93b3f70ae4b189751fbccb/AndroidManifest.xml:5:5-7:41
 MERGED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:27:5-29:41
 MERGED from [:auth_lib] /home/damon/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/AndroidManifest.xml:27:5-29:41
+MERGED from [:spotify-app-remote] /home/damon/.gradle/caches/transforms-2/files-2.1/84af9e9b5b3008760778095a3cce2f4f/AndroidManifest.xml:27:5-29:41
+MERGED from [:spotify-app-remote] /home/damon/.gradle/caches/transforms-2/files-2.1/84af9e9b5b3008760778095a3cce2f4f/AndroidManifest.xml:27:5-29:41
 MERGED from [com.github.kaaes:spotify-web-api-android:0.4.1] /home/damon/.gradle/caches/transforms-2/files-2.1/13ac0fc9fa3ae060120a13c5a1a1b6ba/AndroidManifest.xml:6:5-8:41
 MERGED from [com.github.kaaes:spotify-web-api-android:0.4.1] /home/damon/.gradle/caches/transforms-2/files-2.1/13ac0fc9fa3ae060120a13c5a1a1b6ba/AndroidManifest.xml:6:5-8:41
 MERGED from [com.spotify.android:auth:1.1.0] /home/damon/.gradle/caches/transforms-2/files-2.1/27708dc4ba273963fa6d8c1d9aa94889/AndroidManifest.xml:27:5-29:41

@@ -31,9 +31,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
+    protected void onStart() {super.onStart();}
 
     public void toSpotifyData(View view) {
         Intent intent = new Intent(this, UserStatistics.class);

@@ -5,12 +5,19 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.spotify.android.appremote.api.ConnectionParams;
+import com.spotify.android.appremote.api.Connector;
+import com.spotify.android.appremote.api.SpotifyAppRemote;
+import com.spotify.protocol.types.Image;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -23,9 +30,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.AudioFeaturesTrack;
 import kaaes.spotify.webapi.android.models.AudioFeaturesTracks;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.SavedTrack;
@@ -49,11 +58,18 @@ public class UserStatistics extends AppCompatActivity {
     List<Track> userTopTracks = new ArrayList<>();       // getting all top song
     Map<String, Object> options = new HashMap<String, Object>();     // for each call
     SpotifyService spotify;                            // Service variable
+    private SpotifyAppRemote mSpotifyAppRemote;       // the app remote
+
     String lastTrack = "";
     String currentTrack = "";
     private String accessToken;
     private String dateToday = new SimpleDateFormat("MM-dd").
                                                     format(Calendar.getInstance().getTime());
+
+    private String currentTrackId = ""; // The track Id for the current song playing
+    private String currentTrackImageURI = ""; // the tracks coverart
+    private ArrayList<Float> curTrackAudioFet = new ArrayList<>(); // current track audio features.
+    ImageView coverArtImg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,13 +110,16 @@ public class UserStatistics extends AppCompatActivity {
                 })
                 .build();
 
-
         /* If we made it here we are good to go! Start getting service. */
         spotify = restAdapter.create(SpotifyService.class);
         System.out.println("Connected");
 
-        ImageView initImg = (ImageView) findViewById(R.id.coverArt);
-        initImg.setImageResource(R.drawable.mood_image);
+        coverArtImg = (ImageView) findViewById(R.id.coverArt);
+        coverArtImg.setImageResource(R.drawable.mood_image);
+
+        /* default values for the ui */
+        TextView defaultVal = (TextView) findViewById(R.id.danceabilityNum);
+        defaultVal.setText("0");
 
 
         System.out.println("End of onCreate()");
@@ -110,16 +129,34 @@ public class UserStatistics extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        updateUI();
+        /* Set the connection parameters */
+        ConnectionParams connectionParams =
+                new ConnectionParams.Builder(CLIENT_ID)
+                .setRedirectUri(REDIRECT_URI)
+                .showAuthView(true)
+                .build();
 
-        System.out.println("onStart END");
+        SpotifyAppRemote.connect(this, connectionParams, new Connector.ConnectionListener() {
+            @Override
+            public void onConnected(SpotifyAppRemote spotifyAppRemote) {
+                mSpotifyAppRemote = spotifyAppRemote;
+                Log.d("UserStatistics", "App remote Connected!");
+                connected();
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                Log.e("UserStatistics", throwable.getMessage(), throwable);
+            }
+        });
+
+        //updateTrackValUI();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        updateUI();
+        //updateTrackValUI();
 
         System.out.println("Resume end");
     }
@@ -127,13 +164,40 @@ public class UserStatistics extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        /* When app not in use, disconnect, might change if we need it for longer */
+        SpotifyAppRemote.disconnect(mSpotifyAppRemote);
+    }
+
+    /**
+     * This method will subscribe to the player state for future use
+     */
+    private void connected() {
+        /* Subscribe to the PlayerState */
+        mSpotifyAppRemote.getPlayerApi()
+                .subscribeToPlayerState()
+                .setEventCallback(playerState -> {
+                   final com.spotify.protocol.types.Track track = playerState.track;
+                   currentTrackId = playerState.track.uri;
+                   if (track != null) {
+                       Log.d("UserStatistics", track.name + " by " + track.artist.name);
+                   }
+
+                   /* Get the cover art of the current playing song */
+                   mSpotifyAppRemote.getImagesApi()
+                           .getImage(playerState.track.imageUri, Image.Dimension.LARGE)
+                           .setResultCallback(bitmap -> {
+                               coverArtImg.setImageBitmap(bitmap);
+                           });
+                });
+
+
 
     }
 
     /**
      * This method will call the proper thread ui update so that no crashes happen
      */
-    private void updateUI() {
+    private void updateArtworkUI() {
 
         Runnable getArtwork = new Runnable() {
             @Override
@@ -166,52 +230,99 @@ public class UserStatistics extends AppCompatActivity {
         };
         Thread threadGetArtwork = new Thread(getArtwork);
         threadGetArtwork.start();
-
     }
 
-    public ArrayList<Float> getTrackAudioFeatures() {
-        ArrayList<Float> results = new ArrayList<>();
-        float acousticness = 0; // 0.0 - 1.0 (acoustic)
-        //android.os.Parcelable.Creator<AudioFeaturesTrack> creator;
-        float danceability = 0; // (not danceable) 0.0 - 1.0 (danceable)
-        int durationMs = 0; // How long the song is in ms
-        float energy = 0;   // 0.0 - 1.0 (loud, fast, noisy)
-        float instrumentalness = 0; // (vocals present) 0.0 - 1.0 (no vocal content)
-        float loudness = 0; // -60 - 0 (how loud a song is)
-        float tempo = 0;  // BPM measured in each song
-        float valence = 0; // (angry, depresses, sad ) 0.0 - 1.0 (most positive, happy, cheerful track)
+    /**
+     * This method will call the proper thread ui update so that no crashes happen for updating
+     * track audio analysis values.
+     */
+    private void updateTrackValUI() {
+
+        System.out.println("Size of array: " + curTrackAudioFet.size());
+
+        Runnable getAudioAnalysis = new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        getTrackAudioFeatures(currentTrackId);
+                        break;
+                    } catch (Exception e) {
+                        if (retry == retryLimit)
+                            throw e;
+                        System.out.println("RETRYING: count: " + (retry + 1));
+                        retry++;
+                    }
+                }
+
+                /* Update the UI with the current songs cover art */
+
+
+                //runOnUiThread(new Runnable() {
+                  //  @Override
+                    //public void run() {
+                      //  /* Update the values on the ui  for the current song */
+                        //TextView updateNum = (TextView) findViewById(R.id.danceabilityNum);
+                        //updateNum.setText(String.format("%s", curTrackAudioFet.get(0).toString()));
+                    //}
+                //});
+            }
+        };
+        Thread threadGetAnalysis = new Thread(getAudioAnalysis);
+        threadGetAnalysis.start();
+    }
+
+    /**
+     * Get audio analysis for the song that is playing right now
+     */
+    public void getTrackAudioFeatures(String currentTrack) {
+        float danceability = 0;
+        float liveness = 0;
+        float valence = 0;
+        float speechiness = 0;
+        float instrumentalness = 0;
+
+        float loudness = 0;
+        float key = 0;
+        float energy = 0;
+        float tempo = 0;
+        float acousticness = 0;
+
 
         try {
-            int totalTracks = userTopTracks.size();
 
-            // Compute for all parameters above
-            for (Track track : userTopTracks) {
-                AudioFeaturesTracks audioFeaturesTracks = spotify.getTracksAudioFeatures(track.id);
+            AudioFeaturesTrack trackAudioFeatures = spotify.getTrackAudioFeatures(currentTrack);
 
-                acousticness += audioFeaturesTracks.audio_features.get(0).acousticness;
-                danceability += audioFeaturesTracks.audio_features.get(0).danceability;
-                durationMs += audioFeaturesTracks.audio_features.get(0).duration_ms;
-                energy += audioFeaturesTracks.audio_features.get(0).energy;
-                instrumentalness += audioFeaturesTracks.audio_features.get(0).instrumentalness;
-                loudness += audioFeaturesTracks.audio_features.get(0).loudness;
-                tempo += audioFeaturesTracks.audio_features.get(0).tempo;
-                valence += audioFeaturesTracks.audio_features.get(0).valence;
-            }
-            results.add(acousticness / totalTracks);
-            results.add(danceability / totalTracks);
-            results.add( (float) (durationMs / totalTracks) );
-            results.add(energy / totalTracks);
-            results.add(instrumentalness / totalTracks);
-            results.add(loudness / totalTracks);
-            results.add(tempo / totalTracks);
-            results.add(valence / totalTracks);
+            danceability = trackAudioFeatures.danceability;
+            liveness = trackAudioFeatures.liveness;
+            valence = trackAudioFeatures.liveness;
+            speechiness = trackAudioFeatures.speechiness;
+            instrumentalness = trackAudioFeatures.instrumentalness;
+
+            loudness = trackAudioFeatures.loudness;
+            key = trackAudioFeatures.key;
+            energy = trackAudioFeatures.energy;
+            tempo = trackAudioFeatures.tempo;
+            acousticness = trackAudioFeatures.acousticness;
+
+            curTrackAudioFet.add(danceability);
+            curTrackAudioFet.add(liveness);
+            curTrackAudioFet.add(valence);
+            curTrackAudioFet.add(speechiness);
+            curTrackAudioFet.add(instrumentalness);
+
+            curTrackAudioFet.add(loudness);
+            curTrackAudioFet.add(key);
+            curTrackAudioFet.add(energy);
+            curTrackAudioFet.add(tempo);
+            curTrackAudioFet.add(acousticness);
+
+            System.out.println("Array size inside METHOD: " + curTrackAudioFet.size());
 
         } catch (RetrofitError e) {
             System.out.println(e.getResponse().getStatus());
             System.out.println(e.getResponse().getReason());
         }
-
-        return results;
     }
 
     /**
@@ -392,9 +503,14 @@ public class UserStatistics extends AppCompatActivity {
                     getAsJsonObject().get("album").
                     getAsJsonObject().get("images");
 
+            /* This will get the "name" section from the json file */
             JsonElement trackName = jsonData.get("item").
                     getAsJsonObject().get("album").
                     getAsJsonObject().get("name");
+
+            /* This will get the "track id" section from the json file */
+            JsonElement trackId = jsonData.get("item").
+                    getAsJsonObject().get("id");
 
             String imageURL;
             JsonElement imageDetails;
@@ -409,9 +525,11 @@ public class UserStatistics extends AppCompatActivity {
             /* Lets clean up the URL by stripping the " occurances */
             imageURL = imageURL.replace("\"", "");
             currentTrack = trackName.toString().replace("\"", "");
+            currentTrackId = trackId.toString().replace("\"", "");
 
             System.out.println("URL: " + imageURL);
             System.out.println("Current Track: " + currentTrack);
+            System.out.println("Current Track ID: " + currentTrackId);
 
             InputStream in = new URL(imageURL).openStream();
 
