@@ -75,6 +75,7 @@ public class UserStatistics extends AppCompatActivity {
     private String currentTrackUri = ""; // The track Id for the current song playing
     private ArrayList<Float> curTrackAudioFet = new ArrayList<>(); // current track audio features.
     ImageView coverArtImg;
+    TextView updateTxt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +99,6 @@ public class UserStatistics extends AppCompatActivity {
                 "user-library-read",            // Permission to see user's library.
                 "user-read-currently-playing", // Permission to see what user is currently playing.
                 "user-read-playback-state",   // To read information on playerState
-                "app-remote-control"
         });
         AuthenticationRequest request = builder.build();
 
@@ -122,8 +122,6 @@ public class UserStatistics extends AppCompatActivity {
 
         coverArtImg = (ImageView) findViewById(R.id.coverArt);
         coverArtImg.setImageResource(R.drawable.mood_image);
-
-
     }
 
     @Override
@@ -143,15 +141,17 @@ public class UserStatistics extends AppCompatActivity {
                 mSpotifyAppRemote = spotifyAppRemote;
                 Log.d("UserStatistics", "App remote Connected!");
                 connected();
-                Runnable fetchInfo = new Runnable() {
+
+                System.out.println("TESTING: " + curTrackAudioFet.size());
+
+                runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        getSongArtwork(getCurrentSongJSON());
+                        updateTxt = (TextView) findViewById(R.id.danceabilityNum);
+                        updateTxt.setText(String.format("%s", 122));
                     }
-                };
+                });
 
-                Thread fit = new Thread(fetchInfo);
-                fit.start();
             }
 
             @Override
@@ -160,7 +160,6 @@ public class UserStatistics extends AppCompatActivity {
             }
         });
 
-        Log.d("UserStatistics", "size of array: " + curTrackAudioFet.size());
     }
 
     @Override
@@ -181,14 +180,33 @@ public class UserStatistics extends AppCompatActivity {
     /**
      * This method will subscribe to the player state for future use
      */
-    private void connected() {
+    public void connected() {
         /* Subscribe to the PlayerState */
         mSpotifyAppRemote.getPlayerApi()
                 .subscribeToPlayerState()
                 .setEventCallback(playerState -> {
-                    final com.spotify.protocol.types.Track track = playerState.track;
+
+                    /* get current track uri */
                     currentTrackUri = playerState.track.uri;
+
+                    /* just get the uri, done twince since two ':' */
+                    currentTrackUri = currentTrackUri.substring(currentTrackUri.indexOf(":") + 1);
+                    currentTrackUri = currentTrackUri.substring(currentTrackUri.indexOf(":") + 1);
                     Log.d("US", "TRACK URI: " + currentTrackUri);
+
+                    /* get the analysis of the current song */
+                    Runnable fetchInfo = new Runnable() {
+                        @Override
+                        public void run() {
+                            getTrackAudioFeatures();
+                            Log.d("UserStatistics", "size of array: " + curTrackAudioFet.size());
+                            //updateTxt = (TextView) findViewById(R.id.livenessNum);
+                            //updateTxt.setText(curTrackAudioFet.get(0).toString());
+                        }
+                    };
+
+                    Thread fit = new Thread(fetchInfo);
+                    fit.start();
 
                     /* Get the cover art of the current playing song */
                     mSpotifyAppRemote.getImagesApi()
@@ -196,11 +214,8 @@ public class UserStatistics extends AppCompatActivity {
                             .setResultCallback(bitmap -> {
                                 coverArtImg.setImageBitmap(bitmap);
                             });
-
                 });
     }
-
-
 
     /**
      * Get audio analysis for the song that is playing right now
@@ -220,12 +235,11 @@ public class UserStatistics extends AppCompatActivity {
 
 
         try {
-            Track track = spotify.getTrack("4s2BWgnSQ9NZiOQM4PP4HB");
-            AudioFeaturesTrack trackAudioFeatures = spotify.getTrackAudioFeatures(track.uri);
+            AudioFeaturesTrack trackAudioFeatures = spotify.getTrackAudioFeatures(currentTrackUri);
 
             danceability = trackAudioFeatures.danceability;
             liveness = trackAudioFeatures.liveness;
-            valence = trackAudioFeatures.liveness;
+            valence = trackAudioFeatures.valence;
             speechiness = trackAudioFeatures.speechiness;
             instrumentalness = trackAudioFeatures.instrumentalness;
 
@@ -247,8 +261,9 @@ public class UserStatistics extends AppCompatActivity {
             curTrackAudioFet.add(tempo);
             curTrackAudioFet.add(acousticness);
 
-            System.out.println("Array size inside METHOD: " + curTrackAudioFet.size());
-
+            for (int i = 0; i < curTrackAudioFet.size(); i++) {
+                Log.d("element: ", i + " = " + curTrackAudioFet.get(i) );
+            }
 
         } catch (RetrofitError e) {
             e.getBody();
