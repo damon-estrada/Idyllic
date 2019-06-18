@@ -352,9 +352,12 @@ public class UserStatistics extends AppCompatActivity {
                     activity.updateTxt = (TextView) activity.uiElements.get(i);
                     activity.updateTxt.setText(String.format(java.util.Locale.US,"%.5s%%", trackFeatures.get(i).toString()));
 
-                } else if (i == 5 || i == 8) {
+                } else if (i == 8) {
                     activity.updateTxt = (TextView) activity.uiElements.get(i);
                     activity.updateTxt.setText(String.format(java.util.Locale.US,"%.5s", trackFeatures.get(i).toString()));
+                } else if (i == 5) {
+                    activity.updateTxt = (TextView) activity.uiElements.get(i);
+                    activity.updateTxt.setText(String.format(java.util.Locale.US,"%.5s dB", trackFeatures.get(i).toString()));
                 } else {
                     activity.updateTxt = (TextView) activity.uiElements.get(i);
                     switch (Math.round(trackFeatures.get(i))) {
