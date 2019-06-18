@@ -207,26 +207,15 @@ public class UserStatistics extends AppCompatActivity {
                     currentTrackUri = currentTrackUri.substring(currentTrackUri.indexOf(":") + 1);
                     currentTrackUri = currentTrackUri.substring(currentTrackUri.indexOf(":") + 1);
 
-                    /* get the analysis of the current song
-                    Runnable fetchInfo = new Runnable() {
-                        @Override
-                        public void run() {
-                            getTrackAudioFeatures();
-                        }
-                   };
-
-                    Thread fit = new Thread(fetchInfo);
-                    fit.start();
-                    */
-
-                    beginAsyncTask();
-
                     /* Get the cover art of the current playing song */
                     mSpotifyAppRemote.getImagesApi()
                             .getImage(playerState.track.imageUri, Image.Dimension.LARGE)
                             .setResultCallback(bitmap -> {
                                 coverArtImg.setImageBitmap(bitmap);
                             });
+
+                    /* grab current track features and update the UI with these details */
+                    beginAsyncTask();
                 });
     }
 
@@ -247,63 +236,42 @@ public class UserStatistics extends AppCompatActivity {
         float acousticness = 0;
         int retryCount = 0;
         int maxAttempt = 3;
-        ArrayList<Float> trackFeatures = new ArrayList<Float>();
+        ArrayList<Float> trackFeatures = new ArrayList<>();
 
-        while (true) {
-            try {
+        try {
 
-                AudioFeaturesTrack trackAudioFeatures = spotify.getTrackAudioFeatures(currentTrackUri);
+            AudioFeaturesTrack trackAudioFeatures = spotify.getTrackAudioFeatures(currentTrackUri);
 
-                danceability = trackAudioFeatures.danceability;
-                liveness = trackAudioFeatures.liveness;
-                valence = trackAudioFeatures.valence;
-                speechiness = trackAudioFeatures.speechiness;
-                instrumentalness = trackAudioFeatures.instrumentalness;
+            danceability = trackAudioFeatures.danceability;
+            liveness = trackAudioFeatures.liveness;
+            valence = trackAudioFeatures.valence;
+            speechiness = trackAudioFeatures.speechiness;
+            instrumentalness = trackAudioFeatures.instrumentalness;
 
-                loudness = trackAudioFeatures.loudness;
-                key = trackAudioFeatures.key;
-                energy = trackAudioFeatures.energy;
-                tempo = trackAudioFeatures.tempo;
-                acousticness = trackAudioFeatures.acousticness;
+            loudness = trackAudioFeatures.loudness;
+            key = trackAudioFeatures.key;
+            energy = trackAudioFeatures.energy;
+            tempo = trackAudioFeatures.tempo;
+            acousticness = trackAudioFeatures.acousticness;
 
-                trackFeatures.add(danceability);
-                trackFeatures.add(liveness);
-                trackFeatures.add(valence);
-                trackFeatures.add(speechiness);
-                trackFeatures.add(instrumentalness);
+            trackFeatures.add(danceability);
+            trackFeatures.add(liveness);
+            trackFeatures.add(valence);
+            trackFeatures.add(speechiness);
+            trackFeatures.add(instrumentalness);
 
-                trackFeatures.add(loudness);
-                trackFeatures.add(key);
-                trackFeatures.add(energy);
-                trackFeatures.add(tempo);
-                trackFeatures.add(acousticness);
+            trackFeatures.add(loudness);
+            trackFeatures.add(key);
+            trackFeatures.add(energy);
+            trackFeatures.add(tempo);
+            trackFeatures.add(acousticness);
 
-                /*
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        for (int i = 0; i < curTrackAudioFet.size(); i++) {
-                            Log.d("getAudioFet...", "i: " + i);
-                            updateTxt = (TextView) uiElements.get(i);
-                            */
-                            //updateTxt.setText(String.format("%s", curTrackAudioFet.get(i).toString()));
-                            /*updateTxt.setText(curTrackAudioFet.get(i).toString());
-                        }
-                        */
-                        /* Purge the array list after finished */
-                        curTrackAudioFet.clear();
-                    /*}
-                });
-                */
+            curTrackAudioFet.clear();
 
-                break;
 
-            } catch (RetrofitError e) {
-                if (retryCount == maxAttempt) {
-                    e.getBody();
-                    e.getResponse();
-                } else {retryCount++; Log.d("getTrackAudioFeatures()", "Retry count: " + retryCount);}
-            }
+        } catch (RetrofitError e) {
+            e.getBody();
+            e.getResponse();
         }
         return trackFeatures;
     }
@@ -373,8 +341,53 @@ public class UserStatistics extends AppCompatActivity {
             }
 
             for (int i = 0; i < trackFeatures.size(); i++) {
-                activity.updateTxt = (TextView) activity.uiElements.get(i);
-                activity.updateTxt.setText(String.format("%s", trackFeatures.get(i).toString()));
+                /* correctly identify the key rather than put a number */
+                if (i == 6) {
+                    activity.updateTxt = (TextView) activity.uiElements.get(i);
+                    switch (Math.round(trackFeatures.get(i))) {
+                        case 0:
+                            activity.updateTxt.setText(String.format("%s", KeyIdentifier.C.stringIdentifier()));
+                            break;
+                        case 1:
+                            activity.updateTxt.setText(String.format("%s", KeyIdentifier.CSHARP.stringIdentifier()));
+                            break;
+                        case 2:
+                            activity.updateTxt.setText(String.format("%s", KeyIdentifier.D.stringIdentifier()));
+                            break;
+                        case 3:
+                            activity.updateTxt.setText(String.format("%s", KeyIdentifier.DSHARP.stringIdentifier()));
+                            break;
+                        case 4:
+                            activity.updateTxt.setText(String.format("%s", KeyIdentifier.E.stringIdentifier()));
+                            break;
+                        case 5:
+                            activity.updateTxt.setText(String.format("%s", KeyIdentifier.F.stringIdentifier()));
+                            break;
+                        case 6:
+                            activity.updateTxt.setText(String.format("%s", KeyIdentifier.FSHARP.stringIdentifier()));
+                            break;
+                        case 7:
+                            activity.updateTxt.setText(String.format("%s", KeyIdentifier.G.stringIdentifier()));
+                            break;
+                        case 8:
+                            activity.updateTxt.setText(String.format("%s", KeyIdentifier.GSHARP.stringIdentifier()));
+                            break;
+                        case 9:
+                            activity.updateTxt.setText(String.format("%s", KeyIdentifier.A.stringIdentifier()));
+                            break;
+                        case 10:
+                            activity.updateTxt.setText(String.format("%s", KeyIdentifier.ASHARP.stringIdentifier()));
+                            break;
+                        case 11:
+                            activity.updateTxt.setText(String.format("%s", KeyIdentifier.B.stringIdentifier()));
+                            break;
+                        default:
+                            break;
+                    }
+                } else {
+                    activity.updateTxt = (TextView) activity.uiElements.get(i);
+                    activity.updateTxt.setText(String.format("%s", trackFeatures.get(i).toString()));
+                }
             }
         }
     }
@@ -446,6 +459,27 @@ public class UserStatistics extends AppCompatActivity {
         trackDate = trackDate.substring(indexStart + 1, indexEnd);
 
         return trackDate;
+    }
+
+    public enum KeyIdentifier
+    {
+        C(0) {@Override public String stringIdentifier() {return "C";}},
+        CSHARP(1) {@Override public String stringIdentifier() {return "C#";}},
+        D(2) {@Override public String stringIdentifier() {return "D";}},
+        DSHARP(3) {@Override public String stringIdentifier() {return "D#";}},
+        E(4) {@Override public String stringIdentifier() {return "E";}},
+        F(5) {@Override public String stringIdentifier() {return "F";}},
+        FSHARP(6) {@Override public String stringIdentifier() {return "F#";}},
+        G(7) {@Override public String stringIdentifier() {return "G";}},
+        GSHARP(8) {@Override public String stringIdentifier() {return "G#";}},
+        A(9) {@Override public String stringIdentifier() {return "A";}},
+        ASHARP(10) {@Override public String stringIdentifier() {return "A#";}},
+        B(11) {@Override public String stringIdentifier() {return "B";}};
+
+        private int numberIdentifier;
+        public abstract String stringIdentifier();
+
+        KeyIdentifier(int numIdentifier) {this.numberIdentifier = numIdentifier;}
     }
 
     public void getUserTopTracks() {
