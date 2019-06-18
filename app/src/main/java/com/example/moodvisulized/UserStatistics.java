@@ -350,14 +350,14 @@ public class UserStatistics extends AppCompatActivity {
                 /* correctly identify the key rather than put a number */
                 if (i != 5 && i != 6 && i != 8) {
                     activity.updateTxt = (TextView) activity.uiElements.get(i);
-                    activity.updateTxt.setText(String.format(java.util.Locale.US,"%.5s%%", trackFeatures.get(i).toString()));
+                    activity.updateTxt.setText(String.format(java.util.Locale.US, "%.5s%%", trackFeatures.get(i).toString()));
 
                 } else if (i == 8) {
                     activity.updateTxt = (TextView) activity.uiElements.get(i);
-                    activity.updateTxt.setText(String.format(java.util.Locale.US,"%.5s", trackFeatures.get(i).toString()));
+                    activity.updateTxt.setText(String.format(java.util.Locale.US, "%.5s", trackFeatures.get(i).toString()));
                 } else if (i == 5) {
                     activity.updateTxt = (TextView) activity.uiElements.get(i);
-                    activity.updateTxt.setText(String.format(java.util.Locale.US,"%.5s dB", trackFeatures.get(i).toString()));
+                    activity.updateTxt.setText(String.format(java.util.Locale.US, "%.5s dB", trackFeatures.get(i).toString()));
                 } else {
                     activity.updateTxt = (TextView) activity.uiElements.get(i);
                     switch (Math.round(trackFeatures.get(i))) {
@@ -404,9 +404,9 @@ public class UserStatistics extends AppCompatActivity {
                             break;
                     }
                 }
+
             }
         }
-    }
 
     /**
      * getUserSavedLibrary gets the user's whole saved songs from their library.
