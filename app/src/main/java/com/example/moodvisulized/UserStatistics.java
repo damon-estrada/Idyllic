@@ -356,7 +356,7 @@ public class UserStatistics extends AppCompatActivity {
 
                 } else if (i == 8) {
                     activity.updateTxt = (TextView) activity.uiElements.get(i);
-                    activity.updateTxt.setText(String.format(java.util.Locale.US, "%.5s", trackFeatures.get(i).toString()));
+                    activity.updateTxt.setText(String.format(java.util.Locale.US, "%.5s BPM", trackFeatures.get(i).toString()));
                 } else if (i == 5) {
                     activity.updateTxt = (TextView) activity.uiElements.get(i);
                     activity.updateTxt.setText(String.format(java.util.Locale.US, "%.5s dB", trackFeatures.get(i).toString()));
