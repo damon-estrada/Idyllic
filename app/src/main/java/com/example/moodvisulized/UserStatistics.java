@@ -24,8 +24,12 @@ import com.spotify.protocol.types.Image;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
+
+import org.w3c.dom.Text;
+
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
@@ -74,6 +78,7 @@ public class UserStatistics extends AppCompatActivity {
 
     private String currentTrackUri = ""; // The track Id for the current song playing
     private ArrayList<Float> curTrackAudioFet = new ArrayList<>(); // current track audio features.
+    ArrayList<TextView> uiElements = new ArrayList<>();
     ImageView coverArtImg;
     TextView updateTxt;
 
@@ -122,6 +127,17 @@ public class UserStatistics extends AppCompatActivity {
 
         coverArtImg = (ImageView) findViewById(R.id.coverArt);
         coverArtImg.setImageResource(R.drawable.mood_image);
+        uiElements.add(findViewById(R.id.danceabilityNum));
+        uiElements.add(findViewById(R.id.livenessNum));
+        uiElements.add(findViewById(R.id.valenceNum));
+        uiElements.add(findViewById(R.id.speechinessNum));
+        uiElements.add(findViewById(R.id.instrumentalnessNum));
+
+        uiElements.add(findViewById(R.id.loudnessNum));
+        uiElements.add(findViewById(R.id.keyNum));
+        uiElements.add(findViewById(R.id.energyNum));
+        uiElements.add(findViewById(R.id.tempoNum));
+        uiElements.add(findViewById(R.id.acousticnessNum));
     }
 
     @Override
@@ -140,18 +156,14 @@ public class UserStatistics extends AppCompatActivity {
             public void onConnected(SpotifyAppRemote spotifyAppRemote) {
                 mSpotifyAppRemote = spotifyAppRemote;
                 Log.d("UserStatistics", "App remote Connected!");
-                connected();
-
-                System.out.println("TESTING: " + curTrackAudioFet.size());
-
-                runOnUiThread(new Runnable() {
+                Runnable onConnected = new Runnable() {
                     @Override
                     public void run() {
-                        updateTxt = (TextView) findViewById(R.id.danceabilityNum);
-                        updateTxt.setText(String.format("%s", 122));
+                        connected();
                     }
-                });
-
+                };
+                Thread launch = new Thread(onConnected);
+                launch.start();
             }
 
             @Override
@@ -160,12 +172,14 @@ public class UserStatistics extends AppCompatActivity {
             }
         });
 
+        System.out.println("curAudio array size: " + curTrackAudioFet.size());
+        System.out.println("Out of onConnected");
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //updateTrackValUI();
 
         System.out.println("Resume end");
     }
@@ -192,21 +206,20 @@ public class UserStatistics extends AppCompatActivity {
                     /* just get the uri, done twince since two ':' */
                     currentTrackUri = currentTrackUri.substring(currentTrackUri.indexOf(":") + 1);
                     currentTrackUri = currentTrackUri.substring(currentTrackUri.indexOf(":") + 1);
-                    Log.d("US", "TRACK URI: " + currentTrackUri);
 
-                    /* get the analysis of the current song */
+                    /* get the analysis of the current song
                     Runnable fetchInfo = new Runnable() {
                         @Override
                         public void run() {
                             getTrackAudioFeatures();
-                            Log.d("UserStatistics", "size of array: " + curTrackAudioFet.size());
-                            //updateTxt = (TextView) findViewById(R.id.livenessNum);
-                            //updateTxt.setText(curTrackAudioFet.get(0).toString());
                         }
-                    };
+                   };
 
                     Thread fit = new Thread(fetchInfo);
                     fit.start();
+                    */
+
+                    beginAsyncTask();
 
                     /* Get the cover art of the current playing song */
                     mSpotifyAppRemote.getImagesApi()
@@ -220,7 +233,7 @@ public class UserStatistics extends AppCompatActivity {
     /**
      * Get audio analysis for the song that is playing right now
      */
-    public void getTrackAudioFeatures() {
+    public ArrayList getTrackAudioFeatures() {
         float danceability = 0;
         float liveness = 0;
         float valence = 0;
@@ -232,43 +245,137 @@ public class UserStatistics extends AppCompatActivity {
         float energy = 0;
         float tempo = 0;
         float acousticness = 0;
+        int retryCount = 0;
+        int maxAttempt = 3;
+        ArrayList<Float> trackFeatures = new ArrayList<Float>();
 
+        while (true) {
+            try {
 
-        try {
-            AudioFeaturesTrack trackAudioFeatures = spotify.getTrackAudioFeatures(currentTrackUri);
+                AudioFeaturesTrack trackAudioFeatures = spotify.getTrackAudioFeatures(currentTrackUri);
 
-            danceability = trackAudioFeatures.danceability;
-            liveness = trackAudioFeatures.liveness;
-            valence = trackAudioFeatures.valence;
-            speechiness = trackAudioFeatures.speechiness;
-            instrumentalness = trackAudioFeatures.instrumentalness;
+                danceability = trackAudioFeatures.danceability;
+                liveness = trackAudioFeatures.liveness;
+                valence = trackAudioFeatures.valence;
+                speechiness = trackAudioFeatures.speechiness;
+                instrumentalness = trackAudioFeatures.instrumentalness;
 
-            loudness = trackAudioFeatures.loudness;
-            key = trackAudioFeatures.key;
-            energy = trackAudioFeatures.energy;
-            tempo = trackAudioFeatures.tempo;
-            acousticness = trackAudioFeatures.acousticness;
+                loudness = trackAudioFeatures.loudness;
+                key = trackAudioFeatures.key;
+                energy = trackAudioFeatures.energy;
+                tempo = trackAudioFeatures.tempo;
+                acousticness = trackAudioFeatures.acousticness;
 
-            curTrackAudioFet.add(danceability);
-            curTrackAudioFet.add(liveness);
-            curTrackAudioFet.add(valence);
-            curTrackAudioFet.add(speechiness);
-            curTrackAudioFet.add(instrumentalness);
+                trackFeatures.add(danceability);
+                trackFeatures.add(liveness);
+                trackFeatures.add(valence);
+                trackFeatures.add(speechiness);
+                trackFeatures.add(instrumentalness);
 
-            curTrackAudioFet.add(loudness);
-            curTrackAudioFet.add(key);
-            curTrackAudioFet.add(energy);
-            curTrackAudioFet.add(tempo);
-            curTrackAudioFet.add(acousticness);
+                trackFeatures.add(loudness);
+                trackFeatures.add(key);
+                trackFeatures.add(energy);
+                trackFeatures.add(tempo);
+                trackFeatures.add(acousticness);
 
-            for (int i = 0; i < curTrackAudioFet.size(); i++) {
-                Log.d("element: ", i + " = " + curTrackAudioFet.get(i) );
+                /*
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (int i = 0; i < curTrackAudioFet.size(); i++) {
+                            Log.d("getAudioFet...", "i: " + i);
+                            updateTxt = (TextView) uiElements.get(i);
+                            */
+                            //updateTxt.setText(String.format("%s", curTrackAudioFet.get(i).toString()));
+                            /*updateTxt.setText(curTrackAudioFet.get(i).toString());
+                        }
+                        */
+                        /* Purge the array list after finished */
+                        curTrackAudioFet.clear();
+                    /*}
+                });
+                */
+
+                break;
+
+            } catch (RetrofitError e) {
+                if (retryCount == maxAttempt) {
+                    e.getBody();
+                    e.getResponse();
+                } else {retryCount++; Log.d("getTrackAudioFeatures()", "Retry count: " + retryCount);}
+            }
+        }
+        return trackFeatures;
+    }
+
+    public void beginAsyncTask() {
+        ExampleAsyncTask task = new ExampleAsyncTask(this);
+        task.execute();
+    }
+
+    private static class ExampleAsyncTask extends AsyncTask<Void, TextView, ArrayList<Float>> {
+        private WeakReference<UserStatistics> activityWeakRef;
+
+        ExampleAsyncTask(UserStatistics activity) {
+            activityWeakRef = new WeakReference<>(activity);
+        }
+
+        /* Happens before, the setup */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            /* get strong reference which will be destroyed after this scope ends */
+            UserStatistics activity = activityWeakRef.get();
+            /* This will return if garbage collection is happening so we return immediately */
+            if (activity == null || activity.isFinishing()) {
+                return;
             }
 
-        } catch (RetrofitError e) {
-            e.getBody();
-            e.getResponse();
+            /* uncomment this is we want to display something in the uielements before updating
+            for (int i = 0; i < 10; i++) {
+                activity.updateTxt = (TextView) activity.uiElements.get(i);
+                updateTxt.setText(String.format("%s", curTrackAudioFet.get(i).toString()));
+                activity.updateTxt.setText(String.format("%s","Loading"));
+            }
+            */
+        }
 
+        /**
+         * Here we are getting the currently playing track audio features
+         * @param voids nothing
+         * @return an array list of the track audio features
+         */
+        @Override
+        protected ArrayList<Float> doInBackground(Void... voids) {
+            /* get strong reference which will be destroyed after this scope ends */
+            UserStatistics activity = activityWeakRef.get();
+            if (activity == null || activity.isFinishing()) {
+                return null;
+            }
+
+            return activity.getTrackAudioFeatures();
+        }
+
+        /**
+         *  At this point, we have the populated array list and need to now update
+         *  the TextView for the current song playing.
+         * @param trackFeatures
+         */
+        @Override
+        protected void onPostExecute(ArrayList<Float> trackFeatures) {
+            super.onPostExecute(trackFeatures);
+
+            /* get strong reference which will be destroyed after this scope ends */
+            UserStatistics activity = activityWeakRef.get();
+            if (activity == null || activity.isFinishing()) {
+                return;
+            }
+
+            for (int i = 0; i < trackFeatures.size(); i++) {
+                activity.updateTxt = (TextView) activity.uiElements.get(i);
+                activity.updateTxt.setText(String.format("%s", trackFeatures.get(i).toString()));
+            }
         }
     }
 
