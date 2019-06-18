@@ -127,6 +127,8 @@ public class UserStatistics extends AppCompatActivity {
 
         coverArtImg = (ImageView) findViewById(R.id.coverArt);
         coverArtImg.setImageResource(R.drawable.mood_image);
+
+        /* Store all the ui elements in an array list to parse over later */
         uiElements.add(findViewById(R.id.danceabilityNum));
         uiElements.add(findViewById(R.id.livenessNum));
         uiElements.add(findViewById(R.id.valenceNum));
@@ -171,10 +173,6 @@ public class UserStatistics extends AppCompatActivity {
                 Log.e("UserStatistics", throwable.getMessage(), throwable);
             }
         });
-
-        System.out.println("curAudio array size: " + curTrackAudioFet.size());
-        System.out.println("Out of onConnected");
-
     }
 
     @Override
@@ -238,40 +236,41 @@ public class UserStatistics extends AppCompatActivity {
         int maxAttempt = 3;
         ArrayList<Float> trackFeatures = new ArrayList<>();
 
-        try {
+        while (true) {
+            try {
+                AudioFeaturesTrack trackAudioFeatures = spotify.getTrackAudioFeatures(currentTrackUri);
 
-            AudioFeaturesTrack trackAudioFeatures = spotify.getTrackAudioFeatures(currentTrackUri);
+                danceability = trackAudioFeatures.danceability;
+                liveness = trackAudioFeatures.liveness;
+                valence = trackAudioFeatures.valence;
+                speechiness = trackAudioFeatures.speechiness;
+                instrumentalness = trackAudioFeatures.instrumentalness;
 
-            danceability = trackAudioFeatures.danceability;
-            liveness = trackAudioFeatures.liveness;
-            valence = trackAudioFeatures.valence;
-            speechiness = trackAudioFeatures.speechiness;
-            instrumentalness = trackAudioFeatures.instrumentalness;
+                loudness = trackAudioFeatures.loudness;
+                key = trackAudioFeatures.key;
+                energy = trackAudioFeatures.energy;
+                tempo = trackAudioFeatures.tempo;
+                acousticness = trackAudioFeatures.acousticness;
 
-            loudness = trackAudioFeatures.loudness;
-            key = trackAudioFeatures.key;
-            energy = trackAudioFeatures.energy;
-            tempo = trackAudioFeatures.tempo;
-            acousticness = trackAudioFeatures.acousticness;
+                trackFeatures.add(danceability);
+                trackFeatures.add(liveness);
+                trackFeatures.add(valence);
+                trackFeatures.add(speechiness);
+                trackFeatures.add(instrumentalness);
 
-            trackFeatures.add(danceability);
-            trackFeatures.add(liveness);
-            trackFeatures.add(valence);
-            trackFeatures.add(speechiness);
-            trackFeatures.add(instrumentalness);
+                trackFeatures.add(loudness);
+                trackFeatures.add(key);
+                trackFeatures.add(energy);
+                trackFeatures.add(tempo);
+                trackFeatures.add(acousticness);
+                break;
 
-            trackFeatures.add(loudness);
-            trackFeatures.add(key);
-            trackFeatures.add(energy);
-            trackFeatures.add(tempo);
-            trackFeatures.add(acousticness);
-
-            curTrackAudioFet.clear();
-
-
-        } catch (RetrofitError e) {
-            e.getBody();
-            e.getResponse();
+            } catch (RetrofitError e) {
+                if (retryCount == maxAttempt) {
+                    e.getBody();
+                    e.getResponse();
+                } else {retryCount++;}
+            }
         }
         return trackFeatures;
     }
@@ -340,11 +339,28 @@ public class UserStatistics extends AppCompatActivity {
                 return;
             }
 
+            /* make all floats that can be represented as a percentage */
+            for (int i = 0; i < trackFeatures.size(); i++) {
+                if (i != 5 && i != 6 && i != 8) {
+                    trackFeatures.set(i, (trackFeatures.get(i) * 100));
+                }
+            }
+
             for (int i = 0; i < trackFeatures.size(); i++) {
                 /* correctly identify the key rather than put a number */
-                if (i == 6) {
+                if (i != 5 && i != 6 && i != 8) {
+                    activity.updateTxt = (TextView) activity.uiElements.get(i);
+                    activity.updateTxt.setText(String.format(java.util.Locale.US,"%.5s%%", trackFeatures.get(i).toString()));
+
+                } else if (i == 5 || i == 8) {
+                    activity.updateTxt = (TextView) activity.uiElements.get(i);
+                    activity.updateTxt.setText(String.format(java.util.Locale.US,"%.5s", trackFeatures.get(i).toString()));
+                } else {
                     activity.updateTxt = (TextView) activity.uiElements.get(i);
                     switch (Math.round(trackFeatures.get(i))) {
+                        case -1:
+                            activity.updateTxt.setText(String.format("%s", KeyIdentifier.UNKOWN.stringIdentifier()));
+                            break;
                         case 0:
                             activity.updateTxt.setText(String.format("%s", KeyIdentifier.C.stringIdentifier()));
                             break;
@@ -384,9 +400,6 @@ public class UserStatistics extends AppCompatActivity {
                         default:
                             break;
                     }
-                } else {
-                    activity.updateTxt = (TextView) activity.uiElements.get(i);
-                    activity.updateTxt.setText(String.format("%s", trackFeatures.get(i).toString()));
                 }
             }
         }
@@ -463,6 +476,7 @@ public class UserStatistics extends AppCompatActivity {
 
     public enum KeyIdentifier
     {
+        UNKOWN(-1) {@Override public String stringIdentifier() {return "Unknown";}},
         C(0) {@Override public String stringIdentifier() {return "C";}},
         CSHARP(1) {@Override public String stringIdentifier() {return "C#";}},
         D(2) {@Override public String stringIdentifier() {return "D";}},
@@ -532,103 +546,6 @@ public class UserStatistics extends AppCompatActivity {
             System.out.println(e.getResponse().getStatus());
             System.out.println(e.getResponse().getReason());
         }
-    }
-
-    /**
-     * The current song's JSON file that corresponds to it
-     * @return JSON file
-     */
-    private JsonObject getCurrentSongJSON() {
-        /* As of May 8, 2019 there is not a way from the kaae wrapper to get current song
-           Let's roll our own handler.
-         */
-
-        //@GET("https://api.spotify.com/v1/me/player/currently-playing")
-        // Full call:
-        // GET "https://api.spotify.com/v1/me/player/currently-playing" -H "Authorization: Bearer {your access token}"
-
-        String urlStr = "https://api.spotify.com/v1/me/player/currently-playing";
-        JsonObject rootObj = null;
-        JsonElement root;
-
-        try {
-            URL url = new URL(urlStr);
-            URLConnection request = url.openConnection();
-            // I need to tell spotify who I am with my access code
-            request.setRequestProperty("Authorization", "Bearer " + accessToken);
-            request.connect();
-
-            JsonParser parser = new JsonParser(); // From gson
-            try {
-                root = parser.parse(new InputStreamReader((InputStream) request.getContent()));
-            } catch (Exception e) {
-                /* I handle the null reference below in getArtwork */
-                return rootObj;
-            }
-                rootObj = root.getAsJsonObject();
-
-            System.out.println("JSON FILE: " + rootObj);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return rootObj;
-    }
-
-    /**
-     * This method will retrieve the url the artwork is located at and store it in coverArt variable
-     * @param jsonData the current playing song's JSON file
-     */
-    public void getSongArtwork(JsonObject jsonData) {
-        /* Always experience a cache miss, retry since next time a song is playing */
-        if (jsonData == null)
-            return;
-
-        try {
-            /* This will get the "images" section from the json file. */
-            JsonElement images = jsonData.get("item").
-                    getAsJsonObject().get("album").
-                    getAsJsonObject().get("images");
-
-            /* This will get the "name" section from the json file */
-            JsonElement trackName = jsonData.get("item").
-                    getAsJsonObject().get("album").
-                    getAsJsonObject().get("name");
-
-            /* This will get the "track id" section from the json file */
-            JsonElement trackId = jsonData.get("item").
-                    getAsJsonObject().get("id");
-
-            String imageURL;
-            JsonElement imageDetails;
-
-            /* Obtain the section as a json array from the three elements in the section. */
-            JsonArray imagesArray = images.getAsJsonArray();
-
-            /* This will get the URL from the 640x640 cover art */
-            imageDetails = imagesArray.get(0).getAsJsonObject().get("url");
-            imageURL = imageDetails.toString();
-
-            /* Lets clean up the URL by stripping the " occurances */
-            imageURL = imageURL.replace("\"", "");
-            currentTrack = trackName.toString().replace("\"", "");
-            currentTrackUri = trackId.toString().replace("\"", "");
-
-            System.out.println("URL: " + imageURL);
-            System.out.println("Current Track: " + currentTrack);
-            System.out.println("Current Track Uri: " + currentTrackUri);
-
-            InputStream in = new URL(imageURL).openStream();
-
-            /* Decode bitmap */
-            coverArt = BitmapFactory.decodeStream(in);
-
-            /* Re-structure bitmap */
-            coverArt = coverArt.createScaledBitmap(coverArt, 900, 900, true);
-
-            in.close();
-        } catch (Exception e) {e.printStackTrace();}
     }
 
     /**
