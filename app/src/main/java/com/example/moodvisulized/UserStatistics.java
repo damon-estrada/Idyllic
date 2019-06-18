@@ -310,6 +310,7 @@ public class UserStatistics extends AppCompatActivity {
 
         /**
          * Here we are getting the currently playing track audio features
+         *
          * @param voids nothing
          * @return an array list of the track audio features
          */
@@ -325,8 +326,9 @@ public class UserStatistics extends AppCompatActivity {
         }
 
         /**
-         *  At this point, we have the populated array list and need to now update
-         *  the TextView for the current song playing.
+         * At this point, we have the populated array list and need to now update
+         * the TextView for the current song playing.
+         *
          * @param trackFeatures
          */
         @Override
@@ -407,7 +409,7 @@ public class UserStatistics extends AppCompatActivity {
 
             }
         }
-
+    }
     /**
      * getUserSavedLibrary gets the user's whole saved songs from their library.
      * This iterates until the first song ever saved. It also does other things such
