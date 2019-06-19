@@ -50,7 +50,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:text="#"
+        android:text="Loading..."
         android:textSize="18sp"
         android:textAppearance="@style/danceability"
         android:gravity="start"
@@ -86,7 +86,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:text="#"
+        android:text="Loading..."
         android:textSize="18sp"
         android:textAppearance="@style/danceability"
         android:gravity="start"
@@ -124,7 +124,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:text="#"
+        android:text="Loading..."
         android:textSize="18sp"
         android:textAppearance="@style/danceability"
         android:gravity="start"
@@ -161,7 +161,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:text="#"
+        android:text="Loading..."
         android:textSize="18sp"
         android:textAppearance="@style/danceability"
         android:gravity="start"
@@ -193,7 +193,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:text="#"
+        android:text="Loading..."
         android:textSize="18sp"
         android:textAppearance="@style/danceability"
         android:gravity="start"
@@ -227,7 +227,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:text="#"
+        android:text="Loading..."
         android:textSize="18sp"
         android:textAppearance="@style/danceability"
         android:gravity="start"
@@ -263,7 +263,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:text="#"
+        android:text="Loading..."
         android:textSize="18sp"
         android:textAppearance="@style/danceability"
         android:gravity="start"
@@ -299,7 +299,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:text="#"
+        android:text="Loading..."
         android:textSize="18sp"
         android:textAppearance="@style/danceability"
         android:gravity="start"
@@ -336,7 +336,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:text="#"
+        android:text="Loading..."
         android:textSize="18sp"
         android:textAppearance="@style/danceability"
         android:gravity="start"
@@ -369,7 +369,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:text="#"
+        android:text="Loading..."
         android:textSize="18sp"
         android:textAppearance="@style/danceability"
         android:gravity="start"

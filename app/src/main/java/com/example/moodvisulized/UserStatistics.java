@@ -348,19 +348,11 @@ public class UserStatistics extends AppCompatActivity {
                 return;
             }
 
-            /* make all floats that can be represented as a percentage */
-            for (int i = 0; i < trackFeatures.size(); i++) {
-                if (i != 5 && i != 6 && i != 8) {
-                    trackFeatures.set(i, (trackFeatures.get(i) * 100));
-                }
-            }
-
             for (int i = 0; i < trackFeatures.size(); i++) {
                 /* correctly identify the key rather than put a number */
                 if (i != 5 && i != 6 && i != 8) {
                     activity.updateTxt = (TextView) activity.uiElements.get(i);
-                    activity.updateTxt.setText(String.format(java.util.Locale.US, "%.5s%%", trackFeatures.get(i).toString()));
-
+                    activity.updateTxt.setText(String.format(java.util.Locale.US, "%.4s", trackFeatures.get(i).toString()));
                 } else if (i == 8) {
                     activity.updateTxt = (TextView) activity.uiElements.get(i);
                     activity.updateTxt.setText(String.format(java.util.Locale.US, "%.5s BPM", trackFeatures.get(i).toString()));

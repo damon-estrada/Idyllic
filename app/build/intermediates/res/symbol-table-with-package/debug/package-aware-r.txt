@@ -630,12 +630,9 @@ drawable abc_textfield_search_activated_mtrl_alpha
 drawable abc_textfield_search_default_mtrl_alpha
 drawable abc_textfield_search_material
 drawable abc_vector_test
-drawable danceability1_img
-drawable danceability2_img
-drawable energy_img
 drawable ic_launcher_background
 drawable ic_launcher_foreground
-drawable mood_image
+drawable loginbutton
 drawable notification_action_background
 drawable notification_bg
 drawable notification_bg_low
@@ -648,10 +645,8 @@ drawable notification_template_icon_bg
 drawable notification_template_icon_low_bg
 drawable notification_tile_bg
 drawable notify_panel_notification_icon_bg
-drawable tempo_img
 drawable tooltip_frame_dark
 drawable tooltip_frame_light
-drawable valence_img
 id ALT
 id CTRL
 id FUNCTION
@@ -870,7 +865,6 @@ layout select_dialog_item_material
 layout select_dialog_multichoice_material
 layout select_dialog_singlechoice_material
 layout support_simple_spinner_dropdown_item
-layout temporary_layout
 mipmap ic_launcher
 mipmap ic_launcher_round
 string abc_action_bar_home_description
@@ -924,13 +918,13 @@ string daceabilityDesc
 string danceability
 string energy
 string energyDesc
-string fetchSpotifyData
 string instrumentalness
 string instrumentalnessDesc
 string key
 string keyDesc
 string liveness
 string livenessDesc
+string loginToSpotify
 string loudness
 string loudnessDesc
 string search_menu_title
