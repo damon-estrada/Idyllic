@@ -63,24 +63,21 @@ public class UserStatistics extends AppCompatActivity {
     private static final String CLIENT_ID = "0184658057ca400693856a596026419b";
     private static final String REDIRECT_URI = "moodvisualized://callback";
 
-    Bitmap coverArt = null;
-    List<Track> userSavedTracks = new ArrayList<>();       // getting all saved tracks
-    List<Track> userSongTodayTracks = new ArrayList<>();  // Stores the date everything was added
-    List<Track> userTopTracks = new ArrayList<>();       // getting all top song
-    Map<String, Object> options = new HashMap<String, Object>();     // for each call
-    SpotifyService spotify;                            // Service variable
-    private SpotifyAppRemote mSpotifyAppRemote;       // the app remote
+    /* The UI variables */
+    ArrayList<TextView> uiElements = new ArrayList<>(); // An array of elements that make up the UI.
+    ImageView coverArtImg;                             // Current track cover art.
+    TextView updateTxt;                               // Var that will be used to update the UI.
 
-    String currentTrack = "";
-    private String accessToken = null;
-    private String dateToday = new SimpleDateFormat("MM-dd").
-                                                    format(Calendar.getInstance().getTime());
+    /* The variables for holding essential information */
+    private String currentTrackUri = "";           // The track Id for the current song playing
 
-    private String currentTrackUri = ""; // The track Id for the current song playing
-    private ArrayList<Float> curTrackAudioFet = new ArrayList<>(); // current track audio features.
-    ArrayList<TextView> uiElements = new ArrayList<>();
-    ImageView coverArtImg;
-    TextView updateTxt;
+    /* Variables needed for service to spotify calls or access to app-remote */
+    private SpotifyAppRemote mSpotifyAppRemote; // The app remote
+    private SpotifyService spotify;            // Service variable
+    private String accessToken = null;        // Needed to make calls that require access token.
+
+    /* Debugging purposes */
+    private static final String TAG = UserStatistics.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +101,7 @@ public class UserStatistics extends AppCompatActivity {
                 "user-library-read",            // Permission to see user's library.
                 "user-read-currently-playing", // Permission to see what user is currently playing.
                 "user-read-playback-state",   // To read information on playerState
+                "app-remote-control"
         });
         AuthenticationRequest request = builder.build();
 
@@ -125,8 +123,8 @@ public class UserStatistics extends AppCompatActivity {
         spotify = restAdapter.create(SpotifyService.class);
         System.out.println("Connected");
 
+        /* Need a reference to the cover art id */
         coverArtImg = (ImageView) findViewById(R.id.coverArt);
-        coverArtImg.setImageResource(R.drawable.mood_image);
 
         /* Store all the ui elements in an array list to parse over later */
         uiElements.add(findViewById(R.id.danceabilityNum));
@@ -146,6 +144,9 @@ public class UserStatistics extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
+        /* To prevent multiple instances of app remote being active. */
+        SpotifyAppRemote.disconnect(mSpotifyAppRemote);
+
         /* Set the connection parameters */
         ConnectionParams connectionParams =
                 new ConnectionParams.Builder(CLIENT_ID)
@@ -153,6 +154,7 @@ public class UserStatistics extends AppCompatActivity {
                 .showAuthView(true)
                 .build();
 
+        /* Connect to SpotifyAppRemote */
         SpotifyAppRemote.connect(this, connectionParams, new Connector.ConnectionListener() {
             @Override
             public void onConnected(SpotifyAppRemote spotifyAppRemote) {
@@ -178,15 +180,20 @@ public class UserStatistics extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        System.out.println("onResume() Start");
 
-        System.out.println("Resume end");
+        System.out.println("onResume() End");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        /* When app not in use, disconnect, might change if we need it for longer */
+        System.out.println("onStop() Start");
+
+        /* When app not in use, disconnect. */
         SpotifyAppRemote.disconnect(mSpotifyAppRemote);
+
+        System.out.println("onStop() End");
     }
 
     /**
@@ -218,7 +225,7 @@ public class UserStatistics extends AppCompatActivity {
     }
 
     /**
-     * Get audio analysis for the song that is playing right now
+     * Get audio analysis for the song that is playing right now.
      */
     public ArrayList getTrackAudioFeatures() {
         float danceability = 0;
@@ -408,75 +415,8 @@ public class UserStatistics extends AppCompatActivity {
                 }
 
             }
+            trackFeatures.clear();
         }
-    }
-    /**
-     * getUserSavedLibrary gets the user's whole saved songs from their library.
-     * This iterates until the first song ever saved. It also does other things such
-     * as populate userSongTodayTracks which will check to see if a song today was saved
-     * earlier in the past year(s).
-     */
-    public void getUserSavedLibrary() {
-        try {
-            int totalSongsInLibrary;
-            int i = 0;
-            // Limit is how many songs we can grab at a time (Max is 50 for this call)
-            int limit = 50;
-            int updateIndexBy = 50; // where to start the new index in the library.
-            int offset = 0;
-            String tmp;
-            Pager<SavedTrack> savedTrackPager;
-
-            totalSongsInLibrary = spotify.getMySavedTracks().total;
-            options.put(SpotifyService.LIMIT, limit); // get 50 songs at a time.
-            options.put(SpotifyService.OFFSET, offset); // initially 0 to start at top of library.
-
-            while (i <= totalSongsInLibrary) {
-                savedTrackPager = spotify.getMySavedTracks(options);
-
-                // iterate though the first songs fetched
-                for (SavedTrack savedTrack : savedTrackPager.items) {
-                    userSavedTracks.add(savedTrack.track); // save the track from the fetch
-
-                    // capture the instance of the track being analyzed
-                    tmp = savedTrack.added_at;
-
-                    // reformat it to MM-dd
-                    tmp = reformatDate(tmp);
-
-                    if (tmp.equals(dateToday)) {
-                        userSongTodayTracks.add(savedTrack.track);
-                    }
-                }
-
-                if ( (totalSongsInLibrary - i) >= 50 ) {
-                    i += updateIndexBy; // This means there are more than 50 songs left, increase by so.
-                    options.put(SpotifyService.OFFSET, offset += updateIndexBy); // New start point is at 50th song.
-                } else if(i == totalSongsInLibrary) {
-                    break; // To get out of the infinite loop
-                } else {
-                    i += (totalSongsInLibrary - i); // update by remained to not go over.
-                    options.put(SpotifyService.OFFSET, offset += (totalSongsInLibrary - i)); // New start point is at 50th song.
-                }
-            }
-        } catch (RetrofitError e) {
-            System.out.println(e.getResponse().getStatus());
-            System.out.println(e.getResponse().getReason());
-        }
-    }
-
-    /**
-     * This method will restructure the spotify added_at format(yyyy-MM-ddT##..) to (MM-dd)
-     * @param trackDate The added_at track string date
-     * @return The new formatted (MM-dd) string
-     */
-    public String reformatDate(String trackDate) {
-        /* I want to ignore the timezone and year, just capture the MM-dd */
-        int indexStart = trackDate.indexOf("-"); // this is the month
-        int indexEnd = trackDate.indexOf("T"); // this is the day of the month
-        trackDate = trackDate.substring(indexStart + 1, indexEnd);
-
-        return trackDate;
     }
 
     public enum KeyIdentifier
@@ -499,58 +439,6 @@ public class UserStatistics extends AppCompatActivity {
         public abstract String stringIdentifier();
 
         KeyIdentifier(int numIdentifier) {this.numberIdentifier = numIdentifier;}
-    }
-
-    public void getUserTopTracks() {
-        try {
-            int totalTopSongs;
-            int i = 0;
-            // Limit is how many songs we can grab at a time (Max is 50 for this call)
-            int limit = 50;
-            int updateIndexBy = 50; // where to start the new index in the library.
-            // Offset is the starting point of which we index our songs
-            // REMEMBER: update offset to get more than 50 songs. It starts at 0
-            // and when updated to (offset = 50) will start at the 50th song while
-            // (limit) will fetch the next 50 songs in this case.
-            int offset = 0;
-            String timeRange = "long_term"; // How far back to calculate topSongs
-                                            // long_term - years back
-                                            // medium_term - 6 months back
-                                            // short_term - 1 month back
-            Pager<Track> topTrackPager = new Pager<>();
-
-            totalTopSongs = spotify.getTopTracks().total;
-            options.put(SpotifyService.LIMIT, limit); // get 50 songs at a time.
-            options.put(SpotifyService.OFFSET, offset); // initially 0 to start at top of library.
-            options.put(SpotifyService.TIME_RANGE, timeRange); // get recent songs
-
-            while (i <= totalTopSongs) {
-                topTrackPager = spotify.getTopTracks(options);
-                for (Track track : topTrackPager.items) {
-                    userTopTracks.add(track); // save the track from the fetch
-                }
-
-                if ( (totalTopSongs - i) >= 50 ) {
-                    i += updateIndexBy; // This means there are more than 50 songs left, increase by so.
-                    options.put(SpotifyService.OFFSET, offset += updateIndexBy); // New start point is at 50th song.
-                    options.put(SpotifyService.TIME_RANGE, timeRange); // get recent songs
-                } else if(i == totalTopSongs) {
-                    break; // To get out of the infinite loop
-                } else {
-                    i += (totalTopSongs - i); // update by remained to not go over.
-                    options.put(SpotifyService.OFFSET, offset += (totalTopSongs - i)); // New start point is at 50th song.
-                    options.put(SpotifyService.TIME_RANGE, timeRange); // get recent songs
-                }
-            }
-
-            for (Track track : userTopTracks) {
-                System.out.println("Top Songs: " + track.name + " by -> " + track.artists.get(0).name);
-            }
-
-        } catch (RetrofitError e) {
-            System.out.println(e.getResponse().getStatus());
-            System.out.println(e.getResponse().getReason());
-        }
     }
 
     /**

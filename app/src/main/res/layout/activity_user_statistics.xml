@@ -9,7 +9,6 @@
     <ImageView
         android:id="@+id/coverArt"
         android:contentDescription="@string/coverArtDesc"
-        android:src="@drawable/mood_image"
 
         android:layout_width="0dp"
         android:layout_height="0dp"
