@@ -9,20 +9,24 @@
     <ImageView
         android:id="@+id/coverArt"
         android:contentDescription="@string/coverArtDesc"
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:src="@drawable/mood_image"
 
-        android:scaleType="fitCenter"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+
+        android:scaleType="centerCrop"
         android:adjustViewBounds="true"
-        android:maxWidth="640dp"
-        android:maxHeight="640dp"
 
         app:layout_constraintBottom_toTopOf="@id/danceabilityVar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintVertical_bias="0.05"/>
 
     <TextView
         android:id="@+id/danceabilityVar"
