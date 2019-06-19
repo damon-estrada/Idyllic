@@ -1,15 +1,22 @@
 package com.example.moodvisulized;
 
+import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.widget.Button;
+import android.widget.MediaController;
 import android.widget.VideoView;
+
+import com.spotify.android.appremote.api.ContentApi;
 
 import java.net.URI;
 
@@ -18,10 +25,10 @@ public class MainActivity extends AppCompatActivity {
     /* for the button animation */
     private AlphaAnimation buttonClicked = new AlphaAnimation(1F, 0.5F);
 
-    private VideoView mVideoView;
+    VideoView mVideoView;
+    MediaPlayer mMediaPlayer = null;
 
     Button fetchSpotifyData;
-    Uri uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,16 +53,15 @@ public class MainActivity extends AppCompatActivity {
 
         mVideoView = (VideoView) findViewById(R.id.loginVideo);
 
-        String path = "android.resource://" + getPackageName() + "/" + R.raw.video;
-
         try {
-            mVideoView.setVideoURI(Uri.parse(path));
+            /* video view stops audio player (spotify), this will prevent that */
+            initPlayer();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
 
-        mVideoView.start();
 
         mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
@@ -63,12 +69,13 @@ public class MainActivity extends AppCompatActivity {
                 mp.setLooping(true);
             }
         });
-
-
     }
 
     @Override
-    protected void onStart() {super.onStart();}
+    protected void onStart() {
+        super.onStart();
+        initPlayer();
+    }
 
     public void toSpotifyData(View view) {
         Intent intent = new Intent(this, UserStatistics.class);
@@ -78,5 +85,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        releasePlayer();
+    }
+
+
+    private void initPlayer() {
+        /* Path to the video */
+        String path = "android.resource://" + getPackageName() + "/" + R.raw.video;
+
+        mVideoView.setVideoURI(Uri.parse(path));
+
+        /* If phone api > 26, we can use this to allow audio to remain */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mVideoView.setAudioFocusRequest(AudioManager.AUDIOFOCUS_NONE);
+        }
+        mVideoView.start();
+    }
+    private void releasePlayer() {
+        mVideoView.stopPlayback();
     }
 }
