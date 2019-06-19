@@ -632,6 +632,7 @@ drawable abc_textfield_search_material
 drawable abc_vector_test
 drawable ic_launcher_background
 drawable ic_launcher_foreground
+drawable login_temp_button
 drawable loginbutton
 drawable notification_action_background
 drawable notification_bg
@@ -645,6 +646,7 @@ drawable notification_template_icon_bg
 drawable notification_template_icon_low_bg
 drawable notification_tile_bg
 drawable notify_panel_notification_icon_bg
+drawable test_image
 drawable tooltip_frame_dark
 drawable tooltip_frame_light
 id ALT
@@ -741,6 +743,7 @@ id listMode
 id list_item
 id livenessNum
 id livenessVar
+id loginVideo
 id loudnessNum
 id loudnessVar
 id message
@@ -815,6 +818,7 @@ id up
 id useLogo
 id valenceNum
 id valenceVar
+id watermark
 id withText
 id wrap
 id wrap_content
@@ -867,6 +871,7 @@ layout select_dialog_singlechoice_material
 layout support_simple_spinner_dropdown_item
 mipmap ic_launcher
 mipmap ic_launcher_round
+raw video
 string abc_action_bar_home_description
 string abc_action_bar_up_description
 string abc_action_menu_overflow_description
@@ -928,6 +933,7 @@ string loginToSpotify
 string loudness
 string loudnessDesc
 string search_menu_title
+string small_watermark
 string speechiness
 string speechinessDesc
 string status_bar_notification_info_overflow

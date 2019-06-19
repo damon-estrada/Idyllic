@@ -3,6 +3,9 @@
     <string name="loginToSpotify">Login To Spotify</string>
     <string name="title_activity_user_statistics">User Statistics</string>
     <string name="album_name">Album name</string>
+    <string name="small_watermark">
+        Made with love by Damon L. Estrada
+    </string>
     <string name="coverArtDesc">
         This is where the cover art of the current song being played
         goes.

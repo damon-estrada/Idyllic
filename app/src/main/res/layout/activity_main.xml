@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <VideoView
+        android:id="@+id/loginVideo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        />
+
     <Button
         android:id="@+id/fetchSpotifyData"
-        android:background="@drawable/loginbutton"
-        android:layout_width="275dp"
+        android:background="@drawable/login_temp_button"
+        android:layout_width="300dp"
         android:layout_height="50dp"
         android:onClick="toSpotifyData"
 
-        android:textColor="@color/white"
-
-
-        android:layout_marginBottom="75dp"
+        android:layout_marginTop="450dp"
         android:gravity="center|bottom"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
@@ -24,9 +28,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toTopOf="@id/watermark" />
 
+    <TextView
+        android:id="@+id/watermark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/small_watermark"
+        android:textColor="#ffa144"
 
-
-
-</RelativeLayout>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fetchSpotifyData"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="12sp"
+        />
+</android.support.constraint.ConstraintLayout>

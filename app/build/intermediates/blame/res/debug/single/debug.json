@@ -440,6 +440,10 @@
         "source": "/home/damon/.gradle/caches/transforms-2/files-2.1/28a09e283f2c98d6fb2e19691e56cfbc/res/drawable-ldrtl-xxhdpi-v17/abc_ic_menu_cut_mtrl_alpha.png"
     },
     {
+        "merged": "/home/damon/Desktop/mood-visualization/app/build/intermediates/res/merged/debug/drawable_test_image.png.flat",
+        "source": "/home/damon/Desktop/mood-visualization/app/src/main/res/drawable/test_image.png"
+    },
+    {
         "merged": "/home/damon/Desktop/mood-visualization/app/build/intermediates/res/merged/debug/drawable-xhdpi-v4_abc_spinner_mtrl_am_alpha.9.png.flat",
         "source": "/home/damon/.gradle/caches/transforms-2/files-2.1/28a09e283f2c98d6fb2e19691e56cfbc/res/drawable-xhdpi-v4/abc_spinner_mtrl_am_alpha.9.png"
     },
@@ -580,6 +584,10 @@
         "source": "/home/damon/.gradle/caches/transforms-2/files-2.1/28a09e283f2c98d6fb2e19691e56cfbc/res/drawable-mdpi-v4/abc_list_selector_disabled_holo_light.9.png"
     },
     {
+        "merged": "/home/damon/Desktop/mood-visualization/app/build/intermediates/res/merged/debug/raw_video.mp4.flat",
+        "source": "/home/damon/Desktop/mood-visualization/app/src/main/res/raw/video.mp4"
+    },
+    {
         "merged": "/home/damon/Desktop/mood-visualization/app/build/intermediates/res/merged/debug/drawable-xhdpi-v4_abc_ic_menu_share_mtrl_alpha.png.flat",
         "source": "/home/damon/.gradle/caches/transforms-2/files-2.1/28a09e283f2c98d6fb2e19691e56cfbc/res/drawable-xhdpi-v4/abc_ic_menu_share_mtrl_alpha.png"
     },
@@ -644,12 +652,12 @@
         "source": "/home/damon/.gradle/caches/transforms-2/files-2.1/28a09e283f2c98d6fb2e19691e56cfbc/res/drawable-v21/abc_edit_text_material.xml"
     },
     {
-        "merged": "/home/damon/Desktop/mood-visualization/app/build/intermediates/res/merged/debug/drawable-xxxhdpi-v4_abc_btn_radio_to_on_mtrl_000.png.flat",
-        "source": "/home/damon/.gradle/caches/transforms-2/files-2.1/28a09e283f2c98d6fb2e19691e56cfbc/res/drawable-xxxhdpi-v4/abc_btn_radio_to_on_mtrl_000.png"
-    },
-    {
         "merged": "/home/damon/Desktop/mood-visualization/app/build/intermediates/res/merged/debug/drawable-xxxhdpi-v4_abc_ic_menu_paste_mtrl_am_alpha.png.flat",
         "source": "/home/damon/.gradle/caches/transforms-2/files-2.1/28a09e283f2c98d6fb2e19691e56cfbc/res/drawable-xxxhdpi-v4/abc_ic_menu_paste_mtrl_am_alpha.png"
+    },
+    {
+        "merged": "/home/damon/Desktop/mood-visualization/app/build/intermediates/res/merged/debug/drawable-xxxhdpi-v4_abc_btn_radio_to_on_mtrl_000.png.flat",
+        "source": "/home/damon/.gradle/caches/transforms-2/files-2.1/28a09e283f2c98d6fb2e19691e56cfbc/res/drawable-xxxhdpi-v4/abc_btn_radio_to_on_mtrl_000.png"
     },
     {
         "merged": "/home/damon/Desktop/mood-visualization/app/build/intermediates/res/merged/debug/drawable-xxhdpi-v4_abc_scrubber_control_off_mtrl_alpha.png.flat",
@@ -1326,6 +1334,10 @@
     {
         "merged": "/home/damon/Desktop/mood-visualization/app/build/intermediates/res/merged/debug/drawable-xxhdpi-v4_abc_ic_star_black_36dp.png.flat",
         "source": "/home/damon/.gradle/caches/transforms-2/files-2.1/28a09e283f2c98d6fb2e19691e56cfbc/res/drawable-xxhdpi-v4/abc_ic_star_black_36dp.png"
+    },
+    {
+        "merged": "/home/damon/Desktop/mood-visualization/app/build/intermediates/res/merged/debug/drawable_login_temp_button.png.flat",
+        "source": "/home/damon/Desktop/mood-visualization/app/src/main/res/drawable/login_temp_button.png"
     },
     {
         "merged": "/home/damon/Desktop/mood-visualization/app/build/intermediates/res/merged/debug/drawable-xxxhdpi-v4_abc_tab_indicator_mtrl_alpha.9.png.flat",
