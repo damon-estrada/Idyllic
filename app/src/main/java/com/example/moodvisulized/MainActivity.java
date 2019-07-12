@@ -1,6 +1,5 @@
 package com.example.moodvisulized;
 
-import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -8,41 +7,33 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.widget.Button;
-import android.widget.MediaController;
 import android.widget.VideoView;
-
-import com.spotify.android.appremote.api.ContentApi;
-
-import java.net.URI;
 
 public class MainActivity extends AppCompatActivity {
 
-    /* for the button animation */
+    /* For the button animation */
     private AlphaAnimation buttonClicked = new AlphaAnimation(1F, 0.5F);
 
     VideoView mVideoView;
-    MediaPlayer mMediaPlayer = null;
-
-    Button fetchSpotifyData;
+    Button connectToSpotify;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // to remove the status bar
+        /* To remove the status bar */
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_main);
 
-        fetchSpotifyData = (Button) findViewById(R.id.fetchSpotifyData);
+        connectToSpotify = (Button) findViewById(R.id.connectToSpotify);
 
-        fetchSpotifyData.setOnClickListener(new View.OnClickListener() {
+        connectToSpotify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 v.startAnimation(buttonClicked);
@@ -77,18 +68,28 @@ public class MainActivity extends AppCompatActivity {
         initPlayer();
     }
 
-    public void toSpotifyData(View view) {
-        Intent intent = new Intent(this, UserStatistics.class);
-        startActivity(intent);
-    }
-
     @Override
     protected void onStop() {
         super.onStop();
         releasePlayer();
     }
 
+    /**
+     * Onward to the the next activity which is the home screen.
+     * @param view  Refering to the next activity view
+     */
+    public void toSpotifyData(View view) {
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
+    }
 
+
+    /**
+     * This is where the looping video is created at the login of the application.
+     * Currently, This works if the uer's api is at or above 26.
+     * TODO: Work on a solution to continue background music when the application
+     *      is launched instead of the audioless video stopping all audio.
+     */
     private void initPlayer() {
         /* Path to the video */
         String path = "android.resource://" + getPackageName() + "/" + R.raw.video;

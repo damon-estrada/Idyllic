@@ -14,7 +14,7 @@
         />
 
     <Button
-        android:id="@+id/fetchSpotifyData"
+        android:id="@+id/connectToSpotify"
         android:background="@drawable/login_temp_button"
         android:layout_width="300dp"
         android:layout_height="50dp"
@@ -39,7 +39,7 @@
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fetchSpotifyData"
+        app:layout_constraintTop_toBottomOf="@id/connectToSpotify"
         app:layout_constraintBottom_toBottomOf="parent"
         android:textSize="12sp"
         />

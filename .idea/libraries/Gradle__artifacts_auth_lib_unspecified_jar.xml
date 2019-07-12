@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="Gradle: artifacts:auth_lib:unspecified@jar">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/97eeed6581697f9dce2b3bdfbead499a/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/4a042f12068861c8581fe7bc3af9c669/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/4a042f12068861c8581fe7bc3af9c669/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
