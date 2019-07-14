@@ -22,7 +22,8 @@
         android:supportsRtl="true"
         android:testOnly="true"
         android:theme="@style/AppTheme" >
-        <activity android:name="com.example.moodvisulized.HomeActivity" />
+        <activity android:name="com.example.moodvisulized.HomeActivity" >
+        </activity>
         <activity android:name="com.example.moodvisulized.UserStatistics" />
         <activity android:name="com.example.moodvisulized.MainActivity" >
             <intent-filter>
@@ -31,9 +32,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.spotify.sdk.android.authentication.LoginActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
             android:name="com.spotify.sdk.android.authentication.AuthCallbackActivity"
             android:exported="true"
@@ -48,6 +46,10 @@
                     android:host="@string/com_spotify_sdk_redirect_host"
                     android:scheme="@string/com_spotify_sdk_redirect_scheme" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="com.spotify.sdk.android.authentication.LoginActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
         </activity>
     </application>
 

@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="Gradle: com.spotify.android:auth:1.1.0@aar">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/de14b0c3b950341d267be131c264729a/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/de14b0c3b950341d267be131c264729a/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/e193b7303e4e6e7a1e17045803093f5a/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/e193b7303e4e6e7a1e17045803093f5a/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

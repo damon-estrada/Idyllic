@@ -4,7 +4,7 @@
             "outputFile": "/home/damon/Desktop/mood-visualization/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-ky/values-ky.xml",
             "map": [
                 {
-                    "source": "/home/damon/.gradle/caches/transforms-2/files-2.1/27dfe4d3116335052cf65b173e7d4fc6/res/values-ky/values-ky.xml",
+                    "source": "/home/damon/.gradle/caches/transforms-2/files-2.1/0afca31b3c2b6cd30fd8c73c8ccfed42/res/values-ky/values-ky.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -21,7 +21,7 @@
                     }
                 },
                 {
-                    "source": "/home/damon/.gradle/caches/transforms-2/files-2.1/396fb8ca98d69681403cdf0451b261b7/res/values-ky/values-ky.xml",
+                    "source": "/home/damon/.gradle/caches/transforms-2/files-2.1/ee16d1c4e4a2fde58fb9a54e3f63c4ff/res/values-ky/values-ky.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
