@@ -1020,6 +1020,22 @@
             ]
         },
         {
+            "outputFile": "/home/damon/Desktop/mood-visualization/app/build/intermediates/res/merged/debug/values-v17_values-v17.arsc.flat",
+            "map": [
+                {
+                    "source": "/home/damon/.gradle/caches/transforms-2/files-2.1/ee16d1c4e4a2fde58fb9a54e3f63c4ff/res/values-v17/values-v17.xml",
+                    "from": {
+                        "startLines": "2,5,9,12,15,18,22,25,29,33,37,40,43,46,50,53,57",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,228,456,614,764,936,1161,1331,1559,1783,2025,2196,2370,2539,2812,3012,3216",
+                        "endLines": "4,8,11,14,17,21,24,28,32,36,39,42,45,49,52,56,60",
+                        "endColumns": "12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12",
+                        "endOffsets": "223,451,609,759,931,1156,1326,1554,1778,2020,2191,2365,2534,2807,3007,3211,3540"
+                    }
+                }
+            ]
+        },
+        {
             "outputFile": "/home/damon/Desktop/mood-visualization/app/build/intermediates/res/merged/debug/values-my_values-my.arsc.flat",
             "map": [
                 {
@@ -1047,22 +1063,6 @@
                         "startOffsets": "105,214,319,436,529,641,769,847,926,1017,1110,1206,1300,1401,1494,1589,1683,1774,1865,1951,2074,2186,2288,2414,2525,2635,2795,2895",
                         "endColumns": "108,104,116,92,111,127,77,78,90,92,95,93,100,92,94,93,90,90,85,122,111,101,125,110,109,159,99,83",
                         "endOffsets": "209,314,431,524,636,764,842,921,1012,1105,1201,1295,1396,1489,1584,1678,1769,1860,1946,2069,2181,2283,2409,2520,2630,2790,2890,2974"
-                    }
-                }
-            ]
-        },
-        {
-            "outputFile": "/home/damon/Desktop/mood-visualization/app/build/intermediates/res/merged/debug/values-v17_values-v17.arsc.flat",
-            "map": [
-                {
-                    "source": "/home/damon/.gradle/caches/transforms-2/files-2.1/ee16d1c4e4a2fde58fb9a54e3f63c4ff/res/values-v17/values-v17.xml",
-                    "from": {
-                        "startLines": "2,5,9,12,15,18,22,25,29,33,37,40,43,46,50,53,57",
-                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "55,228,456,614,764,936,1161,1331,1559,1783,2025,2196,2370,2539,2812,3012,3216",
-                        "endLines": "4,8,11,14,17,21,24,28,32,36,39,42,45,49,52,56,60",
-                        "endColumns": "12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12",
-                        "endOffsets": "223,451,609,759,931,1156,1326,1554,1778,2020,2191,2365,2534,2807,3007,3211,3540"
                     }
                 }
             ]

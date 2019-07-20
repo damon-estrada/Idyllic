@@ -37,6 +37,7 @@ import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -66,7 +67,10 @@ public class UserStatistics extends AppCompatActivity {
     ArrayList<TextView> uiElements = new ArrayList<>(); // An array of elements that make up the UI.
     ImageView coverArtImg;                             // Current track cover art.
     ArrayList<String> uiValues = new ArrayList<>();  // Value of all track audio features.
+    private static ArrayList<String> uiValuesClone = new ArrayList<>(); // copy of uiValues
     int backPressed;                                // to prevent going back so fetch completes.
+    Bitmap bmCoverArt;
+    static Bitmap bmCoverArtClone;
 
 
     /* Debugging purposes */
@@ -99,13 +103,23 @@ public class UserStatistics extends AppCompatActivity {
         uiElements.add(findViewById(R.id.tempoNum));
         uiElements.add(findViewById(R.id.acousticnessNum));
 
-        uiValues = getIntent().getStringArrayListExtra("uiValues");
-        backPressed = uiValues.size();
+        /* Assign uiValues in addition to checking if a condition is present */
+        if ((uiValues = getIntent().getStringArrayListExtra("uiValues")).size() == 0) {
 
-        Log.d(TAG, "onCreate: Created ELEMENTS SIZE: " + uiElements.size());
-        Log.d(TAG, "onCreate: received: " + uiValues.size());
+            /* if we reached here, jusst update the ui with old values */
+            Log.d(TAG, "onCreate: Same SONG or error has occurred");
+            startUiClone();
 
-        startUiTask();
+        } else {
+            backPressed = uiValues.size();
+            Log.d(TAG, "onCreate: NEW SONG");
+            Log.d(TAG, "onCreate: Created ELEMENTS SIZE: " + uiElements.size());
+            Log.d(TAG, "onCreate: received: " + uiValues.size());
+            for (int i = 0; i < uiValues.size(); i++) {
+                Log.d(TAG, "onCreate ELEMENT (" + i + "): " + uiValues.get(i));
+            }
+            startUiTask();
+        }
     }
 
     @Override
@@ -116,8 +130,6 @@ public class UserStatistics extends AppCompatActivity {
 
     @Override
     protected void onStop() {super.onStop();}
-
-
 
     public void startUiTask() {
         UpdateUiAsync task = new UpdateUiAsync(this);
@@ -159,13 +171,17 @@ public class UserStatistics extends AppCompatActivity {
                track audio features.
              */
             try {
+                Log.d(TAG, "doInBackground: Retrieving CoverArt");
                 String imgUrl = "https://i.scdn.co/image/" + activity.uiValues.get(0);
                 URL url = new URL(imgUrl);
-                Bitmap bmCoverArt = BitmapFactory.decodeStream(url.openStream());
+                activity.bmCoverArt = BitmapFactory.decodeStream(url.openStream());
+                activity.bmCoverArtClone = activity.bmCoverArt;
+
+                Log.d(TAG, "doInBackground: Updating UI" + activity.uiValues.size());
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        activity.coverArtImg.setImageBitmap(bmCoverArt);
+                        activity.coverArtImg.setImageBitmap(activity.bmCoverArt);
 
                         /* Start at 1 since CoverArt Url is at index 0 */
                         for (int i = 1; i < activity.uiValues.size(); i++) {
@@ -176,7 +192,6 @@ public class UserStatistics extends AppCompatActivity {
                         }
                     }
                 });
-
 
             } catch (Exception e) {
                 Log.e("Error Occurred: ", e.getMessage());
@@ -198,12 +213,104 @@ public class UserStatistics extends AppCompatActivity {
                 return;
             }
 
+            /* First song success will yield playing data.
+               However, if same song is playing, clone to reuse for next time.
+
+               Also, if a new song plays, we need to dump the contents to prevent the
+               list from gorwing and getting a null pointer exception as mentioned below.
+            */
+            activity.uiValuesClone.clear();
+            activity.uiValuesClone.addAll(activity.uiValues);
+            Log.d(TAG, "POST EXECUTE UICLONE SIZE: " + activity.uiValuesClone.size());
+
             /* We need to dump the contents of uiValues since it keeps adding to the list
              * Which is problematic when the user keeps exiting and coming back to the activity
              * which throws an exception since uiElements only has 11 elements and uiValues
              * will continue to grow.
              * Therefore, uiElements does not have an index 12 so Error.*/
             activity.uiValues.clear();
+        }
+    }
+
+    public void startUiClone() {
+        UpdateUiAsyncClone task = new UpdateUiAsyncClone(this);
+        task.execute();
+    }
+
+    private static class UpdateUiAsyncClone extends AsyncTask<Void, Void, Void> {
+
+        private WeakReference<UserStatistics> activityWeakRef;
+
+        UpdateUiAsyncClone(UserStatistics activity) {
+            activityWeakRef = new WeakReference<>(activity);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            /* get strong reference which will be destroyed after this scope ends */
+            UserStatistics activity = activityWeakRef.get();
+
+            /* This will return if garbage collection is happening so we return immediately */
+            if (activity == null || activity.isFinishing()) {
+                return;
+            }
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            /* get strong reference which will be destroyed after this scope ends */
+            UserStatistics activity = activityWeakRef.get();
+
+            /* This will return if garbage collection is happening so we return immediately */
+            if (activity == null || activity.isFinishing()) {
+                return null;
+            }
+
+            /* Use this to retry the fetch just in case the user is too fast for fetch of the
+               track audio features.
+             */
+            try {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        activity.coverArtImg.setImageBitmap(activity.bmCoverArtClone);
+
+                        /* Start at 1 since CoverArt Url is at index 0 */
+                        for (int i = 1; i < activity.uiValuesClone.size(); i++) {
+
+                            /* On every iteration, get the txt to be updated */
+                            activity.uiElements.get(i)
+                                    .setText(activity.uiValuesClone.get(i));
+                        }
+                    }
+                });
+
+                Log.d(TAG, "doInBackground UICLONE SIZE: " + activity.uiValuesClone.size());
+                for (int i = 0; i < activity.uiValuesClone.size(); i++) {
+                    Log.d(TAG, "doInBackground UICLONE: " + activity.uiValuesClone.get(i));
+                }
+                Log.d(TAG, "doInBackground UICLONE: FINISHED");
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage());
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            /* get strong reference which will be destroyed after this scope ends */
+            UserStatistics activity = activityWeakRef.get();
+
+            /* This will return if garbage collection is happening so we return immediately */
+            if (activity == null || activity.isFinishing()) {
+                return;
+            }
         }
     }
 
