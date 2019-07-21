@@ -13,17 +13,17 @@ public final class R {
         private attr() {}
 
         public static final int alpha = 0x7f020027;
-        public static final int font = 0x7f02007a;
-        public static final int fontProviderAuthority = 0x7f02007c;
-        public static final int fontProviderCerts = 0x7f02007d;
-        public static final int fontProviderFetchStrategy = 0x7f02007e;
-        public static final int fontProviderFetchTimeout = 0x7f02007f;
-        public static final int fontProviderPackage = 0x7f020080;
-        public static final int fontProviderQuery = 0x7f020081;
-        public static final int fontStyle = 0x7f020082;
-        public static final int fontVariationSettings = 0x7f020083;
-        public static final int fontWeight = 0x7f020084;
-        public static final int ttcIndex = 0x7f020140;
+        public static final int font = 0x7f020082;
+        public static final int fontProviderAuthority = 0x7f020084;
+        public static final int fontProviderCerts = 0x7f020085;
+        public static final int fontProviderFetchStrategy = 0x7f020086;
+        public static final int fontProviderFetchTimeout = 0x7f020087;
+        public static final int fontProviderPackage = 0x7f020088;
+        public static final int fontProviderQuery = 0x7f020089;
+        public static final int fontStyle = 0x7f02008a;
+        public static final int fontVariationSettings = 0x7f02008b;
+        public static final int fontWeight = 0x7f02008c;
+        public static final int ttcIndex = 0x7f020148;
     }
     public static final class color {
         private color() {}
@@ -145,14 +145,14 @@ public final class R {
         public static final int ColorStateListItem_android_color = 0;
         public static final int ColorStateListItem_android_alpha = 1;
         public static final int ColorStateListItem_alpha = 2;
-        public static final int[] FontFamily = { 0x7f02007c, 0x7f02007d, 0x7f02007e, 0x7f02007f, 0x7f020080, 0x7f020081 };
+        public static final int[] FontFamily = { 0x7f020084, 0x7f020085, 0x7f020086, 0x7f020087, 0x7f020088, 0x7f020089 };
         public static final int FontFamily_fontProviderAuthority = 0;
         public static final int FontFamily_fontProviderCerts = 1;
         public static final int FontFamily_fontProviderFetchStrategy = 2;
         public static final int FontFamily_fontProviderFetchTimeout = 3;
         public static final int FontFamily_fontProviderPackage = 4;
         public static final int FontFamily_fontProviderQuery = 5;
-        public static final int[] FontFamilyFont = { 0x1010532, 0x1010533, 0x101053f, 0x101056f, 0x1010570, 0x7f02007a, 0x7f020082, 0x7f020083, 0x7f020084, 0x7f020140 };
+        public static final int[] FontFamilyFont = { 0x1010532, 0x1010533, 0x101053f, 0x101056f, 0x1010570, 0x7f020082, 0x7f02008a, 0x7f02008b, 0x7f02008c, 0x7f020148 };
         public static final int FontFamilyFont_android_font = 0;
         public static final int FontFamilyFont_android_fontWeight = 1;
         public static final int FontFamilyFont_android_fontStyle = 2;

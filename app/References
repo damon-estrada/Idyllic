@@ -1,0 +1,10 @@
+
+
+
+Method: getCurrentSong()
+url: https://stackoverflow.com/questions/9324760/gson-jsonobject-unsupported-operation-exception-null-getasstring
+help: I could not figure out why currentsong string was failing after verfying the JSON file
+      was not returning null.
+
+url: https://stackoverflow.com/questions/43301080/spotify-android-make-authorized-web-requests
+help: How to properly set the request property for the call

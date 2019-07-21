@@ -10,6 +10,7 @@ import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -71,6 +72,7 @@ public class UserStatistics extends AppCompatActivity {
     int backPressed;                                // to prevent going back so fetch completes.
     Bitmap bmCoverArt;
     static Bitmap bmCoverArtClone;
+    public CurrentPlaying receivedObj;
 
 
     /* Debugging purposes */
@@ -104,9 +106,10 @@ public class UserStatistics extends AppCompatActivity {
         uiElements.add(findViewById(R.id.acousticnessNum));
 
         /* Assign uiValues in addition to checking if a condition is present */
-        if ((uiValues = getIntent().getStringArrayListExtra("uiValues")).size() == 0) {
 
-            /* if we reached here, jusst update the ui with old values */
+        //if ((uiValues = getIntent().getStringArrayListExtra("uiValues")).size() == 0) {
+
+            /* if we reached here, just update the ui with old values
             Log.d(TAG, "onCreate: Same SONG or error has occurred");
             startUiClone();
 
@@ -120,6 +123,11 @@ public class UserStatistics extends AppCompatActivity {
             }
             startUiTask();
         }
+        */
+
+        Intent i = getIntent();
+        receivedObj = (CurrentPlaying) i.getSerializableExtra("curTrackObj");
+        startUiTask();
     }
 
     @Override
@@ -130,6 +138,21 @@ public class UserStatistics extends AppCompatActivity {
 
     @Override
     protected void onStop() {super.onStop();}
+
+    public void toHomeActivity() {
+
+        /* I want to send the object back to the HomeActivity */
+        Intent intent = new Intent(this, HomeActivity.class);
+
+        Log.d(TAG, "toHomeActivity: Activity sending Object with data");
+
+        /* The object being sent to UserStatistics Activity */
+        intent.putExtra("object", receivedObj);
+
+        startActivity(intent);
+    }
+
+
 
     public void startUiTask() {
         UpdateUiAsync task = new UpdateUiAsync(this);
@@ -172,24 +195,29 @@ public class UserStatistics extends AppCompatActivity {
              */
             try {
                 Log.d(TAG, "doInBackground: Retrieving CoverArt");
-                String imgUrl = "https://i.scdn.co/image/" + activity.uiValues.get(0);
+                String imgUrl = "https://i.scdn.co/image/" + activity.receivedObj.coverArtUrl;
+
                 URL url = new URL(imgUrl);
                 activity.bmCoverArt = BitmapFactory.decodeStream(url.openStream());
+
                 activity.bmCoverArtClone = activity.bmCoverArt;
 
-                Log.d(TAG, "doInBackground: Updating UI" + activity.uiValues.size());
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        /* update the UI with the object information */
                         activity.coverArtImg.setImageBitmap(activity.bmCoverArt);
+                        activity.uiElements.get(1).setText(activity.receivedObj.danceability);
+                        activity.uiElements.get(2).setText(activity.receivedObj.liveness);
+                        activity.uiElements.get(3).setText(activity.receivedObj.valence);
+                        activity.uiElements.get(4).setText(activity.receivedObj.speechiness);
+                        activity.uiElements.get(5).setText(activity.receivedObj.instrumentalness);
 
-                        /* Start at 1 since CoverArt Url is at index 0 */
-                        for (int i = 1; i < activity.uiValues.size(); i++) {
-
-                            /* On every iteration, get the txt to be updated */
-                            activity.uiElements.get(i)
-                                    .setText(activity.uiValues.get(i));
-                        }
+                        activity.uiElements.get(6).setText(activity.receivedObj.loudness);
+                        activity.uiElements.get(7).setText(activity.receivedObj.key);
+                        activity.uiElements.get(8).setText(activity.receivedObj.energy);
+                        activity.uiElements.get(9).setText(activity.receivedObj.tempo);
+                        activity.uiElements.get(10).setText(activity.receivedObj.acousticness);
                     }
                 });
 
@@ -323,6 +351,7 @@ public class UserStatistics extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Fetch not finished yet", Toast.LENGTH_SHORT).show();
         } else {
             super.onBackPressed();
+            toHomeActivity();
         }
     }
 }

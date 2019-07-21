@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="false">
+
+
+    <!-- Scroll View Can only have one child. Therefore we make it have a child of -->
+    <!-- the ConstraintLayout which encloses all of the other content -->
+    <android.support.constraint.ConstraintLayout
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.example.moodvisulized.HomeActivity">
+
+        <!-- User info shown at the top-->
+
+            <ImageView
+                android:id="@+id/userPicture"
+                android:src="@drawable/user_picture"
+                android:contentDescription="Update later"
+
+                android:layout_width="125dp"
+                android:layout_height="wrap_content"
+
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginBottom="15dp"
+
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
+
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/currentTrackPlayingText"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+
+                app:layout_constraintDimensionRatio="1:1" />
+
+        <ImageView
+            android:id="@+id/userCountryFlag"
+            android:src="@drawable/country_flag_us"
+            android:contentDescription="Update Later"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="35dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp"
+
+            android:adjustViewBounds="true"
+
+            app:layout_constraintTop_toTopOf="@id/userPicture"
+            app:layout_constraintBottom_toBottomOf="@id/userPicture"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/userName"
+            android:text="First Last"
+            android:textColor="@color/white"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="0dp"
+            android:layout_marginBottom="40dp"
+
+            app:layout_constraintBottom_toTopOf="@+id/currentTrackPlayingText"
+            app:layout_constraintStart_toStartOf="@id/userCountryFlag" />
+
+
+        <ImageButton
+            android:id="@+id/menuIcon"
+            android:background="@drawable/options_icon"
+            android:contentDescription="Update Later"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/userCountryFlag"
+
+
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="15dp" />
+
+            <!-- Current song Playing Banner-->
+
+            <!--The background banner picture -->
+
+            <ImageView
+                android:id="@+id/currentlyPlayingBanner"
+                android:src="@drawable/banner_background1"
+                android:contentDescription="Update Later"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="15dp"
+
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
+
+
+                app:layout_constraintTop_toBottomOf="@id/currentTrackPlayingText"
+                app:layout_constraintBottom_toTopOf="@id/allTimeFavoriteTrackText"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+
+                app:layout_constraintDimensionRatio="1:1" />
+
+            <!-- Picture of artist -->
+            <ImageView
+                android:id="@+id/currentlyPlayingArtist"
+                android:src="@drawable/artist_picture1"
+                android:contentDescription="Update Later"
+
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:adjustViewBounds="true"
+
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+
+                app:layout_constraintTop_toTopOf="@id/currentlyPlayingBanner"
+                app:layout_constraintBottom_toBottomOf="@id/currentlyPlayingBanner"
+                app:layout_constraintStart_toStartOf="@id/currentlyPlayingBanner"
+
+                />
+
+                />
+
+            <!-- Category Text -->
+            <TextView
+                android:id="@+id/currentTrackPlayingText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Current Track Playing"
+                android:textColor="@color/white"
+
+                app:layout_constraintTop_toBottomOf="@id/userPicture"
+                app:layout_constraintBottom_toTopOf="@id/currentlyPlayingBanner"
+                app:layout_constraintStart_toStartOf="@id/currentlyPlayingBanner" />
+
+            <!-- arrow to show more information -->
+            <ImageButton
+                android:id="@+id/currentTrackPlayingArrow"
+                android:background="@drawable/arrow"
+                android:contentDescription="Update Later"
+
+                android:layout_width="24sp"
+                android:layout_height="24sp"
+
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
+
+                app:layout_constraintTop_toTopOf="@id/currentlyPlayingBanner"
+                app:layout_constraintBottom_toBottomOf="@id/currentlyPlayingBanner"
+                app:layout_constraintEnd_toEndOf="@id/currentlyPlayingBanner" />
+
+            <!-- _________________Current Song Playing Banner END____________________ -->
+
+            <!-- All Time Favorite Track Banner-->
+
+            <!--The background banner picture -->
+
+            <ImageView
+                android:id="@+id/allTimeFavoriteTrackBanner"
+                android:src="@drawable/banner_background2"
+                android:contentDescription="Update Later"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="15dp"
+
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
+
+                app:layout_constraintTop_toBottomOf="@id/allTimeFavoriteTrackText"
+                app:layout_constraintBottom_toTopOf="@id/mostHappyTrackText"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Picture of artist -->
+            <ImageView
+                android:id="@+id/allTimeFavoriteTrackArtist"
+                android:src="@drawable/artist_picture2"
+                android:contentDescription="Update Later"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
+
+                app:layout_constraintTop_toTopOf="@id/allTimeFavoriteTrackBanner"
+                app:layout_constraintBottom_toBottomOf="@id/allTimeFavoriteTrackBanner"
+                app:layout_constraintStart_toStartOf="@id/allTimeFavoriteTrackBanner"
+
+
+                app:layout_constraintDimensionRatio="1:1" />
+
+            <!-- Category Text -->
+            <TextView
+                android:id="@+id/allTimeFavoriteTrackText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="All Time Favorite Track"
+                android:textColor="@color/white"
+
+                app:layout_constraintTop_toBottomOf="@id/currentlyPlayingBanner"
+                app:layout_constraintBottom_toTopOf="@id/allTimeFavoriteTrackBanner"
+                app:layout_constraintStart_toStartOf="@id/allTimeFavoriteTrackBanner"/>
+
+            <!-- arrow to show more information -->
+            <ImageButton
+                android:id="@+id/allTimeFavoriteTrackArrow"
+                android:background="@drawable/arrow"
+                android:contentDescription="Update Later"
+
+                android:layout_width="24sp"
+                android:layout_height="24sp"
+
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="20dp"
+
+
+                app:layout_constraintTop_toTopOf="@id/allTimeFavoriteTrackBanner"
+                app:layout_constraintBottom_toBottomOf="@id/allTimeFavoriteTrackBanner"
+
+                app:layout_constraintEnd_toEndOf="@id/allTimeFavoriteTrackBanner"
+
+                app:layout_constraintDimensionRatio="1:1" />
+
+
+            <!-- _________________All Time Favorite Track Banner END____________________ -->
+
+
+
+
+        <!-- Most Happy Track Banner -->
+
+        <!--The background banner picture -->
+
+        <ImageView
+            android:id="@+id/mostHappyTrackBanner"
+            android:src="@drawable/banner_background3"
+            android:contentDescription="Update Later"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="15dp"
+
+
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+
+            app:layout_constraintTop_toBottomOf="@id/mostHappyTrackText"
+            app:layout_constraintBottom_toTopOf="@id/mostDepressingTrackText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+
+            app:layout_constraintDimensionRatio="1:1"/>
+
+        <!-- Picture of artist -->
+        <ImageView
+            android:id="@+id/mostHappyTrackArtist"
+            android:src="@drawable/artist_picture3"
+            android:contentDescription="Update Later"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+
+            app:layout_constraintTop_toTopOf="@id/mostHappyTrackBanner"
+            app:layout_constraintBottom_toBottomOf="@id/mostHappyTrackBanner"
+            app:layout_constraintStart_toStartOf="@id/mostHappyTrackBanner"
+
+
+            app:layout_constraintDimensionRatio="1:1" />
+
+        <!-- Category Text -->
+        <TextView
+            android:id="@+id/mostHappyTrackText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Most Happy Track"
+            android:textColor="@color/white"
+
+            app:layout_constraintTop_toBottomOf="@id/allTimeFavoriteTrackBanner"
+            app:layout_constraintBottom_toTopOf="@id/mostHappyTrackBanner"
+            app:layout_constraintStart_toStartOf="@id/mostHappyTrackBanner"/>
+
+        <!-- arrow to show more information -->
+        <ImageButton
+            android:id="@+id/mostHappyTrackArrow"
+            android:background="@drawable/arrow"
+            android:contentDescription="Update Later"
+
+            android:layout_width="24sp"
+            android:layout_height="24sp"
+
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="20dp"
+
+
+            app:layout_constraintTop_toTopOf="@id/mostHappyTrackBanner"
+            app:layout_constraintBottom_toBottomOf="@id/mostHappyTrackBanner"
+
+            app:layout_constraintEnd_toEndOf="@id/mostHappyTrackBanner"
+
+            app:layout_constraintDimensionRatio="1:1" />
+
+
+        <!-- _________________Most Happy Track Banner END____________________ -->
+
+
+
+
+
+        <!-- Most Depressing Track Banner -->
+
+        <!--The background banner picture -->
+
+        <ImageView
+            android:id="@+id/mostDepressingTrackBanner"
+            android:src="@drawable/banner_background4"
+            android:contentDescription="Update Later"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="15dp"
+
+
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+
+            app:layout_constraintTop_toBottomOf="@id/mostDepressingTrackText"
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+
+            app:layout_constraintDimensionRatio="1:1"/>
+
+        <!-- Picture of artist -->
+        <ImageView
+            android:id="@+id/mostDepressingArtist"
+            android:src="@drawable/artist_picture4"
+            android:contentDescription="Update Later"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+
+            app:layout_constraintTop_toTopOf="@id/mostDepressingTrackBanner"
+            app:layout_constraintBottom_toBottomOf="@id/mostDepressingTrackBanner"
+            app:layout_constraintStart_toStartOf="@id/mostDepressingTrackBanner"
+            app:layout_constraintDimensionRatio="1:1" />
+
+        <!-- Category Text -->
+        <TextView
+            android:id="@+id/mostDepressingTrackText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Most Depressing Track"
+            android:textColor="@color/white"
+
+            app:layout_constraintTop_toBottomOf="@id/mostHappyTrackBanner"
+            app:layout_constraintBottom_toTopOf="@id/mostDepressingTrackBanner"
+            app:layout_constraintStart_toStartOf="@id/mostDepressingTrackBanner"/>
+
+        <!-- arrow to show more information -->
+        <ImageButton
+            android:id="@+id/mostDepressingTrackArrow"
+            android:background="@drawable/arrow"
+            android:contentDescription="Update Later"
+
+            android:layout_width="24sp"
+            android:layout_height="24sp"
+
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="20dp"
+
+            app:layout_constraintTop_toTopOf="@id/mostDepressingTrackBanner"
+            app:layout_constraintBottom_toBottomOf="@id/mostDepressingTrackBanner"
+            app:layout_constraintEnd_toEndOf="@id/mostDepressingTrackBanner"
+            app:layout_constraintDimensionRatio="1:1" />
+
+
+        <!-- _________________Most Depressing Track Banner END____________________ -->
+
+
+
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

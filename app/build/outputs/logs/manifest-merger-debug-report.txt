@@ -11,6 +11,7 @@ MERGED from [:spotify-app-remote] /home/damon/.gradle/caches/transforms-2/files-
 MERGED from [com.github.kaaes:spotify-web-api-android:0.4.1] /home/damon/.gradle/caches/transforms-2/files-2.1/875b3b33867efa398a2d1369528b3ef2/AndroidManifest.xml:2:1-13:12
 MERGED from [com.spotify.android:auth:1.1.0] /home/damon/.gradle/caches/transforms-2/files-2.1/e193b7303e4e6e7a1e17045803093f5a/AndroidManifest.xml:22:1-55:12
 MERGED from [pl.droidsonroids.gif:android-gif-drawable:1.2.17] /home/damon/.gradle/caches/transforms-2/files-2.1/97d3d6a309c075a213792ac4bbf41add/AndroidManifest.xml:2:1-10:12
+MERGED from [com.mikhaellopez:circularimageview:4.0.1] /home/damon/.gradle/caches/transforms-2/files-2.1/83448c30d03549ea02b1eca4b185f52a/AndroidManifest.xml:2:1-11:12
 MERGED from [com.android.support:support-fragment:28.0.0] /home/damon/.gradle/caches/transforms-2/files-2.1/0d139141673231d57d4d9909cb15515d/AndroidManifest.xml:17:1-22:12
 MERGED from [com.android.support:animated-vector-drawable:28.0.0] /home/damon/.gradle/caches/transforms-2/files-2.1/bf7c2a60cfebb799ff2f96f522e35673/AndroidManifest.xml:17:1-22:12
 MERGED from [com.android.support:support-core-ui:28.0.0] /home/damon/.gradle/caches/transforms-2/files-2.1/2879e657236f4892f3485b6c75b62cac/AndroidManifest.xml:17:1-22:12
@@ -138,6 +139,8 @@ MERGED from [com.spotify.android:auth:1.1.0] /home/damon/.gradle/caches/transfor
 MERGED from [com.spotify.android:auth:1.1.0] /home/damon/.gradle/caches/transforms-2/files-2.1/e193b7303e4e6e7a1e17045803093f5a/AndroidManifest.xml:27:5-29:41
 MERGED from [pl.droidsonroids.gif:android-gif-drawable:1.2.17] /home/damon/.gradle/caches/transforms-2/files-2.1/97d3d6a309c075a213792ac4bbf41add/AndroidManifest.xml:6:5-8:41
 MERGED from [pl.droidsonroids.gif:android-gif-drawable:1.2.17] /home/damon/.gradle/caches/transforms-2/files-2.1/97d3d6a309c075a213792ac4bbf41add/AndroidManifest.xml:6:5-8:41
+MERGED from [com.mikhaellopez:circularimageview:4.0.1] /home/damon/.gradle/caches/transforms-2/files-2.1/83448c30d03549ea02b1eca4b185f52a/AndroidManifest.xml:7:5-9:41
+MERGED from [com.mikhaellopez:circularimageview:4.0.1] /home/damon/.gradle/caches/transforms-2/files-2.1/83448c30d03549ea02b1eca4b185f52a/AndroidManifest.xml:7:5-9:41
 MERGED from [com.android.support:support-fragment:28.0.0] /home/damon/.gradle/caches/transforms-2/files-2.1/0d139141673231d57d4d9909cb15515d/AndroidManifest.xml:20:5-44
 MERGED from [com.android.support:support-fragment:28.0.0] /home/damon/.gradle/caches/transforms-2/files-2.1/0d139141673231d57d4d9909cb15515d/AndroidManifest.xml:20:5-44
 MERGED from [com.android.support:animated-vector-drawable:28.0.0] /home/damon/.gradle/caches/transforms-2/files-2.1/bf7c2a60cfebb799ff2f96f522e35673/AndroidManifest.xml:20:5-44
