@@ -1,5 +1,7 @@
 package com.example.moodvisulized;
 
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -25,6 +27,8 @@ import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.net.URL;
@@ -65,9 +69,6 @@ public class HomeActivity extends AppCompatActivity {
     /* The variables for holding essential information */
     private String currentTrackUri = "";         // The track Id for the current song playing
     private String currentArtistUri = "";       // The current artist Uri
-    private String previousTrackUri = "";      // This is to reduce API calls if same song is play.
-    private String tmpTrackUri;               // To aid the process.
-    AudioFeaturesTrack check;
 
     /* Variables needed for service to spotify calls or access to app-remote */
     private ConnectionParams connectionParams;   // Connection Params for the app remote
@@ -128,12 +129,6 @@ public class HomeActivity extends AppCompatActivity {
                 })
                 .build();
 
-        /* For mAppRemoteSet the connection parameters */
-        connectionParams = new ConnectionParams.Builder(CLIENT_ID)
-                .setRedirectUri(REDIRECT_URI)
-                .showAuthView(true)
-                .build();
-
         /* If we made it here we are good to go! Start getting service. */
         spotify = restAdapter.create(SpotifyService.class);
 
@@ -159,20 +154,28 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         /* Let us see if we receive anything first */
+        Intent i = getIntent();
+        if ( (receivedObj = (CurrentPlaying) i.getSerializableExtra("object")) != null) {
 
-        try {
+            Log.d(TAG, "onCreate: received object: " + receivedObj);
             Log.d(TAG, "onCreate: Second and more run through");
-            Intent i = getIntent();
-            receivedObj = (CurrentPlaying) i.getSerializableExtra("object");
 
-            /* If we reach this, then we received something */
+            /* If we reach this, then we received something from currently playing activity */
             curTrack = new CurrentPlaying(receivedObj);
-        } catch (Exception e) {
+
+            
+        } else {
 
             /* If we get here, then we are in the first run through of the app */
             Log.d(TAG, "onCreate: First run through");
             curTrack = new CurrentPlaying();
-            curTrack.trackUri = "init";
+            curTrack.setTrackUri("init");
+
+            /* For mAppRemoteSet the connection parameters */
+            connectionParams = new ConnectionParams.Builder(CLIENT_ID)
+                    .setRedirectUri(REDIRECT_URI)
+                    .showAuthView(true)
+                    .build();
         }
     }
 
@@ -183,6 +186,7 @@ public class HomeActivity extends AppCompatActivity {
 
         /* To prevent multiple instances of app remote being active. */
         SpotifyAppRemote.disconnect(mSpotifyAppRemote);
+
 
         /* Connect to SpotifyAppRemote */
         SpotifyAppRemote.connect(this, connectionParams, new Connector.ConnectionListener() {
@@ -210,6 +214,7 @@ public class HomeActivity extends AppCompatActivity {
          * when the new song comes. Disconnecting helps prevent this error
          */
         SpotifyAppRemote.disconnect(mSpotifyAppRemote);
+        Log.d(TAG, "onStop: App remote disconnected");
     }
 
     @Override
@@ -229,7 +234,7 @@ public class HomeActivity extends AppCompatActivity {
         Log.d(TAG, "toTrackAudioFeatures: Activity sending Object with data");
 
         /* Set the coverArtUrl here to ensure we got it */
-        curTrack.coverArtUrl = coverArtUrl;
+        curTrack.setCoverArtUrl(coverArtUrl);
 
         /* The object being sent to UserStatistics Activity */
         intent.putExtra("curTrackObj", curTrack);
@@ -270,10 +275,10 @@ public class HomeActivity extends AppCompatActivity {
                     Log.d(TAG, "connected CURRENT ARTIST URI: " + currentArtistUri);
 
                     Log.d(TAG, "connected: playerState track uri: " + "spotify:track:" + currentTrackUri);
-                    Log.d(TAG, "connected: curTrack track uri: " + curTrack.trackUri);
+                    Log.d(TAG, "connected: curTrack track uri: " + curTrack.getTrackUri());
 
                     /* So if the track uri are not the same, make api call; new song playing */
-                    if (!("spotify:track:" + currentTrackUri).equals(curTrack.trackUri)) {
+                    if (!("spotify:track:" + currentTrackUri).equals(curTrack.getTrackUri())) {
                         Log.d(TAG, "connected: API CALL; NEW SONG");
 
                         coverArtUrl = playerState.track.imageUri.toString();
@@ -295,7 +300,7 @@ public class HomeActivity extends AppCompatActivity {
 
                     } else {
                     /* else, return the same obj back from the UserStatistics activity */
-                       coverArtUrl = curTrack.coverArtUrl;
+                       coverArtUrl = curTrack.getCoverArtUrl();
 
                        Log.d(TAG, "connected: else condition (same song playing): ");
                     }
@@ -304,7 +309,7 @@ public class HomeActivity extends AppCompatActivity {
 
         fetchProfilePic();
         fetchFavTracks();
-        //spotify.getTopTracks();
+
     }
 
     /**
@@ -455,11 +460,9 @@ public class HomeActivity extends AppCompatActivity {
     public void fetchFavTracks() {
         FavoriteTracksAsyncTask fTAT = new FavoriteTracksAsyncTask(this);
         fTAT.execute();
-
     }
 
     private static class FavoriteTracksAsyncTask extends AsyncTask<Artist, Void, Void> {
-
 
         /* Create a weak reference to try and minimize leaks */
         /* The variables accessible by the class */
@@ -508,6 +511,9 @@ public class HomeActivity extends AppCompatActivity {
             return null;
         }
     }
+
+
+
 
     private static class ArtistProfilePicAsyncTask extends AsyncTask<String, Void, Bitmap> {
 
@@ -648,6 +654,33 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
     }
+
+    public void writeToInternalStorage(AllTimeFavorite favTracks) {
+
+        ContextWrapper contextWrapper = new ContextWrapper(getApplicationContext());
+        File dir = contextWrapper.getDir(getFilesDir().getName(), Context.MODE_PRIVATE);
+        File fileStore = new File(dir, "favoriteTracks");
+
+        try {
+            FileOutputStream out = new FileOutputStream(fileStore, true);
+
+            for (int i = 0; i < favTracks.getFavTrackList().size(); i++) {
+                out.write(favTracks.getFavTrackList().get(i).name.getBytes());
+                out.write(favTracks.getFavTrackList().get(i).artists.get(0).name.getBytes());
+                out.flush();
+            }
+
+            out.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(TAG, "writeToInternalStorage: " + e.getMessage() + e.getCause() );
+        }
+    }
+
+
+
+
 
     /**
      * This method will handle acccessToken or failure as necessary
