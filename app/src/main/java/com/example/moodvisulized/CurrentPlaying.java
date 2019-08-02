@@ -5,22 +5,22 @@ import java.util.Locale;
 
 public class CurrentPlaying implements Serializable {
 
-    public String danceability;
-    public String liveness;
-    public String valence;
-    public String speechiness;
-    public String instrumentalness;
+    private String danceability;
+    private String liveness;
+    private String valence;
+    private String speechiness;
+    private String instrumentalness;
 
-    public String loudness;
-    public String key;
-    public String energy;
-    public String tempo;
-    public String acousticness;
+    private String loudness;
+    private String key;
+    private String energy;
+    private String tempo;
+    private String acousticness;
 
-    public int duration_ms;
-    public String trackUri;
+    private int duration_ms;
+    private String trackUri;
 
-    public String coverArtUrl;
+    private String coverArtUrl;
 
     /* Setters */
     public void setDanceability(String danceability) {this.danceability = danceability;}
