@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+        <ImageButton
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:src="@color/white"
+            android:id="@+id/shotTerm"
+
+            app:layout_constraintTop_toTopOf="@id/midTerm"
+            app:layout_constraintBottom_toBottomOf="@id/midTerm"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/midTerm" />
+
+        <ImageButton
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:src="@color/white"
+            android:id="@+id/midTerm"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/allTimeFavoriteTrackText"
+            app:layout_constraintStart_toEndOf="@id/shotTerm"
+            app:layout_constraintEnd_toStartOf="@id/longTerm"
+
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"/>
+
+        <ImageButton
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:src="@color/white"
+            android:id="@+id/longTerm"
+
+            app:layout_constraintTop_toTopOf="@id/midTerm"
+            app:layout_constraintBottom_toBottomOf="@id/midTerm"
+            app:layout_constraintStart_toEndOf="@id/midTerm"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/allTimeFavoriteTrackText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            app:layout_constraintTop_toBottomOf="@id/midTerm"
+            app:layout_constraintBottom_toTopOf="@id/coverArt"
+            app:layout_constraintStart_toStartOf="@id/coverArt"
+            app:layout_constraintEnd_toEndOf="@id/coverArt"
+
+            android:text="Top 10 Favorite Tracks"
+            android:textColor="@color/white" />
+
+
+        <ImageView
+            android:id="@+id/coverArt"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/coverArtDesc"
+
+            android:scaleType="centerCrop"
+            android:src="@color/colorPrimary"
+
+            app:layout_constraintTop_toBottomOf="@id/allTimeFavoriteTrackText"
+            app:layout_constraintBottom_toTopOf="@id/allTimeFavoriteTrackName"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintDimensionRatio="1:1" />
+
+        <TextView
+            android:id="@+id/allTimeFavoriteTrackName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            app:layout_constraintTop_toBottomOf="@id/coverArt"
+            app:layout_constraintBottom_toBottomOf="@id/allTimeFavoriteTrackArtist"
+            app:layout_constraintStart_toStartOf="@id/coverArt"
+
+            android:text="Track Name"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/allTimeFavoriteTrackArtist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            app:layout_constraintTop_toBottomOf="@id/allTimeFavoriteTrackName"
+            app:layout_constraintBottom_toTopOf="@id/secondFavTrack"
+            app:layout_constraintStart_toStartOf="@id/allTimeFavoriteTrackName"
+
+            android:layout_marginBottom="10dp"
+
+            android:text="Track Artist"
+            android:textColor="@color/white" />
+
+        <ImageView
+            android:id="@+id/secondFavTrack"
+            android:src="@drawable/banner_background1"
+            android:contentDescription="Update Later"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="15dp"
+
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+
+            app:layout_constraintTop_toBottomOf="@id/allTimeFavoriteTrackArtist"
+            app:layout_constraintBottom_toTopOf="@id/thirdFavTrack"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageView
+            android:id="@+id/thirdFavTrack"
+            android:src="@drawable/banner_background1"
+            android:contentDescription="Update Later"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="15dp"
+
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+
+            app:layout_constraintTop_toBottomOf="@id/secondFavTrack"
+            app:layout_constraintBottom_toTopOf="@id/fourthFavTrack"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageView
+            android:id="@+id/fourthFavTrack"
+            android:src="@drawable/banner_background1"
+            android:contentDescription="Update Later"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="15dp"
+
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+
+            app:layout_constraintTop_toBottomOf="@id/thirdFavTrack"
+            app:layout_constraintBottom_toTopOf="@id/fifthFavTrack"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageView
+            android:id="@+id/fifthFavTrack"
+            android:src="@drawable/banner_background1"
+            android:contentDescription="Update Later"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="15dp"
+
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+
+            app:layout_constraintTop_toBottomOf="@id/fourthFavTrack"
+            app:layout_constraintBottom_toTopOf="@id/sixthFavTrack"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageView
+            android:id="@+id/sixthFavTrack"
+            android:src="@drawable/banner_background1"
+            android:contentDescription="Update Later"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="15dp"
+
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+
+            app:layout_constraintTop_toBottomOf="@id/fifthFavTrack"
+            app:layout_constraintBottom_toTopOf="@id/seventhFavTrack"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageView
+            android:id="@+id/seventhFavTrack"
+            android:src="@drawable/banner_background1"
+            android:contentDescription="Update Later"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="15dp"
+
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+
+            app:layout_constraintTop_toBottomOf="@id/sixthFavTrack"
+            app:layout_constraintBottom_toTopOf="@id/eighthFavTrack"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageView
+            android:id="@+id/eighthFavTrack"
+            android:src="@drawable/banner_background1"
+            android:contentDescription="Update Later"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="15dp"
+
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+
+            app:layout_constraintTop_toBottomOf="@id/seventhFavTrack"
+            app:layout_constraintBottom_toTopOf="@id/ninthFavTrack"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageView
+            android:id="@+id/ninthFavTrack"
+            android:src="@drawable/banner_background1"
+            android:contentDescription="Update Later"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="15dp"
+
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+
+            app:layout_constraintTop_toBottomOf="@id/eighthFavTrack"
+            app:layout_constraintBottom_toTopOf="@id/tenthFavTrack"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageView
+            android:id="@+id/tenthFavTrack"
+            android:src="@drawable/banner_background1"
+            android:contentDescription="Update Later"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="15dp"
+
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+
+            app:layout_constraintTop_toBottomOf="@id/ninthFavTrack"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>
