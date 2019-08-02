@@ -105,25 +105,7 @@ public class UserStatistics extends AppCompatActivity {
         uiElements.add(findViewById(R.id.tempoNum));
         uiElements.add(findViewById(R.id.acousticnessNum));
 
-        /* Assign uiValues in addition to checking if a condition is present */
-
-        //if ((uiValues = getIntent().getStringArrayListExtra("uiValues")).size() == 0) {
-
-            /* if we reached here, just update the ui with old values
-            Log.d(TAG, "onCreate: Same SONG or error has occurred");
-            startUiClone();
-
-        } else {
-            backPressed = uiValues.size();
-            Log.d(TAG, "onCreate: NEW SONG");
-            Log.d(TAG, "onCreate: Created ELEMENTS SIZE: " + uiElements.size());
-            Log.d(TAG, "onCreate: received: " + uiValues.size());
-            for (int i = 0; i < uiValues.size(); i++) {
-                Log.d(TAG, "onCreate ELEMENT (" + i + "): " + uiValues.get(i));
-            }
-            startUiTask();
-        }
-        */
+        /* Get the passed object and use it to populate the UI */
 
         Intent i = getIntent();
         receivedObj = (CurrentPlaying) i.getSerializableExtra("curTrackObj");
@@ -195,7 +177,7 @@ public class UserStatistics extends AppCompatActivity {
              */
             try {
                 Log.d(TAG, "doInBackground: Retrieving CoverArt");
-                String imgUrl = "https://i.scdn.co/image/" + activity.receivedObj.coverArtUrl;
+                String imgUrl = "https://i.scdn.co/image/" + activity.receivedObj.getCoverArtUrl();
 
                 URL url = new URL(imgUrl);
                 activity.bmCoverArt = BitmapFactory.decodeStream(url.openStream());
@@ -207,17 +189,17 @@ public class UserStatistics extends AppCompatActivity {
                     public void run() {
                         /* update the UI with the object information */
                         activity.coverArtImg.setImageBitmap(activity.bmCoverArt);
-                        activity.uiElements.get(1).setText(activity.receivedObj.danceability);
-                        activity.uiElements.get(2).setText(activity.receivedObj.liveness);
-                        activity.uiElements.get(3).setText(activity.receivedObj.valence);
-                        activity.uiElements.get(4).setText(activity.receivedObj.speechiness);
-                        activity.uiElements.get(5).setText(activity.receivedObj.instrumentalness);
+                        activity.uiElements.get(1).setText(activity.receivedObj.getDanceability());
+                        activity.uiElements.get(2).setText(activity.receivedObj.getLiveness());
+                        activity.uiElements.get(3).setText(activity.receivedObj.getValence());
+                        activity.uiElements.get(4).setText(activity.receivedObj.getSpeechiness());
+                        activity.uiElements.get(5).setText(activity.receivedObj.getInstrumentalness());
 
-                        activity.uiElements.get(6).setText(activity.receivedObj.loudness);
-                        activity.uiElements.get(7).setText(activity.receivedObj.key);
-                        activity.uiElements.get(8).setText(activity.receivedObj.energy);
-                        activity.uiElements.get(9).setText(activity.receivedObj.tempo);
-                        activity.uiElements.get(10).setText(activity.receivedObj.acousticness);
+                        activity.uiElements.get(6).setText(activity.receivedObj.getLoudness());
+                        activity.uiElements.get(7).setText(activity.receivedObj.getKey());
+                        activity.uiElements.get(8).setText(activity.receivedObj.getEnergy());
+                        activity.uiElements.get(9).setText(activity.receivedObj.getTempo());
+                        activity.uiElements.get(10).setText(activity.receivedObj.getAcousticness());
                     }
                 });
 
