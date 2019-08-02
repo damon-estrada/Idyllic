@@ -13,9 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".HomeActivity">
-
-        </activity>
+        <activity android:name=".AllTimeFavoriteTracks"></activity>
+        <activity android:name=".HomeActivity"></activity>
         <activity android:name=".UserStatistics" />
         <activity android:name=".MainActivity">
             <intent-filter>
