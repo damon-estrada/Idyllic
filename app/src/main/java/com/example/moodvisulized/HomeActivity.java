@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -27,12 +28,19 @@ import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -65,6 +73,7 @@ public class HomeActivity extends AppCompatActivity {
     ImageView backgroundBanner2;
     ImageButton currentTrackArrow;
     ImageView userPicture;
+    ImageView allTimeFavArrow;
 
     /* The variables for holding essential information */
     private String currentTrackUri = "";         // The track Id for the current song playing
@@ -82,7 +91,13 @@ public class HomeActivity extends AppCompatActivity {
     /* Objects */
     CurrentPlaying curTrack = null;
     CurrentPlaying receivedObj = null;
-    AllTimeFavorite favTracks = new AllTimeFavorite();
+    AllTimeFavorite favTracksShort = new AllTimeFavorite();   // favorite tracks from short_term
+    AllTimeFavorite favTracksMedium = new AllTimeFavorite(); // favorite tracks from medium_term
+    AllTimeFavorite favTracksLong = new AllTimeFavorite();  // favorite tracks from long_term
+
+    /* Date variables */
+    Calendar cal = Calendar.getInstance();
+    int dayOfYear = cal.get(Calendar.DAY_OF_YEAR);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,10 +109,12 @@ public class HomeActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_home);
 
-        currentTrackArtist = (ImageView) findViewById(R.id.currentlyPlayingArtist);
-        backgroundBanner2 = (ImageView) findViewById(R.id.allTimeFavoriteTrackBanner);
-        currentTrackArrow = (ImageButton) findViewById(R.id.currentTrackPlayingArrow);
         userPicture = (ImageView) findViewById(R.id.userPicture);
+        currentTrackArtist = (ImageView) findViewById(R.id.currentlyPlayingArtist);
+        currentTrackArrow = (ImageButton) findViewById(R.id.currentTrackPlayingArrow);
+
+        backgroundBanner2 = (ImageView) findViewById(R.id.allTimeFavoriteTrackBanner);
+        allTimeFavArrow = (ImageView) findViewById(R.id.allTimeFavoriteTrackArrow);
 
         AuthenticationRequest.Builder builder =
                 new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
@@ -153,6 +170,25 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+        /* onWard to AllTimeFavoriteTracks activity */
+        allTimeFavArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {toAllTimeFavoriteTracks(v);}
+        });
+
+        /* Checking to see if the file is null */
+        if (readInternalStorageDate().equals(null)) {
+            writeInternalStorageDate();
+        } else {
+            Log.d(TAG, "onCreate: DOY file exists already");
+        }
+
+        /* For mAppRemoteSet the connection parameters */
+        connectionParams = new ConnectionParams.Builder(CLIENT_ID)
+                .setRedirectUri(REDIRECT_URI)
+                .showAuthView(true)
+                .build();
+
         /* Let us see if we receive anything first */
         Intent i = getIntent();
         if ( (receivedObj = (CurrentPlaying) i.getSerializableExtra("object")) != null) {
@@ -162,7 +198,6 @@ public class HomeActivity extends AppCompatActivity {
 
             /* If we reach this, then we received something from currently playing activity */
             curTrack = new CurrentPlaying(receivedObj);
-
             
         } else {
 
@@ -170,12 +205,6 @@ public class HomeActivity extends AppCompatActivity {
             Log.d(TAG, "onCreate: First run through");
             curTrack = new CurrentPlaying();
             curTrack.setTrackUri("init");
-
-            /* For mAppRemoteSet the connection parameters */
-            connectionParams = new ConnectionParams.Builder(CLIENT_ID)
-                    .setRedirectUri(REDIRECT_URI)
-                    .showAuthView(true)
-                    .build();
         }
     }
 
@@ -186,7 +215,6 @@ public class HomeActivity extends AppCompatActivity {
 
         /* To prevent multiple instances of app remote being active. */
         SpotifyAppRemote.disconnect(mSpotifyAppRemote);
-
 
         /* Connect to SpotifyAppRemote */
         SpotifyAppRemote.connect(this, connectionParams, new Connector.ConnectionListener() {
@@ -208,11 +236,7 @@ public class HomeActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
 
-        /* When app not in use, disconnect.
-         * We need to disconnect to prevent the HomeActivity from thinking the same song
-         * is plying when in reality a new song updated if we are in UserStatistics Activity
-         * when the new song comes. Disconnecting helps prevent this error
-         */
+        /* When app not in use, disconnect. */
         SpotifyAppRemote.disconnect(mSpotifyAppRemote);
         Log.d(TAG, "onStop: App remote disconnected");
     }
@@ -228,7 +252,7 @@ public class HomeActivity extends AppCompatActivity {
      * @param view  Refering to the next activity view
      */
     public void toTrackAudioFeatures(View view) {
-        /* I want to send the uiValues and coverart to UserStatistcs */
+        /* I want to send the uiValues and coverart to UserStatistics */
         Intent intent = new Intent(this, UserStatistics.class);
 
         Log.d(TAG, "toTrackAudioFeatures: Activity sending Object with data");
@@ -239,7 +263,22 @@ public class HomeActivity extends AppCompatActivity {
         /* The object being sent to UserStatistics Activity */
         intent.putExtra("curTrackObj", curTrack);
 
-        favTracks.giveReport();
+        /* if true */
+        if (updateFavTracksRankings()) {
+            clearFile("favoriteTracks.txt");
+            writeToInternalStorage(favTracksShort, "short");
+            writeToInternalStorage(favTracksMedium, "medium");
+            writeToInternalStorage(favTracksLong, "long");
+        }
+
+        startActivity(intent);
+    }
+
+    public void toAllTimeFavoriteTracks(View view) {
+
+        Intent intent = new Intent(this, AllTimeFavoriteTracks.class);
+
+        Log.d(TAG, "toAllTimeFavoriteTracks: Going to AllTimeFavoriteTracks view");
 
         startActivity(intent);
     }
@@ -307,9 +346,14 @@ public class HomeActivity extends AppCompatActivity {
                     fetchArtistPic();
                 });
 
-        fetchProfilePic();
-        fetchFavTracks();
 
+        fetchProfilePic();
+        /* If this is true, rewrite the new date we last fetched */
+        if (updateFavTracksRankings()) {
+            writeInternalStorageDate();
+            fetchFavTracks();
+            Log.d(TAG, "connected: Fetching fav tracks, time to update.");
+        }
     }
 
     /**
@@ -497,23 +541,28 @@ public class HomeActivity extends AppCompatActivity {
 
             /* Setup the call to get the user's top tracks. Pull top ten and start from beginning*/
             Map<String, Object> options = new HashMap<>();
-            //options.put(SpotifyService.COUNTRY, Locale.getDefault().getCountry());
             options.put(SpotifyService.LIMIT, 10);
             options.put(SpotifyService.OFFSET, 0);
-            options.put(SpotifyService.TIME_RANGE, "long_term");
+
 
             /* Make the call */
-            Pager<Track> userTopTracks = activity.spotify.getTopTracks(options);
+            options.put(SpotifyService.TIME_RANGE, "short_term");
+            Pager<Track> userTopTracksShort = activity.spotify.getTopTracks(options);
+            activity.favTracksShort.setFavTrackList(userTopTracksShort);
+
+            options.put(SpotifyService.TIME_RANGE, "medium_term");
+            Pager<Track> userTopTracksMid = activity.spotify.getTopTracks(options);
+            activity.favTracksMedium.setFavTrackList(userTopTracksMid);
+
+            options.put(SpotifyService.TIME_RANGE, "long_term");
+            Pager<Track> userTopTracksLong = activity.spotify.getTopTracks(options);
 
             /* Update the object with this newly found information */
-            activity.favTracks.setFavTrackList(userTopTracks);
+            activity.favTracksLong.setFavTrackList(userTopTracksLong);
 
             return null;
         }
     }
-
-
-
 
     private static class ArtistProfilePicAsyncTask extends AsyncTask<String, Void, Bitmap> {
 
@@ -655,32 +704,167 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    public void writeToInternalStorage(AllTimeFavorite favTracks) {
-
-        ContextWrapper contextWrapper = new ContextWrapper(getApplicationContext());
-        File dir = contextWrapper.getDir(getFilesDir().getName(), Context.MODE_PRIVATE);
-        File fileStore = new File(dir, "favoriteTracks");
+    /**
+     * Clear the contents of the file.
+     * @param fileName the file being cleared
+     */
+    public void clearFile(String fileName) {
 
         try {
-            FileOutputStream out = new FileOutputStream(fileStore, true);
-
-            for (int i = 0; i < favTracks.getFavTrackList().size(); i++) {
-                out.write(favTracks.getFavTrackList().get(i).name.getBytes());
-                out.write(favTracks.getFavTrackList().get(i).artists.get(0).name.getBytes());
-                out.flush();
-            }
-
-            out.close();
-
+            String filePath = getBaseContext().getFilesDir() + "/" + fileName;
+            PrintWriter pw = new PrintWriter(filePath);
+            pw.close();
         } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG, "writeToInternalStorage: " + e.getMessage() + e.getCause() );
+            e.getStackTrace();
         }
     }
 
+    /**
+     * Allows us to write to internal storage the newly updated tracks with our top tracks.
+     * @param favTracks an object holding all the necessary information.
+     * @param type short, medium, or long perspective of results.
+     */
+    public void writeToInternalStorage(AllTimeFavorite favTracks, String type) {
 
+        String fileName = "favoriteTracks.txt";
 
+        try {
 
+            FileOutputStream out = openFileOutput(fileName, MODE_APPEND);
+
+            out.write(("Favorite Tracks Fetched (" + type + ")\n").getBytes());
+            out.flush();
+
+            for (int i = 0; i < favTracks.getFavTrackList().size(); i++) {
+                out.write((favTracks.getFavTrackList().get(i).name + "\n").getBytes());
+                for (int j = 0; j < favTracks.getFavTrackList().get(j).artists.size(); j++) {
+                    out.write((favTracks.getFavTrackList().get(i).artists.get(j).name + ", ").getBytes());
+                }
+                out.write((favTracks.getFavTrackList().get(i).id + "\n").getBytes());
+                out.flush();
+            }
+
+            out.write(("END\n\n").getBytes());
+
+            out.close();
+
+            Log.d(TAG, "writeToInternalStorage: Data saved");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(TAG, "writeToInternalStorage: " + e.getMessage() + e.getCause());
+        }
+    }
+
+    /**
+     * Allows us to read from a file that is in internal storage.
+     * @param fileName the file we want to read from internal storage
+     */
+    public void readFromInternalStorage(String fileName) {
+
+        try {
+            FileInputStream in = getBaseContext().openFileInput(fileName);
+            InputStreamReader iSR = new InputStreamReader(in);
+
+            BufferedReader bR = new BufferedReader(iSR);
+            StringBuilder sB = new StringBuilder();
+
+            String curLine;
+
+            while ((curLine = bR.readLine()) != null) {
+                sB.append(curLine);
+                sB.append("\n");
+            }
+
+            Log.d(TAG, "readFromInternalStorage: Storage Read");
+            Log.d(TAG, "readFromInternalStorage: " + sB);
+
+        } catch (Exception e) {
+            Log.e(TAG, "readFromInternalStorage: " + e.getCause() );
+        }
+    }
+
+    /**
+     * If the file does not exists or we need to re-update the last fetch date, call this.
+     */
+    public void writeInternalStorageDate() {
+        String fileName = "statsUpdateLog.txt";
+
+        try {
+
+            FileOutputStream out = openFileOutput(fileName, MODE_APPEND);
+
+            out.write((dayOfYear + "").getBytes());
+            out.flush();
+
+            out.close();
+
+            Log.d(TAG, "writeInternalStorageDate: Day of the year logged");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(TAG, "writeInternalStorageDate: " + e.getMessage() + e.getCause());
+        }
+    }
+
+    /**
+     * We will return the DOY that we performed a fetch of top tracks
+     * @return the Day of the Year (DOY)
+     */
+    public String readInternalStorageDate() {
+        String result = null;
+        try {
+            FileInputStream in = getBaseContext().openFileInput("statsUpdateLog.txt");
+            InputStreamReader iSR = new InputStreamReader(in);
+
+            BufferedReader bR = new BufferedReader(iSR);
+            StringBuilder sB = new StringBuilder();
+
+            String curLine;
+
+            while ((curLine = bR.readLine()) != null) {
+                sB.append(curLine);
+            }
+
+            Log.d(TAG, "readInternalStorageDate: storage read");
+
+            result = sB.toString();
+
+        } catch (Exception e) {
+            Log.e(TAG, "readFromInternalStorage: " + e.getCause() );
+        }
+
+        return result;
+    }
+
+    /**
+     * This is used to chekck if we should update the allTimeFavoriteTracks activity results.
+     * @return true if the DOY is greater than last fetch, false else.
+     */
+    public boolean updateFavTracksRankings() {
+        String readDOY = readInternalStorageDate();
+        int strToInt;
+        int week = 7;
+        int result = 0;
+        Log.d(TAG, "updateFavTracksRankings: " + dayOfYear);
+
+        try {
+           strToInt = Integer.parseInt(readDOY);
+           result = strToInt + week;
+
+        } catch (NumberFormatException e) {
+            strToInt = 0;
+        }
+
+        Log.d(TAG, "updateFavTracksRankings: DOY update will occur next -> " + result);
+
+        /* Here we are seeing if a week has gone by to then re update the user's rankings */
+        if (dayOfYear >= result) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
      * This method will handle acccessToken or failure as necessary
