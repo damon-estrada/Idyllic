@@ -27,6 +27,7 @@ import com.spotify.protocol.types.Image;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
+import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
@@ -67,11 +68,7 @@ public class UserStatistics extends AppCompatActivity {
     /* The UI variables */
     ArrayList<TextView> uiElements = new ArrayList<>(); // An array of elements that make up the UI.
     ImageView coverArtImg;                             // Current track cover art.
-    ArrayList<String> uiValues = new ArrayList<>();  // Value of all track audio features.
-    private static ArrayList<String> uiValuesClone = new ArrayList<>(); // copy of uiValues
     int backPressed;                                // to prevent going back so fetch completes.
-    Bitmap bmCoverArt;
-    static Bitmap bmCoverArtClone;
     public CurrentPlaying receivedObj;
 
 
@@ -109,11 +106,27 @@ public class UserStatistics extends AppCompatActivity {
 
         Intent i = getIntent();
         receivedObj = (CurrentPlaying) i.getSerializableExtra("curTrackObj");
-        startUiTask();
     }
 
     @Override
-    protected void onStart() {super.onStart();}
+    protected void onStart() {super.onStart();
+    /* load up the passed url */
+        Log.d(TAG, "onStart: Picasso is calling: " + receivedObj.getCoverArtUrl());
+        Log.d(TAG, "onStart: TEST TEST : " + receivedObj.getArtistCoverArtUrl());
+        Picasso.get()
+                .load(receivedObj.getCoverArtUrl()).into(coverArtImg);
+        uiElements.get(1).setText(receivedObj.getDanceability());
+        uiElements.get(2).setText(receivedObj.getLiveness());
+        uiElements.get(3).setText(receivedObj.getValence());
+        uiElements.get(4).setText(receivedObj.getSpeechiness());
+        uiElements.get(5).setText(receivedObj.getInstrumentalness());
+
+        uiElements.get(6).setText(receivedObj.getLoudness());
+        uiElements.get(7).setText(receivedObj.getKey());
+        uiElements.get(8).setText(receivedObj.getEnergy());
+        uiElements.get(9).setText(receivedObj.getTempo());
+        uiElements.get(10).setText(receivedObj.getAcousticness());
+    }
 
     @Override
     protected void onResume() {super.onResume();}
@@ -126,214 +139,15 @@ public class UserStatistics extends AppCompatActivity {
         /* I want to send the object back to the HomeActivity */
         Intent intent = new Intent(this, HomeActivity.class);
 
-        Log.d(TAG, "toHomeActivity: Activity sending Object with data");
-
         /* The object being sent to UserStatistics Activity */
         intent.putExtra("object", receivedObj);
 
         startActivity(intent);
     }
 
-
-
-    public void startUiTask() {
-        UpdateUiAsync task = new UpdateUiAsync(this);
-        task.execute();
-    }
-
-    private static class UpdateUiAsync extends AsyncTask<Void, Void, Void> {
-
-        private WeakReference<UserStatistics> activityWeakRef;
-
-        UpdateUiAsync(UserStatistics activity) {
-            activityWeakRef = new WeakReference<>(activity);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            /* get strong reference which will be destroyed after this scope ends */
-            UserStatistics activity = activityWeakRef.get();
-
-            /* This will return if garbage collection is happening so we return immediately */
-            if (activity == null || activity.isFinishing()) {
-                return;
-            }
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            /* get strong reference which will be destroyed after this scope ends */
-            UserStatistics activity = activityWeakRef.get();
-
-            /* This will return if garbage collection is happening so we return immediately */
-            if (activity == null || activity.isFinishing()) {
-                return null;
-            }
-
-            /* Use this to retry the fetch just in case the user is too fast for fetch of the
-               track audio features.
-             */
-            try {
-                Log.d(TAG, "doInBackground: Retrieving CoverArt");
-                String imgUrl = "https://i.scdn.co/image/" + activity.receivedObj.getCoverArtUrl();
-
-                URL url = new URL(imgUrl);
-                activity.bmCoverArt = BitmapFactory.decodeStream(url.openStream());
-
-                activity.bmCoverArtClone = activity.bmCoverArt;
-
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        /* update the UI with the object information */
-                        activity.coverArtImg.setImageBitmap(activity.bmCoverArt);
-                        activity.uiElements.get(1).setText(activity.receivedObj.getDanceability());
-                        activity.uiElements.get(2).setText(activity.receivedObj.getLiveness());
-                        activity.uiElements.get(3).setText(activity.receivedObj.getValence());
-                        activity.uiElements.get(4).setText(activity.receivedObj.getSpeechiness());
-                        activity.uiElements.get(5).setText(activity.receivedObj.getInstrumentalness());
-
-                        activity.uiElements.get(6).setText(activity.receivedObj.getLoudness());
-                        activity.uiElements.get(7).setText(activity.receivedObj.getKey());
-                        activity.uiElements.get(8).setText(activity.receivedObj.getEnergy());
-                        activity.uiElements.get(9).setText(activity.receivedObj.getTempo());
-                        activity.uiElements.get(10).setText(activity.receivedObj.getAcousticness());
-                    }
-                });
-
-            } catch (Exception e) {
-                Log.e("Error Occurred: ", e.getMessage());
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            /* get strong reference which will be destroyed after this scope ends */
-            UserStatistics activity = activityWeakRef.get();
-
-            /* This will return if garbage collection is happening so we return immediately */
-            if (activity == null || activity.isFinishing()) {
-                return;
-            }
-
-            /* First song success will yield playing data.
-               However, if same song is playing, clone to reuse for next time.
-
-               Also, if a new song plays, we need to dump the contents to prevent the
-               list from gorwing and getting a null pointer exception as mentioned below.
-            */
-            activity.uiValuesClone.clear();
-            activity.uiValuesClone.addAll(activity.uiValues);
-            Log.d(TAG, "POST EXECUTE UICLONE SIZE: " + activity.uiValuesClone.size());
-
-            /* We need to dump the contents of uiValues since it keeps adding to the list
-             * Which is problematic when the user keeps exiting and coming back to the activity
-             * which throws an exception since uiElements only has 11 elements and uiValues
-             * will continue to grow.
-             * Therefore, uiElements does not have an index 12 so Error.*/
-            activity.uiValues.clear();
-        }
-    }
-
-    public void startUiClone() {
-        UpdateUiAsyncClone task = new UpdateUiAsyncClone(this);
-        task.execute();
-    }
-
-    private static class UpdateUiAsyncClone extends AsyncTask<Void, Void, Void> {
-
-        private WeakReference<UserStatistics> activityWeakRef;
-
-        UpdateUiAsyncClone(UserStatistics activity) {
-            activityWeakRef = new WeakReference<>(activity);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            /* get strong reference which will be destroyed after this scope ends */
-            UserStatistics activity = activityWeakRef.get();
-
-            /* This will return if garbage collection is happening so we return immediately */
-            if (activity == null || activity.isFinishing()) {
-                return;
-            }
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            /* get strong reference which will be destroyed after this scope ends */
-            UserStatistics activity = activityWeakRef.get();
-
-            /* This will return if garbage collection is happening so we return immediately */
-            if (activity == null || activity.isFinishing()) {
-                return null;
-            }
-
-            /* Use this to retry the fetch just in case the user is too fast for fetch of the
-               track audio features.
-             */
-            try {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        activity.coverArtImg.setImageBitmap(activity.bmCoverArtClone);
-
-                        /* Start at 1 since CoverArt Url is at index 0 */
-                        for (int i = 1; i < activity.uiValuesClone.size(); i++) {
-
-                            /* On every iteration, get the txt to be updated */
-                            activity.uiElements.get(i)
-                                    .setText(activity.uiValuesClone.get(i));
-                        }
-                    }
-                });
-
-                Log.d(TAG, "doInBackground UICLONE SIZE: " + activity.uiValuesClone.size());
-                for (int i = 0; i < activity.uiValuesClone.size(); i++) {
-                    Log.d(TAG, "doInBackground UICLONE: " + activity.uiValuesClone.get(i));
-                }
-                Log.d(TAG, "doInBackground UICLONE: FINISHED");
-            } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            /* get strong reference which will be destroyed after this scope ends */
-            UserStatistics activity = activityWeakRef.get();
-
-            /* This will return if garbage collection is happening so we return immediately */
-            if (activity == null || activity.isFinishing()) {
-                return;
-            }
-        }
-    }
-
-    /**
-     * When the back button is pressed, I do not want to go back unless the fetch has been completed.
-     */
     @Override
     public void onBackPressed() {
-        if (backPressed < 11 && backPressed > 1) {
-            Toast.makeText(getApplicationContext(), "Fetch not finished yet", Toast.LENGTH_SHORT).show();
-        } else {
-            super.onBackPressed();
-            toHomeActivity();
-        }
+        super.onBackPressed();
+        toHomeActivity();
     }
 }
