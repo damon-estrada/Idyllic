@@ -1,16 +1,8 @@
 package com.example.moodvisulized;
 
-import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
+
 import android.os.AsyncTask;
-import android.os.Environment;
-import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,13 +10,12 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
-import com.spotify.protocol.types.Image;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -34,18 +25,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.lang.ref.WeakReference;
-import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
@@ -54,12 +40,9 @@ import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.AudioFeaturesTrack;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.Track;
-import kaaes.spotify.webapi.android.models.Tracks;
-import retrofit.Callback;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -69,8 +52,9 @@ public class HomeActivity extends AppCompatActivity {
 
     /* The UI variables */
     ArrayList<TextView> uiElements = new ArrayList<>(); // Each UI variable but represented as num.
-    Bitmap coverArtImg;                                // Current track cover art.
-    String coverArtUrl;                               // The url for the CoverArt
+
+    String coverArtUri;                               // The uri for the CoverArt
+    String coverArtUrl = "";
     String artistCoverArtUrl = "";
     String userCoverArtUrl = "";
 
@@ -102,7 +86,7 @@ public class HomeActivity extends AppCompatActivity {
     AllTimeFavorite favTracksLong = new AllTimeFavorite();  // favorite tracks from long_term
 
     /* Date variables */
-    Calendar cal = Calendar.getInstance();
+    Calendar cal = Calendar.getInstance();              //
     int dayOfYear = cal.get(Calendar.DAY_OF_YEAR);
     int offsetFileCreated = 0;
 
@@ -203,11 +187,15 @@ public class HomeActivity extends AppCompatActivity {
         Intent i = getIntent();
         if ( (receivedObj = (CurrentPlaying) i.getSerializableExtra("object")) != null) {
 
-            Log.d(TAG, "onCreate: received object: " + receivedObj);
+            Log.d(TAG, "onCreate: received object: " + receivedObj.getCoverArtUrl());
             Log.d(TAG, "onCreate: Second and more run through");
 
             /* If we reach this, then we received something from currently playing activity */
             curTrack = new CurrentPlaying(receivedObj);
+
+            Log.d(TAG, "onCreate: CURTRACK coverart url: " + curTrack.getCoverArtUrl());
+            Log.d(TAG, "onCreate: CURTRACK ARTIST COVERART URL: " + curTrack.getArtistCoverArtUrl());
+            Log.d(TAG, "onCreate: CURTRACK TRACK URI: " + curTrack.getTrackUri());
             
         } else {
 
@@ -265,10 +253,8 @@ public class HomeActivity extends AppCompatActivity {
         /* I want to send the uiValues and coverart to UserStatistics */
         Intent intent = new Intent(this, UserStatistics.class);
 
-        Log.d(TAG, "toTrackAudioFeatures: Activity sending Object with data");
-
-        /* Set the coverArtUrl here to ensure we got it */
-        curTrack.setCoverArtUrl(coverArtUrl);
+        Log.d(TAG, "toTrackAudioFeatures: coverart url: " + curTrack.getCoverArtUrl());
+        Log.d(TAG, "toTrackAudioFeatures: artist coverart url" + curTrack.getArtistCoverArtUrl());
 
         /* The object being sent to UserStatistics Activity */
         intent.putExtra("curTrackObj", curTrack);
@@ -305,12 +291,6 @@ public class HomeActivity extends AppCompatActivity {
                 .subscribeToPlayerState()
                 .setEventCallback(playerState -> {
 
-                    /* ATTEMPTING TO CACHE THINGS HERE */
-                    /* We need to check if the received obj 1st param is the same as the current
-                       fetch. If so, do not make another api call since the same song is playing.
-                       We will make a quick check here to ensure it is a new song playing.
-                     */
-
                     /* Get current track uri */
                     currentTrackUri = playerState.track.uri;
 
@@ -325,45 +305,35 @@ public class HomeActivity extends AppCompatActivity {
                     currentArtistUri = currentArtistUri.
                             substring(currentArtistUri.indexOf(":") + 1);
 
-                    /*Log.d(TAG, "connected CURRENT ARTIST URI: " + currentArtistUri);
-
-                    Log.d(TAG, "connected: playerState track uri: " + "spotify:track:" + currentTrackUri);
-                    Log.d(TAG, "connected: curTrack track uri: " + curTrack.getTrackUri());
-                    */
-
                     /* So if the track uri are not the same, make api call; new song playing */
                     if (!("spotify:track:" + currentTrackUri).equals(curTrack.getTrackUri())) {
                         Log.d(TAG, "connected: API CALL; NEW SONG");
 
-                        /* Fetch the artist picture asap then send to picasso */
-                        fetchArtistPic();
-
-                        coverArtUrl = playerState.track.imageUri.toString();
+                        coverArtUri = playerState.track.imageUri.toString();
 
                         /* Remove the parts to reach the bare url to the img */
-                        coverArtUrl = coverArtUrl.substring(coverArtUrl.indexOf(":") + 1);
-                        coverArtUrl = coverArtUrl.substring(coverArtUrl.indexOf(":") + 1);
-                        coverArtUrl = coverArtUrl.substring(0, coverArtUrl.indexOf("\'"));
-
-                        /* Get the cover art of the current playing song */
-                        mSpotifyAppRemote.getImagesApi()
-                                .getImage(playerState.track.imageUri, Image.Dimension.LARGE)
-                                .setResultCallback(bitmap -> {
-                                    coverArtImg = bitmap;
-                                });
+                        coverArtUri = coverArtUri.substring(coverArtUri.indexOf(":") + 1);
+                        coverArtUri = coverArtUri.substring(coverArtUri.indexOf(":") + 1);
+                        coverArtUri = coverArtUri.substring(0, coverArtUri.indexOf("\'"));
 
                         /* grab current track features and update the UI with these details */
                         beginAsyncTask();
 
+                        /* Fetch the artist picture asap then send to picasso */
+                        fetchArtistPic();
+
                     } else {
                     /* else, return the same obj back from the UserStatistics activity */
                        coverArtUrl = curTrack.getCoverArtUrl();
+                       artistCoverArtUrl = curTrack.getArtistCoverArtUrl();
 
+                       setUrlPicture(curTrack.getArtistCoverArtUrl(), currentTrackArtist);
                        Log.d(TAG, "connected: else condition (same song playing): ");
                     }
+                    /* Fetch the user's profile picture */
+                    fetchProfilePic();
                 });
 
-        fetchProfilePic();
         /* If this is true, rewrite the new date we last fetched */
         if (updateFavTracksRankings(offsetFileCreated)) {
             writeInternalStorageDate();
@@ -388,6 +358,11 @@ public class HomeActivity extends AppCompatActivity {
                 /* Update the object created */
                 Log.d(TAG, "connected: NEW SONG IS PLAYING");
 
+                /* Get current playing artist URL from URI */
+                // https://i.scdn.co/image/8db0e8c0838b50a3c88da6f4ce7dcdaec0384ce5
+                coverArtUrl = "https://i.scdn.co/image/" + coverArtUri;
+                Log.d(TAG, "getTrackAudioFeatures: " + coverArtUrl);
+
                 curTrack = new CurrentPlaying(
                         trackAudioFeatures.danceability,
                         trackAudioFeatures.liveness,
@@ -402,29 +377,9 @@ public class HomeActivity extends AppCompatActivity {
                         trackAudioFeatures.acousticness,
                         trackAudioFeatures.duration_ms,
                         trackAudioFeatures.uri,
-                        ""
+                        coverArtUrl,
+                        "init"
                 );
-
-                /*
-                curTrack.setDanceability(String.format(Locale.US, "%.4s", trackAudioFeatures.danceability));
-                curTrack.setLiveness(String.format(Locale.US, "%.4s", trackAudioFeatures.liveness));
-                curTrack.setValence(String.format(Locale.US, "%.4s", trackAudioFeatures.valence));
-                curTrack.setSpeechiness(String.format(Locale.US, "%.4s", trackAudioFeatures.speechiness));
-                curTrack.setInstrumentalness(String.format(Locale.US, "%.4s", trackAudioFeatures.instrumentalness));
-
-                curTrack.setLoudness(String.format(Locale.US, "%.5s dB", trackAudioFeatures.loudness));
-                curTrack.setKey(String.format(Locale.US, "%s", curTrack.formatKey(trackAudioFeatures.key)));
-                curTrack.setEnergy(String.format(Locale.US, "%.4s", trackAudioFeatures.energy));
-                curTrack.setTempo(String.format(Locale.US, "%.5s BPM", trackAudioFeatures.tempo));
-                curTrack.setAcousticness(String.format(Locale.US, "%.4s", trackAudioFeatures.acousticness));
-
-                curTrack.setDuration_ms(trackAudioFeatures.duration_ms);
-                curTrack.setTrackUri(trackAudioFeatures.uri);
-                */
-                /* This will be popluated right before the next activity is initialized */
-                //curTrack.setCoverArtUrl("");
-
-
                 break;
 
             } catch (RetrofitError e) {
@@ -442,24 +397,11 @@ public class HomeActivity extends AppCompatActivity {
             task.execute();
     }
 
-    private static class ExampleAsyncTask extends AsyncTask<Void, TextView, CurrentPlaying> {
+    private static class ExampleAsyncTask extends AsyncTask<Void, TextView, Void> {
         private WeakReference<HomeActivity> activityWeakRef;
 
         ExampleAsyncTask(HomeActivity activity) {
             activityWeakRef = new WeakReference<>(activity);
-        }
-
-        /* Happens before, the setup */
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            /* get strong reference which will be destroyed after this scope ends */
-            HomeActivity activity = activityWeakRef.get();
-            /* This will return if garbage collection is happening so we return immediately */
-            if (activity == null || activity.isFinishing()) {
-                return;
-            }
         }
 
         /**
@@ -469,33 +411,16 @@ public class HomeActivity extends AppCompatActivity {
          * @return an array list of the track audio features
          */
         @Override
-        protected CurrentPlaying doInBackground(Void... voids) {
+        protected Void doInBackground(Void... voids) {
             /* get strong reference which will be destroyed after this scope ends */
             HomeActivity activity = activityWeakRef.get();
             if (activity == null || activity.isFinishing()) {
                 return null;
             }
 
-            return activity.getTrackAudioFeatures();
-        }
+            activity.getTrackAudioFeatures();
 
-        /**
-         * At this point, we have the populated array list and need to now update
-         * the TextView for the current song playing.
-         *
-         * @param trackFeaturesObj
-         */
-        @Override
-        protected void onPostExecute(CurrentPlaying trackFeaturesObj) {
-            super.onPostExecute(trackFeaturesObj);
-
-            /* get strong reference which will be destroyed after this scope ends */
-            HomeActivity activity = activityWeakRef.get();
-            if (activity == null || activity.isFinishing()) {
-                return;
-            }
-
-            /* Should have a nicely formatted obj here */
+            return null;
         }
     }
 
@@ -534,19 +459,6 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            /* get strong reference which will be destroyed after this scope ends */
-            HomeActivity activity = activityWeakRef.get();
-
-            /* This will return if garbage collection is happening so we return immediately */
-            if (activity == null || activity.isFinishing()) {
-                return;
-            }
-
-        }
-
-        @Override
         protected Void doInBackground(Artist... artists) {
             /* get strong reference which will be destroyed after this scope ends */
             HomeActivity activity = activityWeakRef.get();
@@ -560,7 +472,6 @@ public class HomeActivity extends AppCompatActivity {
             Map<String, Object> options = new HashMap<>();
             options.put(SpotifyService.LIMIT, 10);
             options.put(SpotifyService.OFFSET, 0);
-
 
             /* Make the call */
             options.put(SpotifyService.TIME_RANGE, "short_term");
@@ -582,8 +493,6 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private static class ArtistProfilePicAsyncTask extends AsyncTask<String, Void, Void> {
-
-        Bitmap bmArtistArt;
 
         /* Create a weak reference to try and minimize leaks */
         /* The variables accessible by the class */
@@ -612,6 +521,8 @@ public class HomeActivity extends AppCompatActivity {
                         .url)
                         .toString();
 
+                activity.curTrack.setArtistCoverArtUrl(activity.artistCoverArtUrl);
+
             } catch (Exception e) {
                 Log.e("Error Occurred: ", e.getMessage());
                 e.printStackTrace();
@@ -636,13 +547,13 @@ public class HomeActivity extends AppCompatActivity {
 
     public void setUrlPicture(String picUrl, ImageView view) {
 
-        Log.d(TAG, "getArtistPicture: PICASSO CALLED W/: " + picUrl);
+        Log.d(TAG, "setUrlPicture: PICASSO CALLED W/: " + picUrl + ": " + view.toString());
         Picasso.get()
                 .load(picUrl)
                 .into(view);
     }
 
-    private static class UserProfilePicAsyncTask extends AsyncTask<String, Void, Void> {
+    private static class UserProfilePicAsyncTask extends AsyncTask<String, Void, String> {
 
         /* Create a weak reference to try and minimize leaks */
         /* The variables accessible by the class */
@@ -653,7 +564,7 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Void doInBackground(String... strings) {
+        protected String doInBackground(String... strings) {
             /* get strong reference which will be destroyed after this scope ends */
             HomeActivity activity = activityWeakRef.get();
 
@@ -664,7 +575,7 @@ public class HomeActivity extends AppCompatActivity {
 
             try {
                 /* Get the current user's profile picture */
-                activity.userCoverArtUrl = activity.spotify
+                return activity.userCoverArtUrl = activity.spotify
                         .getMe()
                         .images
                         .get(0)
@@ -678,8 +589,8 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+        protected void onPostExecute(String urlString) {
+            super.onPostExecute(urlString);
 
             /* get strong reference which will be destroyed after this scope ends */
             HomeActivity activity = activityWeakRef.get();
@@ -689,7 +600,7 @@ public class HomeActivity extends AppCompatActivity {
                 // Do nothing
             } else {
                 /* Set the user's profile picture */
-                activity.setUrlPicture(activity.userCoverArtUrl, activity.userPicture);
+                activity.setUrlPicture(urlString, activity.userPicture);
             }
         }
     }
