@@ -21,6 +21,7 @@ public class CurrentPlaying implements Serializable {
     private String trackUri;
 
     private String coverArtUrl;
+    private String artistCoverArtUrl;
 
     /* Setters */
     public void setDanceability(String danceability) {this.danceability = danceability;}
@@ -40,6 +41,7 @@ public class CurrentPlaying implements Serializable {
 
     public void setCoverArtUrl(String coverArtUrl) {this.coverArtUrl = coverArtUrl;}
 
+    public void setArtistCoverArtUrl(String artistCoverArtUrl) {this.artistCoverArtUrl = artistCoverArtUrl;}
     /*--------------------------------------------------------------------------------------------*/
 
     /* Getters */
@@ -59,7 +61,7 @@ public class CurrentPlaying implements Serializable {
     public String getTrackUri() {return trackUri;}
 
     public String getCoverArtUrl() {return coverArtUrl;}
-
+    public String getArtistCoverArtUrl() {return artistCoverArtUrl;}
     /*--------------------------------------------------------------------------------------------*/
 
     /**
@@ -82,6 +84,7 @@ public class CurrentPlaying implements Serializable {
         this.trackUri = "";
 
         this.coverArtUrl = "";
+        this.artistCoverArtUrl = "";
     }
 
     /**
@@ -102,7 +105,7 @@ public class CurrentPlaying implements Serializable {
     public CurrentPlaying(float danceability, float liveness, float valence, float speechiness,
                           float instrumentalness, float loudness, float key, float energy,
                           float tempo, float acousticness, int duration_ms, String trackUri,
-                          String coverArtUrl) {
+                          String coverArtUrl, String artistCoverArtUrl) {
         this.danceability = String.format(Locale.US, "%.4s", danceability);
         this.liveness = String.format(Locale.US, "%.4s", liveness);
         this.valence = String.format(Locale.US, "%.4s", valence);
@@ -119,6 +122,7 @@ public class CurrentPlaying implements Serializable {
         this.trackUri = trackUri;
 
         this.coverArtUrl = coverArtUrl;
+        this.artistCoverArtUrl = artistCoverArtUrl;
     }
 
     /**
@@ -143,6 +147,7 @@ public class CurrentPlaying implements Serializable {
         this.trackUri = curTrack.trackUri;
 
         this.coverArtUrl = curTrack.coverArtUrl;
+        this.artistCoverArtUrl = curTrack.artistCoverArtUrl;
     }
 
     public String formatKey(float key) {
