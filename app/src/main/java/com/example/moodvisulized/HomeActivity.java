@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
@@ -27,6 +28,7 @@ import com.spotify.protocol.types.Image;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
+import com.squareup.picasso.Picasso;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -37,6 +39,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.lang.ref.WeakReference;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -68,6 +71,8 @@ public class HomeActivity extends AppCompatActivity {
     ArrayList<TextView> uiElements = new ArrayList<>(); // Each UI variable but represented as num.
     Bitmap coverArtImg;                                // Current track cover art.
     String coverArtUrl;                               // The url for the CoverArt
+    String artistCoverArtUrl = "";
+    String userCoverArtUrl = "";
 
     ImageView currentTrackArtist;
     ImageView backgroundBanner2;
@@ -319,14 +324,19 @@ public class HomeActivity extends AppCompatActivity {
                             substring(currentArtistUri.indexOf(":") + 1);
                     currentArtistUri = currentArtistUri.
                             substring(currentArtistUri.indexOf(":") + 1);
-                    Log.d(TAG, "connected CURRENT ARTIST URI: " + currentArtistUri);
+
+                    /*Log.d(TAG, "connected CURRENT ARTIST URI: " + currentArtistUri);
 
                     Log.d(TAG, "connected: playerState track uri: " + "spotify:track:" + currentTrackUri);
                     Log.d(TAG, "connected: curTrack track uri: " + curTrack.getTrackUri());
+                    */
 
                     /* So if the track uri are not the same, make api call; new song playing */
                     if (!("spotify:track:" + currentTrackUri).equals(curTrack.getTrackUri())) {
                         Log.d(TAG, "connected: API CALL; NEW SONG");
+
+                        /* Fetch the artist picture asap then send to picasso */
+                        fetchArtistPic();
 
                         coverArtUrl = playerState.track.imageUri.toString();
 
@@ -351,7 +361,6 @@ public class HomeActivity extends AppCompatActivity {
 
                        Log.d(TAG, "connected: else condition (same song playing): ");
                     }
-                    fetchArtistPic();
                 });
 
         fetchProfilePic();
@@ -572,7 +581,7 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    private static class ArtistProfilePicAsyncTask extends AsyncTask<String, Void, Bitmap> {
+    private static class ArtistProfilePicAsyncTask extends AsyncTask<String, Void, Void> {
 
         Bitmap bmArtistArt;
 
@@ -585,21 +594,7 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            /* get strong reference which will be destroyed after this scope ends */
-            HomeActivity activity = activityWeakRef.get();
-
-            /* This will return if garbage collection is happening so we return immediately */
-            if (activity == null || activity.isFinishing()) {
-                return;
-            }
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... strings) {
-
+        protected Void doInBackground(String... strings) {
             /* get strong reference which will be destroyed after this scope ends */
             HomeActivity activity = activityWeakRef.get();
 
@@ -609,44 +604,45 @@ public class HomeActivity extends AppCompatActivity {
             }
 
             try {
-                /* Get current playing artist uri */
-                String artistPicUri = activity.spotify.
-                        getArtist(activity.currentArtistUri).
-                        images.
-                        get(1).
-                        url;
-
-                URL url = new URL(artistPicUri);
-                bmArtistArt = BitmapFactory.decodeStream(url.openStream());
-
+                /* Get current playing artist URL from URI */
+                activity.artistCoverArtUrl = new URL(activity.spotify
+                        .getArtist(activity.currentArtistUri)
+                        .images
+                        .get(1)
+                        .url)
+                        .toString();
 
             } catch (Exception e) {
                 Log.e("Error Occurred: ", e.getMessage());
                 e.printStackTrace();
             }
-            return bmArtistArt;
+            return null;
         }
 
         @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            super.onPostExecute(bitmap);
-
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
             /* get strong reference which will be destroyed after this scope ends */
             HomeActivity activity = activityWeakRef.get();
 
             /* if the activity is null or finishing, do not do anything */
             if (activity == null || activity.isFinishing()) {
-                // Do nothing
-            } else {
-                /* Set the user's profile picture */
-                activity.currentTrackArtist.setImageBitmap(bmArtistArt);
+                return;
             }
+
+            activity.setUrlPicture(activity.artistCoverArtUrl, activity.currentTrackArtist);
         }
     }
 
-    private static class UserProfilePicAsyncTask extends AsyncTask<String, Void, Bitmap> {
+    public void setUrlPicture(String picUrl, ImageView view) {
 
-        Bitmap bmFetched;
+        Log.d(TAG, "getArtistPicture: PICASSO CALLED W/: " + picUrl);
+        Picasso.get()
+                .load(picUrl)
+                .into(view);
+    }
+
+    private static class UserProfilePicAsyncTask extends AsyncTask<String, Void, Void> {
 
         /* Create a weak reference to try and minimize leaks */
         /* The variables accessible by the class */
@@ -657,21 +653,7 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            /* get strong reference which will be destroyed after this scope ends */
-            HomeActivity activity = activityWeakRef.get();
-
-            /* This will return if garbage collection is happening so we return immediately */
-            if (activity == null || activity.isFinishing()) {
-                return;
-            }
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... strings) {
-
+        protected Void doInBackground(String... strings) {
             /* get strong reference which will be destroyed after this scope ends */
             HomeActivity activity = activityWeakRef.get();
 
@@ -682,22 +664,22 @@ public class HomeActivity extends AppCompatActivity {
 
             try {
                 /* Get the current user's profile picture */
-                InputStream in = new URL("https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=627824893978125&height=200&width=200&ext=1565622679&hash=AeQCwprawguG10t4").
-                        openStream();
-
-                bmFetched = BitmapFactory.decodeStream(in);
-                in.close();
+                activity.userCoverArtUrl = activity.spotify
+                        .getMe()
+                        .images
+                        .get(0)
+                        .url;
 
             } catch (Exception e) {
                 Log.e("Error Occurred: ", e.getMessage());
                 e.printStackTrace();
             }
-            return bmFetched;
+            return null;
         }
 
         @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            super.onPostExecute(bitmap);
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
 
             /* get strong reference which will be destroyed after this scope ends */
             HomeActivity activity = activityWeakRef.get();
@@ -707,7 +689,7 @@ public class HomeActivity extends AppCompatActivity {
                 // Do nothing
             } else {
                 /* Set the user's profile picture */
-                activity.userPicture.setImageBitmap(bitmap);
+                activity.setUrlPicture(activity.userCoverArtUrl, activity.userPicture);
             }
         }
     }
