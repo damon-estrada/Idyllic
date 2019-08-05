@@ -87,6 +87,7 @@ public class HomeActivity extends AppCompatActivity {
 
     /* Debugging purposes */
     private static final String TAG = HomeActivity.class.getSimpleName();
+    boolean overwriteTxt = false;
 
     /* Objects */
     CurrentPlaying curTrack = null;
@@ -98,6 +99,7 @@ public class HomeActivity extends AppCompatActivity {
     /* Date variables */
     Calendar cal = Calendar.getInstance();
     int dayOfYear = cal.get(Calendar.DAY_OF_YEAR);
+    int offsetFileCreated = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,12 +178,15 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View v) {toAllTimeFavoriteTracks(v);}
         });
 
-        /* Checking to see if the file is null */
-        if (readInternalStorageDate().equals(null)) {
+        /* Checking to see if the file does not exists and then write the current date */
+        if (!checkFileExists("statsUpdateLog.txt")) {
             writeInternalStorageDate();
-        } else {
-            Log.d(TAG, "onCreate: DOY file exists already");
+            Log.d(TAG, "onCreate: DOY does not exists, It was created!");
+            offsetFileCreated = 7;
+            overwriteTxt = true;
         }
+
+        Log.d(TAG, "onCreate: DOY File EXISTS");
 
         /* For mAppRemoteSet the connection parameters */
         connectionParams = new ConnectionParams.Builder(CLIENT_ID)
@@ -263,14 +268,6 @@ public class HomeActivity extends AppCompatActivity {
         /* The object being sent to UserStatistics Activity */
         intent.putExtra("curTrackObj", curTrack);
 
-        /* if true */
-        if (updateFavTracksRankings()) {
-            clearFile("favoriteTracks.txt");
-            writeToInternalStorage(favTracksShort, "short");
-            writeToInternalStorage(favTracksMedium, "medium");
-            writeToInternalStorage(favTracksLong, "long");
-        }
-
         startActivity(intent);
     }
 
@@ -279,6 +276,17 @@ public class HomeActivity extends AppCompatActivity {
         Intent intent = new Intent(this, AllTimeFavoriteTracks.class);
 
         Log.d(TAG, "toAllTimeFavoriteTracks: Going to AllTimeFavoriteTracks view");
+
+
+        /* if we updated, make sure to write */
+        if (overwriteTxt) {
+            clearFile("favoriteTracks.txt");
+            writeToInternalStorage(favTracksShort, "short");
+            writeToInternalStorage(favTracksMedium, "medium");
+            writeToInternalStorage(favTracksLong, "long");
+        }
+
+        overwriteTxt = false;
 
         startActivity(intent);
     }
@@ -346,12 +354,12 @@ public class HomeActivity extends AppCompatActivity {
                     fetchArtistPic();
                 });
 
-
         fetchProfilePic();
         /* If this is true, rewrite the new date we last fetched */
-        if (updateFavTracksRankings()) {
+        if (updateFavTracksRankings(offsetFileCreated)) {
             writeInternalStorageDate();
             fetchFavTracks();
+            overwriteTxt = true;
             Log.d(TAG, "connected: Fetching fav tracks, time to update.");
         }
     }
@@ -719,6 +727,25 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    public boolean checkFileExists(String fileName) {
+
+        try {
+            /* If file exists, do nothing and return true */
+            String filePath = getBaseContext().getFilesDir() + "/" + fileName;
+            File file = new File(filePath);
+            if (file.isFile()) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return false;
+        }
+    }
+
     /**
      * Allows us to write to internal storage the newly updated tracks with our top tracks.
      * @param favTracks an object holding all the necessary information.
@@ -732,19 +759,14 @@ public class HomeActivity extends AppCompatActivity {
 
             FileOutputStream out = openFileOutput(fileName, MODE_APPEND);
 
-            out.write(("Favorite Tracks Fetched (" + type + ")\n").getBytes());
-            out.flush();
-
             for (int i = 0; i < favTracks.getFavTrackList().size(); i++) {
-                out.write((favTracks.getFavTrackList().get(i).name + "\n").getBytes());
+                out.write((favTracks.getFavTrackList().get(i).name + ", ").getBytes());
                 for (int j = 0; j < favTracks.getFavTrackList().get(j).artists.size(); j++) {
                     out.write((favTracks.getFavTrackList().get(i).artists.get(j).name + ", ").getBytes());
                 }
-                out.write((favTracks.getFavTrackList().get(i).id + "\n").getBytes());
+                out.write((favTracks.getFavTrackList().get(i).album.images.get(0).url + "\n").getBytes());
                 out.flush();
             }
-
-            out.write(("END\n\n").getBytes());
 
             out.close();
 
@@ -792,7 +814,7 @@ public class HomeActivity extends AppCompatActivity {
 
         try {
 
-            FileOutputStream out = openFileOutput(fileName, MODE_APPEND);
+            FileOutputStream out = openFileOutput(fileName, MODE_PRIVATE);
 
             out.write((dayOfYear + "").getBytes());
             out.flush();
@@ -814,6 +836,7 @@ public class HomeActivity extends AppCompatActivity {
     public String readInternalStorageDate() {
         String result = null;
         try {
+
             FileInputStream in = getBaseContext().openFileInput("statsUpdateLog.txt");
             InputStreamReader iSR = new InputStreamReader(in);
 
@@ -841,7 +864,7 @@ public class HomeActivity extends AppCompatActivity {
      * This is used to chekck if we should update the allTimeFavoriteTracks activity results.
      * @return true if the DOY is greater than last fetch, false else.
      */
-    public boolean updateFavTracksRankings() {
+    public boolean updateFavTracksRankings(int offset) {
         String readDOY = readInternalStorageDate();
         int strToInt;
         int week = 7;
@@ -859,7 +882,7 @@ public class HomeActivity extends AppCompatActivity {
         Log.d(TAG, "updateFavTracksRankings: DOY update will occur next -> " + result);
 
         /* Here we are seeing if a week has gone by to then re update the user's rankings */
-        if (dayOfYear >= result) {
+        if (dayOfYear >= (result - offset)) {
             return true;
         } else {
             return false;
