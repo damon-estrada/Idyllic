@@ -10,6 +10,7 @@
         android:targetSdkVersion="28" />
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
@@ -22,8 +23,8 @@
         android:supportsRtl="true"
         android:testOnly="true"
         android:theme="@style/AppTheme" >
-        <activity android:name="com.example.moodvisulized.HomeActivity" >
-        </activity>
+        <activity android:name="com.example.moodvisulized.AllTimeFavoriteTracks" />
+        <activity android:name="com.example.moodvisulized.HomeActivity" />
         <activity android:name="com.example.moodvisulized.UserStatistics" />
         <activity android:name="com.example.moodvisulized.MainActivity" >
             <intent-filter>
@@ -32,6 +33,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name="com.squareup.picasso.PicassoProvider"
+            android:authorities="com.moodVisualizedDebug.myapp.com.squareup.picasso"
+            android:exported="false" />
+
         <activity
             android:name="com.spotify.sdk.android.authentication.AuthCallbackActivity"
             android:exported="true"
