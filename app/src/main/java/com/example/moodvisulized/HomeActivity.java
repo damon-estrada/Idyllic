@@ -6,13 +6,19 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
@@ -25,13 +31,16 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.lang.ref.WeakReference;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
@@ -40,9 +49,20 @@ import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.AudioFeaturesTrack;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.Track;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.GET;
+import retrofit2.http.Headers;
+import retrofit2.http.Path;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -72,7 +92,10 @@ public class HomeActivity extends AppCompatActivity {
     private ConnectionParams connectionParams;   // Connection Params for the app remote
     private SpotifyAppRemote mSpotifyAppRemote; // The app remote
     private SpotifyService spotify;            // Service variable
-    private String accessToken = null;        // Needed to make calls that require access token.
+    private static String accessToken = null;        // Needed to make calls that require access token.
+    private static Retrofit retrofit;
+    private static final String SPOTIFY_API_BASE_URL = "https://api.spotify.com/v1/";
+    ApiEndpointInterface apiServiceInterface = null;
 
     /* Debugging purposes */
     private static final String TAG = HomeActivity.class.getSimpleName();
@@ -84,6 +107,8 @@ public class HomeActivity extends AppCompatActivity {
     AllTimeFavorite favTracksShort = new AllTimeFavorite();   // favorite tracks from short_term
     AllTimeFavorite favTracksMedium = new AllTimeFavorite(); // favorite tracks from medium_term
     AllTimeFavorite favTracksLong = new AllTimeFavorite();  // favorite tracks from long_term
+    ArrayList<Double> timbre = new ArrayList<>();
+    ArrayList<Double> pitch = new ArrayList<>();
 
     /* Date variables */
     Calendar cal = Calendar.getInstance();              //
@@ -124,6 +149,10 @@ public class HomeActivity extends AppCompatActivity {
         AuthenticationRequest request = builder.build();
 
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
+
+        /* Get a retrofit instance to make api calls that are not wrapped */
+        Retrofit retrofit = getInstanceRetrofit();
+        apiServiceInterface = retrofit.create(ApiEndpointInterface.class);
 
         /* Get access to spotify services */
         RestAdapter restAdapter = new RestAdapter.Builder()
@@ -317,6 +346,7 @@ public class HomeActivity extends AppCompatActivity {
                         coverArtUri = coverArtUri.substring(0, coverArtUri.indexOf("\'"));
 
                         /* grab current track features and update the UI with these details */
+                        /* Grab the audio Analysis for the current track */
                         beginAsyncTask();
 
                         /* Fetch the artist picture asap then send to picasso */
@@ -378,8 +408,20 @@ public class HomeActivity extends AppCompatActivity {
                         trackAudioFeatures.duration_ms,
                         trackAudioFeatures.uri,
                         coverArtUrl,
-                        "init"
+                        "init",
+                        trackAudioFeatures.id,
+                        pitch, // pitch  (currently empty)
+                        timbre // timbre array (currently empty)
                 );
+
+
+                /* Get a json object from getTrackAudioAnalysis and parse the object */
+                getTrackAudioAnalysis(curTrack);
+
+                /* Update the object with the now known timbre and pitch */
+                curTrack.setPitch(pitch);
+                curTrack.setTimbre(timbre);
+
                 break;
 
             } catch (RetrofitError e) {
@@ -390,6 +432,81 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
         return curTrack;
+    }
+
+    public void getTrackAudioAnalysis(CurrentPlaying curTrack) {
+
+        JsonObject result = null;
+
+        Log.d(TAG, "getTrackAudioAnalysis: apiServiceInterface --> " + apiServiceInterface);
+        Call<JsonObject> getCall = apiServiceInterface.getTrackAnalysis(curTrack.getId());
+
+        getCall.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                Log.d(TAG, "onResponse: CALL Success!");
+                Toast.makeText(getApplicationContext(), "@GET track-analysis Code " + response.code(), Toast.LENGTH_SHORT).show();
+                parseJsonObj(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                Log.e(TAG, "onFailure: Error" );
+
+            }
+        });
+    }
+
+    private interface ApiEndpointInterface {
+        /******************
+         * Audio Analysis *
+         ******************/
+
+        @GET("audio-analysis/{id}")
+        Call<JsonObject> getTrackAnalysis(@Path("id") String id);
+    }
+
+    public void parseJsonObj(JsonObject jsonObj) {
+        Gson gson = new Gson();
+        JsonObject body = gson.fromJson(jsonObj, JsonObject.class);
+        Double average = 0.0;
+
+        /* Clear contents to prevent adding onto previous lists */
+        pitch.clear();
+        timbre.clear();
+
+        /* Used to round to 2 decimal places */
+        DecimalFormat form = new DecimalFormat("###.##");
+
+        /* we now have the segments portion here */
+        JsonArray segments = body.get("segments").getAsJsonArray();
+
+        /* Get the timbre and pitches now */
+        for (int i = 0; i < segments.size(); i++) {
+            JsonObject pitchesArray = (JsonObject) segments.get(i);
+
+            /* pitch loop */
+            JsonArray pitches = (JsonArray) pitchesArray.get("pitches");
+            for (int j = 0; j < 12; j++) {
+                average += (Double.parseDouble(pitches.get(j).toString()));
+            }
+
+            pitch.add(Double.valueOf(form.format(average / 12)));
+
+            average = 0.0;
+
+            /* timbre loop */
+            JsonArray timbres = (JsonArray) pitchesArray.get("timbre");
+            for (int j = 0; j < 12; j++) {
+                average += (Double.parseDouble(timbres.get(j).toString()));
+            }
+
+            timbre.add(Double.valueOf(form.format(average / 12)));
+
+            average = 0.0;
+        }
+
+        Log.e(TAG, "doInBackground: Curtrack timbres size: " + curTrack.getTimbre().size());
     }
 
     public void beginAsyncTask() {
@@ -780,6 +897,39 @@ public class HomeActivity extends AppCompatActivity {
         } else {
             return false;
         }
+    }
+
+
+    /**
+     * Init a retrofit instance and use the Gson library for demoralizing the response.
+     */
+    public Retrofit getInstanceRetrofit() {
+
+        /* I need to add the bearer's token */
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+
+        httpClient.addInterceptor(new Interceptor() {
+            @Override
+            public okhttp3.Response intercept(Chain chain) throws IOException {
+                Request request = chain.request()
+                        .newBuilder()
+                        .addHeader("Authorization" ,"Bearer " + accessToken)
+                        .addHeader("Accept" ,"application/json")
+                        .addHeader("Content-Type" ,"application/json")
+                        .build();
+                return chain.proceed(request);
+            }
+        });
+
+
+        if (retrofit == null) {
+            retrofit = new Retrofit.Builder()
+                    .client(httpClient.build())
+                    .baseUrl(SPOTIFY_API_BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+        }
+        return retrofit;
     }
 
     /**
