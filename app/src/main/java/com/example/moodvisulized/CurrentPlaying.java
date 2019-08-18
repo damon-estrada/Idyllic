@@ -1,6 +1,7 @@
 package com.example.moodvisulized;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class CurrentPlaying implements Serializable {
@@ -23,6 +24,10 @@ public class CurrentPlaying implements Serializable {
     private String coverArtUrl;
     private String artistCoverArtUrl;
 
+    private String id;
+    private ArrayList<Double> pitch;
+    private ArrayList<Double> timbre;
+
     /* Setters */
     public void setDanceability(String danceability) {this.danceability = danceability;}
     public void setLiveness(String liveness) {this.liveness = liveness;}
@@ -42,6 +47,12 @@ public class CurrentPlaying implements Serializable {
     public void setCoverArtUrl(String coverArtUrl) {this.coverArtUrl = coverArtUrl;}
 
     public void setArtistCoverArtUrl(String artistCoverArtUrl) {this.artistCoverArtUrl = artistCoverArtUrl;}
+
+    public void setId(String id) {this.id = id;}
+
+    public void setPitch(ArrayList<Double> pitch) {this.pitch = pitch;}
+
+    public void setTimbre(ArrayList<Double> timbre) {this.timbre = timbre;}
     /*--------------------------------------------------------------------------------------------*/
 
     /* Getters */
@@ -62,6 +73,11 @@ public class CurrentPlaying implements Serializable {
 
     public String getCoverArtUrl() {return coverArtUrl;}
     public String getArtistCoverArtUrl() {return artistCoverArtUrl;}
+
+    public String getId() {return id;}
+
+    public ArrayList<Double> getPitch() {return pitch;}
+    public ArrayList<Double> getTimbre() {return timbre;}
     /*--------------------------------------------------------------------------------------------*/
 
     /**
@@ -85,6 +101,10 @@ public class CurrentPlaying implements Serializable {
 
         this.coverArtUrl = "";
         this.artistCoverArtUrl = "";
+
+        this.id = "";
+        this.pitch = new ArrayList<>();
+        this.timbre = new ArrayList<>();
     }
 
     /**
@@ -105,7 +125,8 @@ public class CurrentPlaying implements Serializable {
     public CurrentPlaying(float danceability, float liveness, float valence, float speechiness,
                           float instrumentalness, float loudness, float key, float energy,
                           float tempo, float acousticness, int duration_ms, String trackUri,
-                          String coverArtUrl, String artistCoverArtUrl) {
+                          String coverArtUrl, String artistCoverArtUrl, String id,
+                          ArrayList<Double> pitch, ArrayList<Double> timbre) {
         this.danceability = String.format(Locale.US, "%.4s", danceability);
         this.liveness = String.format(Locale.US, "%.4s", liveness);
         this.valence = String.format(Locale.US, "%.4s", valence);
@@ -123,6 +144,11 @@ public class CurrentPlaying implements Serializable {
 
         this.coverArtUrl = coverArtUrl;
         this.artistCoverArtUrl = artistCoverArtUrl;
+
+        this.id = id;
+
+        this.pitch = pitch;
+        this.timbre = timbre;
     }
 
     /**
@@ -148,6 +174,11 @@ public class CurrentPlaying implements Serializable {
 
         this.coverArtUrl = curTrack.coverArtUrl;
         this.artistCoverArtUrl = curTrack.artistCoverArtUrl;
+
+        this.id = curTrack.id;
+
+        this.pitch = curTrack.pitch;
+        this.timbre = curTrack.timbre;
     }
 
     public String formatKey(float key) {
