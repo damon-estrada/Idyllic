@@ -1,528 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/scrollView"
+<RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.constraint.ConstraintLayout
+    <!-- This is for the background -->
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
 
-
-        <ImageButton
-            android:id="@+id/shotTerm"
-            android:src="@drawable/short_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            app:layout_constraintTop_toTopOf="@id/midTerm"
-            app:layout_constraintBottom_toBottomOf="@id/midTerm"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/midTerm" />
-
-        <ImageButton
-            android:id="@+id/midTerm"
-            android:src="@drawable/medium_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/top10FavTracksText"
-            app:layout_constraintStart_toEndOf="@id/shotTerm"
-            app:layout_constraintEnd_toStartOf="@id/longTerm"
-
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="10dp"/>
-
-        <ImageButton
-            android:id="@+id/longTerm"
-            android:src="@drawable/long_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-
-            app:layout_constraintTop_toTopOf="@id/midTerm"
-            app:layout_constraintBottom_toBottomOf="@id/midTerm"
-            app:layout_constraintStart_toEndOf="@id/midTerm"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/top10FavTracksText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            app:layout_constraintTop_toBottomOf="@id/midTerm"
-            app:layout_constraintBottom_toTopOf="@id/firstFavTrack"
-            app:layout_constraintStart_toStartOf="@id/firstFavTrack"
-            app:layout_constraintEnd_toEndOf="@id/firstFavTrack"
-
-            android:text="Top 10 Favorite Tracks"
-            android:textColor="@color/white" />
-
-        <ImageView
-            android:id="@+id/firstFavTrack"
-            android:src="@drawable/artist_picture4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/coverArtDesc"
-
-            android:scaleType="centerCrop"
-            app:layout_constraintTop_toBottomOf="@id/top10FavTracksText"
-            app:layout_constraintBottom_toTopOf="@id/firstFavTrackName"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintDimensionRatio="1:1" />
-
-        <TextView
-            android:id="@+id/firstFavTrackName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            app:layout_constraintTop_toBottomOf="@id/firstFavTrack"
-            app:layout_constraintBottom_toTopOf="@id/firstFavTrackArtist"
-            app:layout_constraintStart_toStartOf="@id/firstFavTrack"
-
-            android:text="Track Name"
-            android:textColor="@color/white" />
-
-        <TextView
-            android:id="@+id/firstFavTrackArtist"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            app:layout_constraintTop_toBottomOf="@id/firstFavTrackName"
-            app:layout_constraintBottom_toTopOf="@id/secondFavTrack"
-            app:layout_constraintStart_toStartOf="@id/firstFavTrack"
-
-            android:layout_marginBottom="10dp"
-
-            android:text="Track Artist"
-            android:textColor="@color/white" />
-
-        <ImageView
-            android:id="@+id/secondFavTrack"
-            android:src="@drawable/artist_picture4"
-            android:contentDescription="Update Later"
-
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginTop="0dp"
-
-
-            android:scaleType="centerCrop"
-            android:adjustViewBounds="true"
-
-            app:layout_constraintTop_toBottomOf="@id/firstFavTrackArtist"
-            app:layout_constraintBottom_toTopOf="@id/secondFavTrackName"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/secondFavTrackName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            app:layout_constraintTop_toBottomOf="@id/secondFavTrack"
-            app:layout_constraintBottom_toTopOf="@id/secondFavTrackArtist"
-            app:layout_constraintStart_toStartOf="@id/secondFavTrack"
-
-            android:text="Track Name 2"
-            android:textColor="@color/white" />
-
-        <TextView
-            android:id="@+id/secondFavTrackArtist"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            app:layout_constraintTop_toBottomOf="@id/secondFavTrackName"
-            app:layout_constraintBottom_toTopOf="@id/thirdFavTrack"
-            app:layout_constraintStart_toStartOf="@id/secondFavTrack"
-
-            android:layout_marginBottom="10dp"
-
-            android:text="Track Artist 2"
-            android:textColor="@color/white" />
-
-        <ImageView
-            android:id="@+id/thirdFavTrack"
-            android:src="@drawable/artist_picture4"
-            android:contentDescription="Update Later"
-
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginTop="0dp"
-
-
-            android:scaleType="centerCrop"
-            android:adjustViewBounds="true"
-
-            app:layout_constraintTop_toBottomOf="@id/secondFavTrackArtist"
-            app:layout_constraintBottom_toTopOf="@id/thirdFavTrackName"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/thirdFavTrackName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            app:layout_constraintTop_toBottomOf="@id/thirdFavTrack"
-            app:layout_constraintBottom_toTopOf="@id/thirdFavTrackArtist"
-            app:layout_constraintStart_toStartOf="@id/thirdFavTrack"
-
-            android:text="Track Name 3"
-            android:textColor="@color/white" />
-
-        <TextView
-            android:id="@+id/thirdFavTrackArtist"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            app:layout_constraintTop_toBottomOf="@id/thirdFavTrackName"
-            app:layout_constraintBottom_toTopOf="@id/fourthFavTrack"
-            app:layout_constraintStart_toStartOf="@id/thirdFavTrack"
-
-            android:layout_marginBottom="10dp"
-
-            android:text="Track Artist 3"
-            android:textColor="@color/white" />
-
-        <ImageView
-            android:id="@+id/fourthFavTrack"
-            android:src="@drawable/artist_picture4"
-            android:contentDescription="Update Later"
-
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginTop="0dp"
-
-            android:scaleType="centerCrop"
-            android:adjustViewBounds="true"
-
-            app:layout_constraintTop_toBottomOf="@id/thirdFavTrackArtist"
-            app:layout_constraintBottom_toTopOf="@id/fourthFavTrackName"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/fourthFavTrackName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            app:layout_constraintTop_toBottomOf="@id/fourthFavTrack"
-            app:layout_constraintBottom_toTopOf="@id/fourthFavTrackArtist"
-            app:layout_constraintStart_toStartOf="@id/fourthFavTrack"
-
-            android:text="Track Name 4"
-            android:textColor="@color/white" />
-
-        <TextView
-            android:id="@+id/fourthFavTrackArtist"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            app:layout_constraintTop_toBottomOf="@id/fourthFavTrackName"
-            app:layout_constraintBottom_toTopOf="@id/fifthFavTrack"
-            app:layout_constraintStart_toStartOf="@id/fourthFavTrack"
-
-            android:layout_marginBottom="10dp"
-
-            android:text="Track Artist 4"
-            android:textColor="@color/white" />
-
-        <ImageView
-            android:id="@+id/fifthFavTrack"
-            android:src="@drawable/artist_picture4"
-            android:contentDescription="Update Later"
-
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginTop="0dp"
-
-            android:scaleType="centerCrop"
-            android:adjustViewBounds="true"
-
-            app:layout_constraintTop_toBottomOf="@id/fourthFavTrackArtist"
-            app:layout_constraintBottom_toTopOf="@id/fifthFavTrackName"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/fifthFavTrackName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            app:layout_constraintTop_toBottomOf="@id/fifthFavTrack"
-            app:layout_constraintBottom_toTopOf="@id/fifthFavTrackArtist"
-            app:layout_constraintStart_toStartOf="@id/fifthFavTrack"
-
-            android:text="Track Name 5"
-            android:textColor="@color/white" />
-
-        <TextView
-            android:id="@+id/fifthFavTrackArtist"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            app:layout_constraintTop_toBottomOf="@id/fifthFavTrackName"
-            app:layout_constraintBottom_toTopOf="@id/sixthFavTrack"
-            app:layout_constraintStart_toStartOf="@id/fifthFavTrack"
-
-            android:layout_marginBottom="10dp"
-
-            android:text="Track Artist 5"
-            android:textColor="@color/white" />
-
-        <ImageView
-            android:id="@+id/sixthFavTrack"
-            android:src="@drawable/artist_picture4"
-            android:contentDescription="Update Later"
-
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginTop="0dp"
-
-            android:scaleType="centerCrop"
-            android:adjustViewBounds="true"
-
-            app:layout_constraintTop_toBottomOf="@id/fifthFavTrackArtist"
-            app:layout_constraintBottom_toTopOf="@id/seventhFavTrack"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/sixthFavTrackName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            app:layout_constraintTop_toBottomOf="@id/sixthFavTrack"
-            app:layout_constraintBottom_toTopOf="@id/sixthFavTrackArtist"
-            app:layout_constraintStart_toStartOf="@id/sixthFavTrack"
-
-            android:text="Track Name 6"
-            android:textColor="@color/white" />
-
-        <TextView
-            android:id="@+id/sixthFavTrackArtist"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            app:layout_constraintTop_toBottomOf="@id/sixthFavTrackName"
-            app:layout_constraintBottom_toTopOf="@id/seventhFavTrack"
-            app:layout_constraintStart_toStartOf="@id/sixthFavTrack"
-
-            android:layout_marginBottom="10dp"
-
-            android:text="Track Artist 6"
-            android:textColor="@color/white" />
-
-        <ImageView
-            android:id="@+id/seventhFavTrack"
-            android:src="@drawable/artist_picture4"
-            android:contentDescription="Update Later"
-
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginTop="0dp"
-
-            android:scaleType="centerCrop"
-            android:adjustViewBounds="true"
-
-            app:layout_constraintTop_toBottomOf="@id/sixthFavTrackArtist"
-            app:layout_constraintBottom_toTopOf="@id/seventhFavTrackName"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/seventhFavTrackName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            app:layout_constraintTop_toBottomOf="@id/seventhFavTrack"
-            app:layout_constraintBottom_toTopOf="@id/seventhFavTrackArtist"
-            app:layout_constraintStart_toStartOf="@id/seventhFavTrack"
-
-            android:text="Track Name 7"
-            android:textColor="@color/white" />
-
-        <TextView
-            android:id="@+id/seventhFavTrackArtist"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            app:layout_constraintTop_toBottomOf="@id/seventhFavTrackName"
-            app:layout_constraintBottom_toTopOf="@id/eighthFavTrack"
-            app:layout_constraintStart_toStartOf="@id/seventhFavTrack"
-
-            android:layout_marginBottom="10dp"
-
-            android:text="Track Artist 7"
-            android:textColor="@color/white" />
-
-        <ImageView
-            android:id="@+id/eighthFavTrack"
-            android:src="@drawable/artist_picture4"
-            android:contentDescription="Update Later"
-
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginTop="0dp"
-
-            android:scaleType="centerCrop"
-            android:adjustViewBounds="true"
-
-            app:layout_constraintTop_toBottomOf="@id/seventhFavTrack"
-            app:layout_constraintBottom_toTopOf="@id/eighthFavTrackName"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/eighthFavTrackName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            app:layout_constraintTop_toBottomOf="@id/eighthFavTrack"
-            app:layout_constraintBottom_toTopOf="@id/eighthFavTrackArtist"
-            app:layout_constraintStart_toStartOf="@id/eighthFavTrack"
-
-            android:text="Track Name 8"
-            android:textColor="@color/white" />
-
-        <TextView
-            android:id="@+id/eighthFavTrackArtist"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            app:layout_constraintTop_toBottomOf="@id/eighthFavTrackName"
-            app:layout_constraintBottom_toTopOf="@id/ninthFavTrack"
-            app:layout_constraintStart_toStartOf="@id/eighthFavTrack"
-
-            android:layout_marginBottom="10dp"
-
-            android:text="Track Artist 8"
-            android:textColor="@color/white" />
-
-        <ImageView
-            android:id="@+id/ninthFavTrack"
-            android:src="@drawable/artist_picture4"
-            android:contentDescription="Update Later"
-
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginTop="0dp"
-
-            android:scaleType="centerCrop"
-            android:adjustViewBounds="true"
-
-            app:layout_constraintTop_toBottomOf="@id/eighthFavTrackArtist"
-            app:layout_constraintBottom_toTopOf="@id/ninthFavTrackName"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/ninthFavTrackName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            app:layout_constraintTop_toBottomOf="@id/ninthFavTrack"
-            app:layout_constraintBottom_toTopOf="@id/ninthFavTrackArtist"
-            app:layout_constraintStart_toStartOf="@id/ninthFavTrack"
-
-            android:text="Track Name 9"
-            android:textColor="@color/white" />
-
-        <TextView
-            android:id="@+id/ninthFavTrackArtist"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            app:layout_constraintTop_toBottomOf="@id/ninthFavTrackName"
-            app:layout_constraintBottom_toTopOf="@id/tenthFavTrack"
-            app:layout_constraintStart_toStartOf="@id/ninthFavTrack"
-
-            android:layout_marginBottom="10dp"
-
-            android:text="Track Artist 9"
-            android:textColor="@color/white" />
-
-        <ImageView
-            android:id="@+id/tenthFavTrack"
-            android:src="@drawable/artist_picture4"
-            android:contentDescription="Update Later"
-
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginTop="0dp"
-
-            android:scaleType="centerCrop"
-            android:adjustViewBounds="true"
-
-            app:layout_constraintTop_toBottomOf="@id/ninthFavTrackArtist"
-            app:layout_constraintBottom_toTopOf="@id/tenthFavTrackName"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/tenthFavTrackName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            app:layout_constraintTop_toBottomOf="@id/tenthFavTrack"
-            app:layout_constraintBottom_toTopOf="@id/tenthFavTrackArtist"
-            app:layout_constraintStart_toStartOf="@id/tenthFavTrack"
-
-            android:text="Track Name 10"
-            android:textColor="@color/white" />
-
-        <TextView
-            android:id="@+id/tenthFavTrackArtist"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            app:layout_constraintTop_toBottomOf="@id/tenthFavTrackName"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@id/tenthFavTrack"
-
-            android:layout_marginBottom="10dp"
-
-            android:text="Track Artist 10"
-            android:textColor="@color/white" />
-
-    </android.support.constraint.ConstraintLayout>
-</ScrollView>
+        android:clipToPadding="false"
+        android:layout_centerInParent="true"
+        android:overScrollMode="never">
+    </android.support.v4.view.ViewPager>
+
+
+    <ImageButton
+        android:id="@+id/shotTerm"
+        android:src="@drawable/one_month"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#0000"
+        android:layout_marginStart="10dp"
+
+        android:layout_alignBottom="@id/midTerm"
+        android:layout_alignTop="@id/midTerm"
+        android:layout_alignParentStart="true" />
+
+    <ImageButton
+        android:id="@+id/midTerm"
+        android:src="@drawable/six_months"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#0000"
+
+        android:layout_marginTop="30dp"
+
+        android:layout_centerHorizontal="true"
+        android:layout_alignTop="@id/top10FavTracksText"
+        android:layout_alignStart="@id/shotTerm"
+        android:layout_alignEnd="@id/longTerm"/>
+
+    <ImageButton
+        android:id="@+id/longTerm"
+        android:src="@drawable/all_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#0000"
+        android:layout_marginEnd="10dp"
+
+        android:layout_alignTop="@id/midTerm"
+        android:layout_alignBottom="@id/midTerm"
+        android:layout_alignParentEnd="true"/>
+
+    <TextView
+        android:id="@+id/top10FavTracksText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+
+        android:text="Top 10 Favorite Tracks"
+        android:textColor="@color/white"
+        />
+</RelativeLayout>
