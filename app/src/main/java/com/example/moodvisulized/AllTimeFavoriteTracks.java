@@ -1,7 +1,14 @@
 package com.example.moodvisulized;
 
+import android.animation.ArgbEvaluator;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,10 +20,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AllTimeFavoriteTracks extends AppCompatActivity {
 
@@ -27,80 +36,112 @@ public class AllTimeFavoriteTracks extends AppCompatActivity {
     ArrayList<String> trackName = new ArrayList<>();
     ArrayList<String> artistNames = new ArrayList<>();
     ArrayList<String> imgUri = new ArrayList<>();
-    ArrayList<ImageView> imageViews = new ArrayList<>();
-    ArrayList<TextView> textViews = new ArrayList<>();
-
-    /* Device information */
-    int deviceWidth = (Resources.getSystem().getDisplayMetrics().widthPixels);
-    int deviceHeight = (Resources.getSystem().getDisplayMetrics().heightPixels);
 
     /* Image Buttons & Info */
     ImageButton sButton;
     ImageButton mButton;
     ImageButton lButton;
+    ImageView trackCoverArt;
 
     ArrayList<String> shortTerm = new ArrayList<>();
     ArrayList<String> mediumTerm = new ArrayList<>();
     ArrayList<String> longTerm = new ArrayList<>();
 
+    ViewPager viewPager;
+    CardViewAdapter cardViewAdapter;
+    List<CardAttributes> trackModels;
+    Integer[] colors = new Integer[10];
+    ArgbEvaluator argbEvaluator = new ArgbEvaluator();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // to remove the status bar
+        /* To remove the status bar */
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_all_time_favorite_tracks);
 
-        /* Add the image views */
-        imageViews.add(findViewById(R.id.firstFavTrack)); imageViews.add(findViewById(R.id.secondFavTrack));
-        imageViews.add(findViewById(R.id.thirdFavTrack)); imageViews.add(findViewById(R.id.fourthFavTrack));
-        imageViews.add(findViewById(R.id.fifthFavTrack)); imageViews.add(findViewById(R.id.sixthFavTrack));
-        imageViews.add(findViewById(R.id.seventhFavTrack)); imageViews.add(findViewById(R.id.eighthFavTrack));
-        imageViews.add(findViewById(R.id.ninthFavTrack)); imageViews.add(findViewById(R.id.tenthFavTrack));
-
-        /* Add the text views */
-        textViews.add(findViewById(R.id.firstFavTrackName)); textViews.add(findViewById(R.id.firstFavTrackArtist));
-        textViews.add(findViewById(R.id.secondFavTrackName)); textViews.add(findViewById(R.id.secondFavTrackArtist));
-        textViews.add(findViewById(R.id.thirdFavTrackName)); textViews.add(findViewById(R.id.thirdFavTrackArtist));
-        textViews.add(findViewById(R.id.fourthFavTrackName)); textViews.add(findViewById(R.id.fourthFavTrackArtist));
-        textViews.add(findViewById(R.id.fifthFavTrackName)); textViews.add(findViewById(R.id.fifthFavTrackArtist));
-        textViews.add(findViewById(R.id.sixthFavTrackName)); textViews.add(findViewById(R.id.sixthFavTrackArtist));
-        textViews.add(findViewById(R.id.seventhFavTrackName)); textViews.add(findViewById(R.id.seventhFavTrackArtist));
-        textViews.add(findViewById(R.id.eighthFavTrackName)); textViews.add(findViewById(R.id.eighthFavTrackArtist));
-        textViews.add(findViewById(R.id.ninthFavTrackName)); textViews.add(findViewById(R.id.ninthFavTrackArtist));
-        textViews.add(findViewById(R.id.tenthFavTrackName)); textViews.add(findViewById(R.id.tenthFavTrackArtist));
-
+        /* definitions of where each button/view is */
         sButton = (ImageButton) findViewById(R.id.shotTerm);
         mButton = (ImageButton) findViewById(R.id.midTerm);
         lButton = (ImageButton) findViewById(R.id.longTerm);
+        trackCoverArt = (ImageView) findViewById(R.id.trackCoverArt);
+
+        viewPager = findViewById(R.id.viewPager);
+
+        /* Create the artist cards from the top ten list */
+        trackModels = new ArrayList<>();
+        parseFavTracks();
+
+        Integer[] colorsNew = {
+                getResources().getColor(R.color.black),
+                getResources().getColor(R.color.black),
+                getResources().getColor(R.color.black),
+                getResources().getColor(R.color.black),
+                getResources().getColor(R.color.black),
+                getResources().getColor(R.color.black),
+                getResources().getColor(R.color.black),
+                getResources().getColor(R.color.black),
+                getResources().getColor(R.color.black),
+                getResources().getColor(R.color.black)
+        };
+
+        colors = colorsNew;
+
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                if (position < (cardViewAdapter.getCount() - 1) && position < (colors.length - 1)) {
+                    viewPager.setBackgroundColor(
+                            (Integer) argbEvaluator.evaluate(
+                                    positionOffset,
+                                    colors[position],
+                                    colors[position + 1]
+                            )
+                    );
+                } else {
+                    viewPager.setBackgroundColor(colors[colors.length - 1]);
+                }
+
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
 
         /* Set listeners if the user wants to change the length of time for fav tracks */
         sButton.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {updateUi(shortTerm);}});
+            @Override public void onClick(View v) {initCardView(shortTerm);}});
 
         mButton.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {updateUi(mediumTerm);}});
+            @Override public void onClick(View v) {initCardView(mediumTerm);}});
 
         lButton.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {updateUi(longTerm);}});
+            @Override public void onClick(View v) {initCardView(longTerm);}});
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        parseFavTracks();
-
         /* Update ui by default with shortTerm results. */
-        updateUi(shortTerm);
+        initCardView(shortTerm);
+        //getArtworkColors();
     }
 
     /**
      * Function will populate the artist names and track titles along with the coverart.
      */
-    public void parseFavTracks() {
+    public boolean parseFavTracks() {
 
         String filePath = getBaseContext().getFilesDir() + "/" + "favoriteTracks.txt";
 
@@ -143,44 +184,66 @@ public class AllTimeFavoriteTracks extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
+
+        return true;
     }
 
-    public void updateUi(ArrayList<String> term) {
+    /**
+     * Initialize the card view by creating cardViewAdapter and setting its attributes.
+     * @param term short, medium, or long term spanning the different time periods.
+     */
+    public void initCardView(ArrayList<String> term) {
 
-        int i;
-        int j = 0;
-        int k = 0;
+        trackModels.clear(); // Clear any contents to not add onto the continued top 10
         String imageUrl;
+        String trackArtist;
+        String trackName;
 
-        for (i = 0; i < term.size(); i++) {
+        for (int i = 0; i < term.size(); i += 3) {
+            /* Gets the third spot of every fetch which holds the url */
+            trackName = term.get(i);
+            trackArtist = term.get(i + 1);
+            imageUrl = term.get(i + 2);
 
-            /* Name of track */
-            if (i % 3 == 0) {
-                TextView updateTV = (TextView) textViews.get(j);
-                updateTV.setText(term.get(i));
-                j++;
-            }
+            trackModels.add(new CardAttributes(
+                            imageUrl,
+                            trackName,
+                            trackArtist
+                    )
+            );
+        }
 
-            /* Name of Artist(s) */
-            else if (i % 3 == 1) {
-                TextView updateTV = (TextView) textViews.get(j);
-                updateTV.setText(term.get(i));
-                j++;
-            }
+        cardViewAdapter = new CardViewAdapter(trackModels, this);
 
-            /* Track cover art */
-            else {
-                imageUrl = term.get(i);
-                ImageView coverArt = (ImageView) imageViews.get(k);
+        viewPager.setAdapter(cardViewAdapter);
+    }
 
-                Picasso.get().setLoggingEnabled(true);
-                Picasso.get().load(imageUrl)
-                        .resize(600, 600)
-                        .into(coverArt);
+    public int getArtworkColors() {
 
-                k++;
+        int curPixel, width, height = 0, redAvg = 0, greenAvg = 0, blueAvg = 0;
+
+        Log.d(TAG, "getArtworkColors: ");
+
+        ImageView cur = (ImageView) cardViewAdapter.getViews().get(0).findViewById(R.id.trackCoverArt);
+        Bitmap bm = ((BitmapDrawable) cur.getDrawable()).getBitmap();
+
+        for (width = 0; width < bm.getWidth(); width++) {
+            for (height = 0; height < bm.getHeight(); height++) {
+                curPixel = bm.getPixel(width, height);
+
+                redAvg += Color.red(curPixel);
+                greenAvg += Color.green(curPixel);
+                blueAvg += Color.blue(curPixel);
             }
         }
+
+        redAvg = redAvg / (width * height);
+        greenAvg = greenAvg / (width * height);
+        blueAvg = blueAvg / (width * height);
+
+
+        return Color.rgb(redAvg, greenAvg, blueAvg);
     }
 }
