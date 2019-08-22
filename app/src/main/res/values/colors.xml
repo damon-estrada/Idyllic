@@ -5,4 +5,15 @@
     <color name="colorAccent">#D81B60</color>
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
+
+    <color name="color1">#377ae6</color>
+    <color name="color2">#33bcf2</color>
+    <color name="color3">#33f2d2</color>
+    <color name="color4">#4fe071</color>
+    <color name="color5">#d4f54e</color>
+    <color name="color6">#fff538</color>
+    <color name="color7">#ffd026</color>
+    <color name="color8">#ff8026</color>
+    <color name="color9">#fa2916</color>
+    <color name="color10">#c41df2</color>
 </resources>
