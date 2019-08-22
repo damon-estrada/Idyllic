@@ -66,7 +66,7 @@ import retrofit2.http.Path;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private static final int REQUEST_CODE = 1094;
+    private static final int REQUEST_CODE = 1096;
     private static final String CLIENT_ID = "0184658057ca400693856a596026419b";
     private static final String REDIRECT_URI = "com.example.moodvisualized://callback";
 
