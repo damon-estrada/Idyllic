@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:paddingTop="100dp">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="match_parent"
+        android:layout_height="365dp"
+        android:layout_margin="15dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-35dp"
+            android:background="#404040">
+
+            <ImageView
+                android:id="@+id/trackCoverArt"
+                android:src="@color/browser_actions_title_color"
+
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:scaleType="fitCenter"
+
+                android:layout_width="640dp"
+                android:layout_height="640dp" />
+
+            <TextView
+                android:id="@+id/trackName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:textColor="@color/white"
+                android:text="Track name here"
+
+                android:layout_below="@id/trackCoverArt"
+                android:layout_alignStart="@id/trackCoverArt"
+
+                android:layout_marginTop="-35dp"
+                android:layout_marginStart="5dp" />
+
+            <TextView
+                android:id="@+id/trackArtists"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_below="@id/trackName"
+                android:textColor="@color/white"
+                android:text="Artists go here"
+
+                android:layout_alignStart="@id/trackName" />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+</LinearLayout>
